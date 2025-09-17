@@ -1,0 +1,6 @@
+A	Froguelite/.gitignore
+M	Froguelite/Assets/ExternalPackages/InputSystem_Actions.inputactions
+A	Froguelite/Assets/Froguelite.inputactions
+A	Froguelite/Assets/Froguelite.inputactions.meta
+A	Froguelite/Assets/movementManager.cs
+A	Froguelite/Assets/movementManager.cs.meta
