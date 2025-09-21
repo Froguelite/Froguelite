@@ -52,9 +52,12 @@ public class RoomData
     #region VARIABLES
 
 
-    public Room.RoomType roomType { get; protected set; }
-    public Vector2Int roomCoordinate { get; protected set; }
-    public Dictionary<Door.DoorDirection, DoorData> doors { get; protected set; }
+    public Room.RoomType roomType;
+    public Vector2Int roomCoordinate;
+    public Dictionary<Door.DoorDirection, DoorData> doors;
+
+    public float genWeight = 1f; // Weight for random selection during generation (higher = more likely)
+    public bool isLeaf = false; // Whether this room is a leaf node (dead end) in the graph
 
 
     #endregion
