@@ -2,7 +2,15 @@ using UnityEngine;
 
 public class StatsManager : MonoBehaviour
 {
+
+    // StatsManager holds and manages all player stats
+
+
+    #region VARIABLES
+
+
     public static StatsManager Instance;
+
     [Header("Combat Stats")]
     public int damage;
     public int weaponRange;
@@ -13,23 +21,28 @@ public class StatsManager : MonoBehaviour
     [Header("Movement Stats")]
     public int speed;
 
-    [Header("Health Stats")]
-    public int maxHealth;
-    public int currentHealth;
+    public PlayerHealth playerHealth;
+
+
+    #endregion
+
+
+    #region SETUP
+
+
     void Awake()
     {
-        if (Instance == null)
+        if (Instance != null && Instance != this)
         {
-            Instance = this;
+            Destroy(this);
+            return;
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+
+        Instance = this;
     }
 
-    void Update()
-    {
-        
-    }
+
+    #endregion
+
+
 }
