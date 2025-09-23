@@ -2,25 +2,36 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public static GameManager gameManager { get; private set; }
 
-    public UnitHealth _playerHealth = new UnitHealth(100, 100);
+    // GameManager is the central manager of the game
 
-    void Awake()
+
+    #region VARIABLES
+
+
+    public static GameManager Instance { get; private set; }
+
+
+    #endregion
+
+
+    #region MONOBEHAVIOUR AND SETUP
+
+
+    // Awake, setup singleton
+    private void Awake()
     {
-        if (gameManager != null && gameManager != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(this);
+            return;
         }
-        else
-        {
-            gameManager = this;
-        }
-        
+
+        Instance = this;
     }
-    public void HandlePlayerDeath()
-    {
-        Debug.Log("Health has reached 0. Activate death state.");
-    }
+
+
+    #endregion
+    
+    
 }
