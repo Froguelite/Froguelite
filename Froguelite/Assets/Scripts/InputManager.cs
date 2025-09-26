@@ -101,7 +101,6 @@ public class InputManager : MonoBehaviour
     // Called when the move action stops
     public void OnMoveCanceled(InputAction.CallbackContext context)
     {
-        Debug.Log("Move input canceled");
         PlayerMovement.Instance.SetMoveInputAxes(Vector2.zero);
     }
 

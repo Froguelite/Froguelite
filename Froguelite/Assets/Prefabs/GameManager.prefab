@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6584499593880014730}
   - component: {fileID: 253623656020380025}
   - component: {fileID: 5673963059578216789}
+  - component: {fileID: 4966045886001203952}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -64,3 +65,15 @@ MonoBehaviour:
   stunTime: 0
   speed: 0
   playerHealth: {fileID: 0}
+--- !u!114 &4966045886001203952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5263545398328150652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8c7614a86bb31b49845ecd88b7164f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
