@@ -15,6 +15,9 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] Transform tongue;
     [SerializeField] float tongueDistance = 3f;
     [SerializeField] float tongueSpeed = 10f;
+    [SerializeField] PlayerMovement movement;
+    [SerializeField] Rigidbody2D rb;
+    RigidbodyConstraints2D savedConstraints;  
 
     private Vector3 targetPosition;
     private bool isExtending = false;
@@ -28,7 +31,9 @@ public class PlayerAttack : MonoBehaviour
 
 
     void Awake()
-    {
+    {   if (rb == null) rb = GetComponent<Rigidbody2D>();            
+        if (rb) savedConstraints = rb.constraints; 
+        if (movement == null) movement = GetComponent<PlayerMovement>();
         if (Instance != null && Instance != this)
         {
             Destroy(this);
@@ -65,18 +70,32 @@ public class PlayerAttack : MonoBehaviour
     // Starts the tonuge attack
     void StartTongueAttack()
     {
+        if (movement) movement.enabled = false;
+        if (rb)
+        {
+            rb.linearVelocity = Vector2.zero;              
+            rb.angularVelocity = 0f;
+            rb.constraints = savedConstraints 
+                | RigidbodyConstraints2D.FreezePosition;  // freeze position
+        }
         // Set the tongue's initial position relative to the player
-        Vector3 initialPosition = tongue.position;
+        Vector3 initialPosition = transform.position;
+        tongue.position = initialPosition;  
+        float depthFromCam = Camera.main.orthographic
+                ? 0f
+                : Mathf.Abs(initialPosition.z - Camera.main.transform.position.z);
 
-        // Get mouse position in world space
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 0;
+            Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(
+                new Vector3(Input.mousePosition.x, Input.mousePosition.y, depthFromCam)
+            );
 
-        // Calculate the target position
-        Vector3 direction = (mousePosition - initialPosition).normalized;
-        targetPosition = initialPosition + direction * tongueDistance;
+            mouseWorld.z = initialPosition.z;
 
-        isExtending = true;
+            Vector3 dir = (mouseWorld - initialPosition).normalized;
+            targetPosition = initialPosition + dir * tongueDistance;
+            targetPosition.z = tongue.position.z;   // lock Z
+
+            isExtending = true;
     }
 
 
@@ -95,15 +114,19 @@ public class PlayerAttack : MonoBehaviour
         }
         else if (isRetracting)
         {
-            // Dynamically calculate the player's current position as the retract target
             Vector3 playerPosition = transform.position;
-            Vector3 retractDirection = (playerPosition - tongue.position).normalized; // Normalize direction
-            tongue.position += retractDirection * tongueSpeed * Time.deltaTime; // Move at consistent speed
+            playerPosition.z = tongue.position.z; //lock z
+
+            tongue.position = Vector3.MoveTowards(
+                tongue.position, playerPosition,
+                tongueSpeed * Time.deltaTime);
 
             if (Vector3.Distance(tongue.position, playerPosition) < 0.01f)
             {
                 Debug.Log("Tongue retracted to player's position!");
                 isRetracting = false;
+                if (movement) movement.enabled = true;
+                if (rb) rb.constraints = savedConstraints;   
             }
         }
     }
