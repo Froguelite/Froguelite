@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance { get; private set; }
 
+    [SerializeField] private int seed;
+
 
     #endregion
 
@@ -28,6 +30,8 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
+
+        Random.InitState(seed);
     }
 
 

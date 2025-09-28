@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class ZoneGenerator : MonoBehaviour
 {
@@ -9,16 +10,15 @@ public class ZoneGenerator : MonoBehaviour
     #region VARIABLES
 
 
-    [SerializeField] private int seed;
-
-    [SerializeField] private SpriteRenderer roomPrefab;
-    [SerializeField] private SpriteRenderer doorPrefab;
-    
-    [SerializeField] private float roomSpacing = 5f; // Distance between rooms in world units
+    [SerializeField] private RoomFactory roomFactory;
+    [SerializeField] private Tilemap roomsTilemap;
+    [SerializeField] private AutoTileSet zoneAutoTileSet;
     [SerializeField] private Transform roomParent; // Parent object to organize spawned rooms
 
+    [SerializeField] private SpriteRenderer doorPrefab;
+
     private RoomData[,] roomGraph;
-    private Dictionary<Vector2Int, GameObject> spawnedRooms = new Dictionary<Vector2Int, GameObject>();
+    private Dictionary<Vector2Int, Room> spawnedRooms = new Dictionary<Vector2Int, Room>();
 
 
     #endregion
@@ -29,7 +29,6 @@ public class ZoneGenerator : MonoBehaviour
 
     void Start()
     {
-        UnityEngine.Random.InitState(seed);
         GenerateZone();
     }
 
@@ -45,33 +44,6 @@ public class ZoneGenerator : MonoBehaviour
     {
         roomGraph = RoomGraphGenerator.GetRoomGraph(8);
         SpawnRoomsFromGraph();
-    }
-    
-
-    // Regenerates the zone with a new seed
-    public void RegenerateZone()
-    {
-        UnityEngine.Random.InitState(seed);
-        GenerateZone();
-    }
-
-
-    // Regenerates the zone with a specific seed
-    public void RegenerateZone(int newSeed)
-    {
-        seed = newSeed;
-        UnityEngine.Random.InitState(seed);
-        GenerateZone();
-    }
-
-
-    // Regenerates the zone with a completely random seed
-    [ContextMenu("Regenerate Zone with Random Seed")]
-    public void RegenerateZoneWithRandomSeed()
-    {
-        seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-        UnityEngine.Random.InitState(seed);
-        GenerateZone();
     }
 
 
@@ -95,9 +67,6 @@ public class ZoneGenerator : MonoBehaviour
 
         Debug.Log($"=== SPAWNING ROOMS FROM GRAPH ({width}x{height}) ===");
 
-        // Clear any existing spawned rooms
-        ClearSpawnedRooms();
-
         // Create room parent if it doesn't exist
         if (roomParent == null)
         {
@@ -118,74 +87,15 @@ public class ZoneGenerator : MonoBehaviour
             }
         }
 
-        // Spawn doors for all rooms after all rooms are created
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                RoomData room = roomGraph[x, y];
-                if (room != null)
-                {
-                    SpawnDoorsForRoom(room, new Vector2Int(x, y));
-                }
-            }
-        }
-
         Debug.Log($"Successfully spawned {spawnedRooms.Count} rooms with their doors");
     }
+    
     
     // Spawns a single room at the specified grid position
     private void SpawnRoom(RoomData roomData, Vector2Int gridPosition)
     {
-        if (roomPrefab == null)
-        {
-            Debug.LogError("Room prefab is null - cannot spawn room");
-            return;
-        }
-        
-        // Calculate world position from grid position
-        Vector3 worldPosition = new Vector3(gridPosition.x * roomSpacing, gridPosition.y * roomSpacing, 0);
-        
-        // Instantiate the room
-        GameObject roomObject = Instantiate(roomPrefab.gameObject, worldPosition, Quaternion.identity, roomParent);
-        roomObject.name = $"Room_{gridPosition.x},{gridPosition.y}_{roomData.roomType}";
-        
-        // Store reference to spawned room
-        spawnedRooms[gridPosition] = roomObject;
-        
-        // Change room color based on type for visual distinction
-        SpriteRenderer roomSprite = roomObject.GetComponent<SpriteRenderer>();
-        if (roomSprite != null)
-        {
-            roomSprite.color = GetRoomColor(roomData.roomType);
-        }
-    }
-    
-    // Returns a color for the room based on its type
-    private Color GetRoomColor(Room.RoomType roomType)
-    {
-        return roomType switch
-        {
-            Room.RoomType.Starter => Color.green,
-            Room.RoomType.Boss => Color.red,
-            Room.RoomType.Normal => Color.white,
-            Room.RoomType.Shop => Color.yellow,
-            Room.RoomType.Fly => Color.cyan,
-            _ => Color.gray
-        };
-    }
-    
-    // Clears all previously spawned rooms
-    private void ClearSpawnedRooms()
-    {
-        foreach (var roomEntry in spawnedRooms)
-        {
-            if (roomEntry.Value != null)
-            {
-                DestroyImmediate(roomEntry.Value);
-            }
-        }
-        spawnedRooms.Clear();
+        Room spawnedRoom = roomFactory.SpawnRoom(roomsTilemap, zoneAutoTileSet, roomParent, roomData, 64);
+        spawnedRooms[gridPosition] = spawnedRoom;
     }
 
 
@@ -210,7 +120,7 @@ public class ZoneGenerator : MonoBehaviour
             return;
         }
 
-        GameObject roomObject = spawnedRooms[gridPosition];
+        GameObject roomObject = spawnedRooms[gridPosition].gameObject;
         Transform roomTransform = roomObject.transform;
 
         // Check each direction for doors
@@ -259,7 +169,7 @@ public class ZoneGenerator : MonoBehaviour
     // Returns the offset position for a door based on its direction
     private Vector3 GetDoorOffset(Door.DoorDirection direction)
     {
-        float doorDistance = roomSpacing * 0.4f; // Position doors partway between rooms
+        float doorDistance = 5f * 0.4f; // Position doors partway between rooms
         
         return direction switch
         {

@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Room : MonoBehaviour
+public class Room : MonoBehaviour
 {
 
     // Room represents a single room in a zone, managing its type, position, doors, spawning, etc.
-    // Abstract - specific rooms will inherit from this class
 
 
     #region VARIABLES
@@ -27,14 +26,13 @@ public abstract class Room : MonoBehaviour
     #endregion
 
 
-    #region SPAWNING
+    #region SETUP
 
 
-    // Spawns the room based on its type and other properties
-    public virtual void SpawnRoom()
+    // Initializes the room based on given roomData
+    public virtual void Initialize(RoomData roomData)
     {
-        // TODO
-        Debug.LogWarning("Room spawning not yet implemented.");
+        this.roomData = roomData;
     }
 
 
