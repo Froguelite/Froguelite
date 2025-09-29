@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -15,8 +16,32 @@ public class InventoryManager : MonoBehaviour
     public int lotuses { get; private set; } = 0;
     public int woodpeckers { get; private set; } = 0;
 
-    public List<PowerFly> collectedPowerFlies = new List<PowerFly>();
+    public List<PowerFlyData> collectedPowerFlies = new List<PowerFlyData>();
 
+    public event Action<int> OnLotusesChanged;
+    public event Action<int> OnWoodpeckersChanged;
+    public event Action<int> OnPowerFlyCountChanged;
+    public event Action OnInventoryChanged; 
+    [SerializeField] private ItemDefinition lotusDef;     
+    [SerializeField] private ItemDefinition woodpeckerDef;      
+    [SerializeField] private ItemDefinition powerFlyDef;
+
+    public class Entry
+    {
+        public string id;
+        public string display;
+        public Sprite icon;
+        public int count;
+    }
+
+    // id -> entry
+    private readonly Dictionary<string, Entry> _items = new Dictionary<string, Entry>();
+
+    // Fires whenever any item changes 
+    public event Action<Entry> OnItemChanged;
+
+    // Read-only view for initial HUD paint on enable
+    public IReadOnlyDictionary<string, Entry> Items => _items;
 
     #endregion
 
@@ -29,7 +54,7 @@ public class InventoryManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(this);
+            Destroy(gameObject);
             return;
         }
 
@@ -48,6 +73,9 @@ public class InventoryManager : MonoBehaviour
     {
         lotuses += amount;
         if (lotuses < 0) lotuses = 0;
+        OnLotusesChanged?.Invoke(lotuses);
+        if (lotusDef) AddItem(lotusDef, amount); 
+        OnInventoryChanged?.Invoke(); 
     }
 
 
@@ -63,6 +91,9 @@ public class InventoryManager : MonoBehaviour
     {
         woodpeckers += amount;
         if (woodpeckers < 0) woodpeckers = 0;
+        OnWoodpeckersChanged?.Invoke(woodpeckers);
+        if (woodpeckerDef) AddItem(woodpeckerDef, amount);
+        OnInventoryChanged?.Invoke(); 
     }
 
 
@@ -80,16 +111,52 @@ public class InventoryManager : MonoBehaviour
 
 
     // Adds a collected Power Fly to the player's inventory.
-    public void AddPowerFly(PowerFly powerFly)
+    public void AddPowerFly(PowerFlyData powerFly)
     {
         if (powerFly != null && !collectedPowerFlies.Contains(powerFly))
         {
             collectedPowerFlies.Add(powerFly);
+            OnPowerFlyCountChanged?.Invoke(collectedPowerFlies.Count);
+            if (powerFlyDef) AddItem(powerFlyDef, 1);
+            OnInventoryChanged?.Invoke(); 
         }
     }
 
 
     #endregion
 
+    #region DYNAMIC INVENTORY
 
+        //add/update for HUD-driven inventory rows.
+
+        public void AddItem(ItemDefinition def, int amount = 1)
+        {
+            Debug.Log($"InventoryManager.AddItem: def={def?.id}, amount={amount}");
+
+            if (def == null || string.IsNullOrEmpty(def.id) || amount == 0)
+            return;
+
+            if (!_items.TryGetValue(def.id, out var e))
+            {
+                e = new Entry
+                {
+                    id = def.id,
+                    display = def.displayName,
+                    icon = def.icon,
+                    count = 0
+                };
+                _items[def.id] = e;
+            }
+
+            // Keep latest metadata in case designers update the asset
+            if (!string.IsNullOrEmpty(def.displayName)) e.display = def.displayName;
+            if (def.icon) e.icon = def.icon;
+
+            e.count = Mathf.Max(0, e.count + amount);
+
+            OnItemChanged?.Invoke(e);  // tell HUD to create/update row for this id
+            OnInventoryChanged?.Invoke();
+        }
+
+    #endregion
 }
