@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public static class RoomTileGenHelper
+public static class RoomTileHelper
 {
-    // RoomTileGenHelper is a static class to help with room tile generation
+    // RoomTileHelper is a static class to help with room tiles, primarily generation and noise handling
 
 
     #region TILE GENERATION
@@ -64,7 +64,7 @@ public static class RoomTileGenHelper
                 float centerY = height * 0.5f;
                 float distanceFromCenter = Vector2.Distance(new Vector2(x, y), new Vector2(centerX, centerY));
                 float maxDistance = Mathf.Min(width, height) * 0.5f;
-                
+
                 // Apply land scaling - smaller landScale makes land area smaller
                 float scaledDistance = distanceFromCenter / landScale;
                 float falloff = 1f - Mathf.Clamp01(scaledDistance / maxDistance);
@@ -382,6 +382,86 @@ public static class RoomTileGenHelper
             return false; // Out of bounds is considered water
         }
         return roomLayout[x, y];
+    }
+
+
+    #endregion
+
+
+    #region DOOR LOCATIONS
+
+
+    // Gets the door location in a given direction for a room layout
+    // If launchLocation = true, returns the location where the bubble hovers, ready for launch
+    // If launchLocation = false, returns the location where the player should end up inside the room (i.e. "landing" location)
+    public static Vector2Int GetDoorLocation(bool[,] roomLayout, Door.DoorDirection doorDirection, bool launchLocation = true)
+    {
+        if (roomLayout == null)
+        {
+            Debug.LogError("Room layout is null!");
+            return Vector2Int.zero;
+        }
+
+        int width = roomLayout.GetLength(0);
+        int height = roomLayout.GetLength(1);
+
+        int centerX = width / 2;
+        int centerY = height / 2;
+
+        switch (doorDirection)
+        {
+            case Door.DoorDirection.Up:
+                // Start at highest y, centered on x, and go down until we find land
+                for (int y = height - 1; y >= 0; y--)
+                {
+                    if (roomLayout[centerX, y])
+                    {
+                        // Go a bit further or less depending on launch state, so we are in the water or on land
+                        return new Vector2Int(centerX, y + (launchLocation ? 2 : -2));
+                    }
+                }
+                break;
+
+            case Door.DoorDirection.Down:
+                // Start at lowest y, centered on x, and go up until we find land
+                for (int y = 0; y < height; y++)
+                {
+                    if (roomLayout[centerX, y])
+                    {
+                        // Go a bit further or less depending on launch state, so we are in the water or on land
+                        return new Vector2Int(centerX, y + (launchLocation ? -2 : 2));
+                    }
+                }
+                break;
+
+            case Door.DoorDirection.Left:
+                // Start leftmost x, centered on y, and go right until we find land
+                for (int x = 0; x < width; x++)
+                {
+                    if (roomLayout[x, centerY])
+                    {
+                        // Go a bit further or less depending on launch state, so we are in the water or on land
+                        return new Vector2Int(x + (launchLocation ? -2 : 2), centerY);
+                    }
+                }
+                break;
+
+            case Door.DoorDirection.Right:
+                // Start rightmost x, centered on y, and go left until we find land
+                for (int x = width - 1; x >= 0; x--)
+                {
+                    if (roomLayout[x, centerY])
+                    {
+                        // Go a bit further or less depending on launch state, so we are in the water or on land
+                        return new Vector2Int(x + (launchLocation ? 2 : -2), centerY);
+                    }
+                }
+                break;
+        }
+
+        // If no suitable position found, return center of layout as fallback
+        Debug.LogWarning($"No suitable door location found for direction {doorDirection}. Returning center as fallback.");
+        return new Vector2Int(width / 2, height / 2);
     }
 
 

@@ -43,7 +43,7 @@ public class RoomFactory : MonoBehaviour
         }
 
         // Get the room layout using Perlin with octaves (use default noise params)
-        bool[,] newRoomLayout = RoomTileGenHelper.GenRoomTiles(
+        bool[,] newRoomLayout = RoomTileHelper.GenRoomTiles(
             width: roomLength,
             height: roomLength,
             offsetX: tileOffset.x,
@@ -52,11 +52,14 @@ public class RoomFactory : MonoBehaviour
         );
 
         // Post process to smooth and ensure connectivity
-        newRoomLayout = RoomTileGenHelper.SmoothRoomLayout(newRoomLayout);
-        newRoomLayout = RoomTileGenHelper.EnsureConnectivity(newRoomLayout);
+        newRoomLayout = RoomTileHelper.SmoothRoomLayout(newRoomLayout);
+        newRoomLayout = RoomTileHelper.EnsureConnectivity(newRoomLayout);
+
+        roomData.tileLayout = newRoomLayout;
+        roomData.roomLength = roomLength;
 
         // Set the tilemap to match the new room layout using auto-tiling
-        RoomTileGenHelper.SetTilemapToLayoutWithAutoTiling(
+        RoomTileHelper.SetTilemapToLayoutWithAutoTiling(
             newRoomLayout,
             roomsTilemap,
             autoTileSet,

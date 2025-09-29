@@ -13,6 +13,16 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private int seed;
 
+    public enum PlayerState
+    {
+        Exploring,
+        InCombat,
+        InBubble,
+        InMenu
+    }
+
+    public PlayerState currentPlayerState { get; private set; } = PlayerState.Exploring;
+
 
     #endregion
 
@@ -36,6 +46,19 @@ public class GameManager : MonoBehaviour
 
 
     #endregion
-    
-    
+
+
+    #region PLAYER STATE MANAGEMENT
+
+
+    // Sets the current player state
+    public void SetPlayerState(PlayerState newState)
+    {
+        currentPlayerState = newState;
+    }
+
+
+    #endregion
+
+
 }

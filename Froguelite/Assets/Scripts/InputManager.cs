@@ -18,6 +18,9 @@ public class InputManager : MonoBehaviour
     private InputAction moveAction;
     private InputAction attackAction;
 
+    private bool pendingAttack = false;
+    private Vector2 pendingMoveInput = Vector2.zero;
+
 
     #endregion
 
@@ -71,7 +74,8 @@ public class InputManager : MonoBehaviour
     {
         moveAction.performed += OnMove;
         moveAction.canceled += OnMoveCanceled;
-        attackAction.started += OnAttack;
+        attackAction.started += OnAttackStart;
+        attackAction.canceled += OnAttackEnd;
     }
 
 
@@ -80,35 +84,65 @@ public class InputManager : MonoBehaviour
     {
         moveAction.performed -= OnMove;
         moveAction.canceled -= OnMoveCanceled;
-        attackAction.started -= OnAttack;
+        attackAction.started -= OnAttackStart;
+        attackAction.canceled -= OnAttackEnd;
     }
 
 
     #endregion
 
 
-    #region MOVE AND ATTACK HANDLERS
+    #region MOVE
 
 
     // Called when the move action is performed
     public void OnMove(InputAction.CallbackContext context)
     {
-        Vector2 moveInput = context.ReadValue<Vector2>();
-        PlayerMovement.Instance.SetMoveInputAxes(moveInput);
+        pendingMoveInput = context.ReadValue<Vector2>();
+        PlayerMovement.Instance.SetMoveInputAxes(pendingMoveInput);
     }
 
 
     // Called when the move action stops
     public void OnMoveCanceled(InputAction.CallbackContext context)
     {
-        PlayerMovement.Instance.SetMoveInputAxes(Vector2.zero);
+        pendingMoveInput = Vector2.zero;
+        PlayerMovement.Instance.SetMoveInputAxes(pendingMoveInput);
+    }
+
+    
+    // Pushes any pending movement inputs again to the movement script
+    public void PushAnyPendingMovement()
+    {
+        PlayerMovement.Instance.SetMoveInputAxes(pendingMoveInput);
     }
 
 
-    // Called when the attack action is performed
-    public void OnAttack(InputAction.CallbackContext context)
+    #endregion
+
+
+    #region ATTACK
+
+
+    // Called when the attack action is started
+    public void OnAttackStart(InputAction.CallbackContext context)
     {
+        pendingAttack = true;
         PlayerAttack.Instance.OnInitiateAttack();
+    }
+
+
+    // Called when the attack action is stopped
+    public void OnAttackEnd(InputAction.CallbackContext context)
+    {
+        pendingAttack = false;
+    }
+
+
+    // Returns whether an attack is pending (button held down)
+    public bool IsPendingAttack()
+    {
+        return pendingAttack;
     }
 
 

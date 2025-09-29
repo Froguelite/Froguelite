@@ -22,6 +22,8 @@ public class Room : MonoBehaviour
 
     public RoomData roomData { get; protected set; }
 
+    public List<Door> doors { get; private set; } = new List<Door>();
+
 
     #endregion
 
@@ -30,9 +32,16 @@ public class Room : MonoBehaviour
 
 
     // Initializes the room based on given roomData
-    public virtual void Initialize(RoomData roomData)
+    public void Initialize(RoomData roomData)
     {
         this.roomData = roomData;
+    }
+
+
+    // Adds a door to the room's door list
+    public void AddDoor(Door door)
+    {
+        doors.Add(door);
     }
 
 
@@ -52,6 +61,8 @@ public class RoomData
 
     public Room.RoomType roomType;
     public Vector2Int roomCoordinate;
+    public bool[,] tileLayout; // 2D array representing walkable (true) and non-walkable (false) tiles in the room
+    public int roomLength; // Length of one side of the square room in tiles
     public Dictionary<Door.DoorDirection, DoorData> doors;
 
     public float genWeight = 1f; // Weight for random selection during generation (higher = more likely)
