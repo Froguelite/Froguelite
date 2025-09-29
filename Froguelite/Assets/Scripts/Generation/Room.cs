@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Room : MonoBehaviour
+public class Room : MonoBehaviour
 {
 
     // Room represents a single room in a zone, managing its type, position, doors, spawning, etc.
-    // Abstract - specific rooms will inherit from this class
 
 
     #region VARIABLES
@@ -23,18 +22,26 @@ public abstract class Room : MonoBehaviour
 
     public RoomData roomData { get; protected set; }
 
+    public List<Door> doors { get; private set; } = new List<Door>();
+
 
     #endregion
 
 
-    #region SPAWNING
+    #region SETUP
 
 
-    // Spawns the room based on its type and other properties
-    public virtual void SpawnRoom()
+    // Initializes the room based on given roomData
+    public void Initialize(RoomData roomData)
     {
-        // TODO
-        Debug.LogWarning("Room spawning not yet implemented.");
+        this.roomData = roomData;
+    }
+
+
+    // Adds a door to the room's door list
+    public void AddDoor(Door door)
+    {
+        doors.Add(door);
     }
 
 
@@ -54,6 +61,8 @@ public class RoomData
 
     public Room.RoomType roomType;
     public Vector2Int roomCoordinate;
+    public bool[,] tileLayout; // 2D array representing walkable (true) and non-walkable (false) tiles in the room
+    public int roomLength; // Length of one side of the square room in tiles
     public Dictionary<Door.DoorDirection, DoorData> doors;
 
     public float genWeight = 1f; // Weight for random selection during generation (higher = more likely)

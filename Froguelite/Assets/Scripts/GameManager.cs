@@ -11,6 +11,18 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance { get; private set; }
 
+    [SerializeField] private int seed;
+
+    public enum PlayerState
+    {
+        Exploring,
+        InCombat,
+        InBubble,
+        InMenu
+    }
+
+    public PlayerState currentPlayerState { get; private set; } = PlayerState.Exploring;
+
 
     #endregion
 
@@ -28,10 +40,25 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
+
+        Random.InitState(seed);
     }
 
 
     #endregion
-    
-    
+
+
+    #region PLAYER STATE MANAGEMENT
+
+
+    // Sets the current player state
+    public void SetPlayerState(PlayerState newState)
+    {
+        currentPlayerState = newState;
+    }
+
+
+    #endregion
+
+
 }
