@@ -13,7 +13,7 @@ public class InventoryManager : MonoBehaviour
 
     public static InventoryManager Instance;
 
-    public int lotuses { get; private set; } = 0;
+    public int lotuses { get; private set; }
     public int woodpeckers { get; private set; } = 0;
 
     public List<PowerFlyData> collectedPowerFlies = new List<PowerFlyData>();
@@ -21,9 +21,9 @@ public class InventoryManager : MonoBehaviour
     public event Action<int> OnLotusesChanged;
     public event Action<int> OnWoodpeckersChanged;
     public event Action<int> OnPowerFlyCountChanged;
-    public event Action OnInventoryChanged; 
-    [SerializeField] private ItemDefinition lotusDef;     
-    [SerializeField] private ItemDefinition woodpeckerDef;      
+    public event Action OnInventoryChanged;
+    [SerializeField] private ItemDefinition lotusDef;
+    [SerializeField] private ItemDefinition woodpeckerDef;
     [SerializeField] private ItemDefinition powerFlyDef;
 
     public class Entry
@@ -74,8 +74,8 @@ public class InventoryManager : MonoBehaviour
         lotuses += amount;
         if (lotuses < 0) lotuses = 0;
         OnLotusesChanged?.Invoke(lotuses);
-        if (lotusDef) AddItem(lotusDef, amount); 
-        OnInventoryChanged?.Invoke(); 
+        if (lotusDef) AddItem(lotusDef, amount);
+        OnInventoryChanged?.Invoke();
     }
 
 
@@ -93,7 +93,7 @@ public class InventoryManager : MonoBehaviour
         if (woodpeckers < 0) woodpeckers = 0;
         OnWoodpeckersChanged?.Invoke(woodpeckers);
         if (woodpeckerDef) AddItem(woodpeckerDef, amount);
-        OnInventoryChanged?.Invoke(); 
+        OnInventoryChanged?.Invoke();
     }
 
 
@@ -118,7 +118,7 @@ public class InventoryManager : MonoBehaviour
             collectedPowerFlies.Add(powerFly);
             OnPowerFlyCountChanged?.Invoke(collectedPowerFlies.Count);
             if (powerFlyDef) AddItem(powerFlyDef, 1);
-            OnInventoryChanged?.Invoke(); 
+            OnInventoryChanged?.Invoke();
         }
     }
 
@@ -127,36 +127,46 @@ public class InventoryManager : MonoBehaviour
 
     #region DYNAMIC INVENTORY
 
-        //add/update for HUD-driven inventory rows.
+    //add/update for HUD-driven inventory rows.
 
-        public void AddItem(ItemDefinition def, int amount = 1)
-        {
-            Debug.Log($"InventoryManager.AddItem: def={def?.id}, amount={amount}");
+    public void AddItem(ItemDefinition def, int amount = 1)
+    {
+        Debug.Log($"InventoryManager.AddItem: def={def?.id}, amount={amount}");
 
-            if (def == null || string.IsNullOrEmpty(def.id) || amount == 0)
+        if (def == null || string.IsNullOrEmpty(def.id) || amount == 0)
             return;
 
-            if (!_items.TryGetValue(def.id, out var e))
+        if (!_items.TryGetValue(def.id, out var e))
+        {
+            e = new Entry
             {
-                e = new Entry
-                {
-                    id = def.id,
-                    display = def.displayName,
-                    icon = def.icon,
-                    count = 0
-                };
-                _items[def.id] = e;
-            }
-
-            // Keep latest metadata in case designers update the asset
-            if (!string.IsNullOrEmpty(def.displayName)) e.display = def.displayName;
-            if (def.icon) e.icon = def.icon;
-
-            e.count = Mathf.Max(0, e.count + amount);
-
-            OnItemChanged?.Invoke(e);  // tell HUD to create/update row for this id
-            OnInventoryChanged?.Invoke();
+                id = def.id,
+                display = def.displayName,
+                icon = def.icon,
+                count = 0
+            };
+            _items[def.id] = e;
         }
+
+        // Keep latest metadata in case designers update the asset
+        if (!string.IsNullOrEmpty(def.displayName)) e.display = def.displayName;
+        if (def.icon) e.icon = def.icon;
+
+        e.count = Mathf.Max(0, e.count + amount);
+
+        OnItemChanged?.Invoke(e);  // tell HUD to create/update row for this id
+        OnInventoryChanged?.Invoke();
+    }
+        
+    public bool TryPurchase(ItemDefinition def, int price)
+    {
+        if (!def || string.IsNullOrEmpty(def.id)) return false;
+        if (lotuses < price) return false;
+
+        RemoveLotuses(price);
+        AddItem(def, 1);
+        return true;
+    }
 
     #endregion
 }
