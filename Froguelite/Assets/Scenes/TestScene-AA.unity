@@ -925,7 +925,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2105115379
 Transform:
   m_ObjectHideFlags: 0
@@ -948,30 +948,16 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2105115378}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1668fa2b975c5e42a2ec4ff38d01bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZoneGenManager
-  normalRoom: {fileID: 2083631083}
-  bossRoom: {fileID: 962817251}
-  shopRoom: {fileID: 1197850537}
-  rooms:
-  - position: {x: 0, y: 0}
-    zRotation: 10
-    typeName: 0
-  - position: {x: 5, y: 0}
-    zRotation: 0
-    typeName: 0
-  - position: {x: -2, y: 0}
-    zRotation: 0
-    typeName: 2
-  - position: {x: 0, y: 3}
-    zRotation: 30
-    typeName: 0
-  - position: {x: -7, y: 2}
-    zRotation: 0
-    typeName: 1
+  roomFactory: {fileID: 0}
+  roomsTilemap: {fileID: 0}
+  zoneAutoTileSet: {fileID: 0}
+  roomParent: {fileID: 0}
+  doorPrefab: {fileID: 0}
 --- !u!1 &2131181007
 GameObject:
   m_ObjectHideFlags: 0
