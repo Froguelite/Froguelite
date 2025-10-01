@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using Newtonsoft.Json;
 
 [System.Serializable]
 public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver
@@ -35,15 +36,20 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
 }
 
 
+// Generic wrapper so we can store typed values
 [Serializable]
-public abstract class SaveValue
+public class SaveValue<T> : ISaveValue
 {
-    public abstract object BoxedValue { get; }
+    [JsonProperty]
+    public T value { get; set; }
+
+    public SaveValue() { }
+
+    public SaveValue(T v)
+    {
+        value = v;
+    }
 }
 
-[Serializable]
-public class SaveValue<T> : SaveValue
-{
-    public T value;
-    public override object BoxedValue => value;
-}
+// Base interface so dictionary can hold different SaveValue<T> types
+public interface ISaveValue { }

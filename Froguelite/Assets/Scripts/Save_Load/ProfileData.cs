@@ -1,12 +1,19 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using System;
 
-[System.Serializable]
+[Serializable]
 public class ProfileData
 {
-    //Essentially a hashmap of key-value pairs
-    //Key is variable name's enum value, value is variable value
-    public SerializableDictionary<SaveVariable, SaveValue> data = new SerializableDictionary<SaveVariable, SaveValue>();
+    // Main dictionary for storing all saved variables
+    [JsonProperty]
+    public Dictionary<SaveVariable, ISaveValue> data { get; private set; }
 
+    // Needed for JSON deserialization
+    public ProfileData()
+    {
+        data = new Dictionary<SaveVariable, ISaveValue>();
+    }
 }
