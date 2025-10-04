@@ -14,6 +14,7 @@ public class PlayerAttack : MonoBehaviour
 
     [Header("Tongue Settings")]
     [SerializeField] Transform tongue;
+    [SerializeField] private bool stopMovementOnAttack = true;
     [SerializeField] float tongueDistance = 3f;
     [SerializeField] float tongueExtendSpeed = 10f;
     [SerializeField] float tongueRetractSpeed = 25f;
@@ -70,6 +71,12 @@ public class PlayerAttack : MonoBehaviour
     // Starts the tonuge attack
     void StartTongueAttack()
     {
+        // Stop player movement if setting is set so
+        if (stopMovementOnAttack)
+        {
+            PlayerMovement.Instance.SetAttackingOverride(true);
+        }
+        
         // Get mouse position in world space
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePosition.z = 0;
@@ -119,6 +126,7 @@ public class PlayerAttack : MonoBehaviour
     // Stops the tongue retraction and starts cooldown
     public void StopTongueRetraction()
     {
+        PlayerMovement.Instance.SetAttackingOverride(false);
         isRetracting = false;
         tongue.localPosition = Vector3.zero;
         StartCoroutine(TongueCooldownCoroutine());

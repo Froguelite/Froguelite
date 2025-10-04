@@ -23,6 +23,7 @@ public class PowerFly : MonoBehaviour, ICollectable
     [SerializeField] private float bobDuration = 1.5f;
     [SerializeField] private float rotationAmount = 15f;
     [SerializeField] private float rotationDuration = 2f;
+    [SerializeField] private ItemDefinition itemDef; 
     
     private Vector3 originalPosition;
     private Vector3 targetPosition;
@@ -155,6 +156,12 @@ public class PowerFly : MonoBehaviour, ICollectable
     // On collect, apply the effect and destroy the game object
     public void OnCollect()
     {
+        if (itemDef != null)
+        {
+            InventoryManager.Instance.AddItem(itemDef, 1);
+        }
+
+        InventoryManager.Instance.AddPowerFly(powerFlyData);
         StopBuzzing();
         StopBobbingAndRotation();
         powerFlyData.effect.ApplyEffect();
