@@ -26,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
     [HideInInspector] public UnityEvent onReachManualMoveTarget;
 
     public bool canMove { get; private set; } = true;
+    public bool isAttackingOverride { get; private set; } = false; // If true, player cannot move due to attacking
 
 
     #endregion
@@ -64,7 +65,7 @@ public class PlayerMovement : MonoBehaviour
     // Applies the movement to the player
     public void ApplyMovement()
     {
-        if (canMove && !isManualMoving)
+        if (canMove && !isManualMoving && !isAttackingOverride)
             rb.linearVelocity = moveInput * moveSpeed * Time.fixedDeltaTime * 100f;
         else if (isManualMoving)
             HandleManualMove();
@@ -87,7 +88,18 @@ public class PlayerMovement : MonoBehaviour
     public void SetCanMove(bool value)
     {
         canMove = value;
-        if (canMove)
+        if (canMove && !isAttackingOverride)
+            InputManager.Instance.PushAnyPendingMovement();
+        else
+            rb.linearVelocity = Vector2.zero;
+    }
+
+
+    // Sets whether the player cannot move due to attacking
+    public void SetAttackingOverride(bool value)
+    {
+        isAttackingOverride = value;
+        if (!isAttackingOverride && canMove)
             InputManager.Instance.PushAnyPendingMovement();
         else
             rb.linearVelocity = Vector2.zero;
