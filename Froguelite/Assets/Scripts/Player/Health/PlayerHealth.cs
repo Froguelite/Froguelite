@@ -13,7 +13,9 @@ public class PlayerHealth : MonoBehaviour
     public int currentHealth { get; private set; }
     public int maxHealth { get; private set; }
 
-    public UnityEvent onHealthChanged; // Event triggered when health changes
+    public UnityEvent onHealthChanged; // Event triggered when health changes (damage or heal)
+    public UnityEvent onHealthDamaged; // Event triggered when the player takes damage
+    public UnityEvent onHealthHealed;  // Event triggered when the player is healed
 
 
     #endregion
@@ -51,6 +53,7 @@ public class PlayerHealth : MonoBehaviour
             }
 
             onHealthChanged.Invoke();
+            onHealthDamaged.Invoke();
         }
 
         if (currentHealth <= 0)
@@ -70,6 +73,7 @@ public class PlayerHealth : MonoBehaviour
             }
 
             onHealthChanged.Invoke();
+            onHealthHealed.Invoke();
         }
     }
 
