@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class PlayerHealth : MonoBehaviour
     public int currentHealth { get; private set; }
     public int maxHealth { get; private set; }
 
+    public UnityEvent onHealthChanged; // Event triggered when health changes (damage or heal)
+    public UnityEvent onHealthDamaged; // Event triggered when the player takes damage
+    public UnityEvent onHealthHealed;  // Event triggered when the player is healed
+
 
     #endregion
 
@@ -23,8 +28,10 @@ public class PlayerHealth : MonoBehaviour
     {
         // TODO: Load player health here
 
-        maxHealth = 100;
+        maxHealth = 6;
         currentHealth = maxHealth;
+
+        onHealthChanged.Invoke();
     }
 
 
@@ -40,11 +47,33 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth > 0)
         {
             currentHealth -= dmgAmount;
+            if (currentHealth < 0)
+            {
+                currentHealth = 0;
+            }
+
+            onHealthChanged.Invoke();
+            onHealthDamaged.Invoke();
         }
+
         if (currentHealth <= 0)
-        {
-            currentHealth = 0;
             KillPlayer();
+    }
+
+
+    // Heals player by given amount; if health exceeds max, it caps at max
+    public void HealPlayer(int healAmount)
+    {
+        if (currentHealth < maxHealth)
+        {
+            currentHealth += healAmount;
+            if (currentHealth > maxHealth)
+            {
+                currentHealth = maxHealth;
+            }
+
+            onHealthChanged.Invoke();
+            onHealthHealed.Invoke();
         }
     }
 

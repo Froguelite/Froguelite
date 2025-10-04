@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 321538535000620829, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
       propertyPath: m_Name
-      value: Collectable_Heart Variant
+      value: Collectable_Heart
       objectReference: {fileID: 0}
     - target: {fileID: 3225412905605876153, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -55,7 +55,19 @@ PrefabInstance:
     - target: {fileID: 6116084496106430310, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -6636963309793451902, guid: 101d75a74c6143745a86c1b65ac9424f, type: 3}
+      objectReference: {fileID: 21300000, guid: a994e15c1c4085d4fa28e96e53f59f35, type: 3}
+    - target: {fileID: 7163965599216893010, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7163965599216893010, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7163965599216893010, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 7671069595912888355, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
       propertyPath: onPlayerOverlap.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -91,8 +103,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Collectable_Heart
   spriteRenderer: {fileID: 2006458858967781278}
-  displayImg: {fileID: -6636963309793451902, guid: 101d75a74c6143745a86c1b65ac9424f, type: 3}
+  displayImg: {fileID: 21300000, guid: a994e15c1c4085d4fa28e96e53f59f35, type: 3}
   rotationAmount: 10
   rotationFrequency: 0.75
   bobbingAmount: 0.1
   bobbingFrequency: 1
+  displayImage: {fileID: 2006458858967781278}

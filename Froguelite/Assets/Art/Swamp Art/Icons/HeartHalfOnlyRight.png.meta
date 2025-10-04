@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 1ff90b9dac512d34e88c70d7aa709acd
+guid: 3b38a0f7a611e3c45baaa43fe7bc13f7
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5712959122012955994
-    second: Bubble_0
+      213: -2406394161177453880
+    second: HeartHalfOnlyRight_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,7 +48,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 1
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -113,12 +113,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Bubble_0
+      name: HeartHalfOnlyRight_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 47
         y: 0
-        width: 84
+        width: 53
         height: 84
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6aa171472fd77b0b0800000000000000
-      internalID: -5712959122012955994
+      spriteID: 8ca91719245ca9ed0800000000000000
+      internalID: -2406394161177453880
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Bubble_0: -5712959122012955994
+      HeartHalfOnlyRight_0: -2406394161177453880
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
