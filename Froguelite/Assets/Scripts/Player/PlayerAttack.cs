@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
@@ -14,14 +15,16 @@ public class PlayerAttack : MonoBehaviour
     [Header("Tongue Settings")]
     [SerializeField] Transform tongue;
     [SerializeField] float tongueDistance = 3f;
-    [SerializeField] float tongueSpeed = 10f;
-    [SerializeField] PlayerMovement movement;
-    [SerializeField] Rigidbody2D rb;
-    RigidbodyConstraints2D savedConstraints;  
+    [SerializeField] float tongueExtendSpeed = 10f;
+    [SerializeField] float tongueRetractSpeed = 25f;
+    [SerializeField] float tongueCooldown = 0.5f;
 
-    private Vector3 targetPosition;
+    private Vector3 targetLocalPosition;
     private bool isExtending = false;
     private bool isRetracting = false;
+    private bool inCooldown = false;
+
+    public bool canAttack { get; private set; } = true;
 
 
     #endregion
@@ -31,9 +34,7 @@ public class PlayerAttack : MonoBehaviour
 
 
     void Awake()
-    {   if (rb == null) rb = GetComponent<Rigidbody2D>();            
-        if (rb) savedConstraints = rb.constraints; 
-        if (movement == null) movement = GetComponent<PlayerMovement>();
+    {
         if (Instance != null && Instance != this)
         {
             Destroy(this);
@@ -44,7 +45,7 @@ public class PlayerAttack : MonoBehaviour
     }
 
 
-    void Update()
+    void FixedUpdate()
     {
         HandleTongueAttack();
     }
@@ -59,9 +60,8 @@ public class PlayerAttack : MonoBehaviour
     // If possible, initiate attack
     public void OnInitiateAttack()
     {
-        if (!isExtending && !isRetracting)
+        if (!isExtending && !isRetracting && !inCooldown && canAttack)
         {
-            Debug.Log("Tongue attack started!");
             StartTongueAttack();
         }
     }
@@ -70,32 +70,15 @@ public class PlayerAttack : MonoBehaviour
     // Starts the tonuge attack
     void StartTongueAttack()
     {
-        if (movement) movement.enabled = false;
-        if (rb)
-        {
-            rb.linearVelocity = Vector2.zero;              
-            rb.angularVelocity = 0f;
-            rb.constraints = savedConstraints 
-                | RigidbodyConstraints2D.FreezePosition;  // freeze position
-        }
-        // Set the tongue's initial position relative to the player
-        Vector3 initialPosition = transform.position;
-        tongue.position = initialPosition;  
-        float depthFromCam = Camera.main.orthographic
-                ? 0f
-                : Mathf.Abs(initialPosition.z - Camera.main.transform.position.z);
+        // Get mouse position in world space
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePosition.z = 0;
 
-            Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(
-                new Vector3(Input.mousePosition.x, Input.mousePosition.y, depthFromCam)
-            );
+        // Get target position for tongue extension
+        Vector3 direction = (mousePosition - transform.position).normalized;
+        targetLocalPosition = direction * tongueDistance;
 
-            mouseWorld.z = initialPosition.z;
-
-            Vector3 dir = (mouseWorld - initialPosition).normalized;
-            targetPosition = initialPosition + dir * tongueDistance;
-            targetPosition.z = tongue.position.z;   // lock Z
-
-            isExtending = true;
+        isExtending = true;
     }
 
 
@@ -104,31 +87,63 @@ public class PlayerAttack : MonoBehaviour
     {
         if (isExtending)
         {
-            tongue.position = Vector3.MoveTowards(tongue.position, targetPosition, tongueSpeed * Time.deltaTime);
-            if (Vector3.Distance(tongue.position, targetPosition) < 0.01f)
+            tongue.localPosition = Vector3.MoveTowards(tongue.localPosition, targetLocalPosition, tongueExtendSpeed * Time.fixedDeltaTime);
+            if (Vector3.Distance(tongue.localPosition, targetLocalPosition) < 0.01f)
             {
-                Debug.Log("Tongue reached target position!");
-                isExtending = false;
-                isRetracting = true;
+                StopTongueExtension();
             }
         }
         else if (isRetracting)
         {
-            Vector3 playerPosition = transform.position;
-            playerPosition.z = tongue.position.z; //lock z
+            tongue.localPosition = Vector3.MoveTowards(tongue.localPosition, Vector3.zero, tongueRetractSpeed * Time.fixedDeltaTime);
 
-            tongue.position = Vector3.MoveTowards(
-                tongue.position, playerPosition,
-                tongueSpeed * Time.deltaTime);
-
-            if (Vector3.Distance(tongue.position, playerPosition) < 0.01f)
+            if (Vector3.Distance(tongue.localPosition, Vector3.zero) < 0.01f)
             {
-                Debug.Log("Tongue retracted to player's position!");
-                isRetracting = false;
-                if (movement) movement.enabled = true;
-                if (rb) rb.constraints = savedConstraints;   
+                StopTongueRetraction();
             }
         }
+    }
+
+    // Stops the tongue extension and starts retraction
+    public void StopTongueExtension(bool movePlayerWithRetract = false)
+    {
+        isExtending = false;
+        isRetracting = true;
+
+        if (movePlayerWithRetract)
+        {
+            PlayerMovement.Instance.ManualMoveToPosition(tongue.position, tongueRetractSpeed);
+        }
+    }
+
+    // Stops the tongue retraction and starts cooldown
+    public void StopTongueRetraction()
+    {
+        isRetracting = false;
+        tongue.localPosition = Vector3.zero;
+        StartCoroutine(TongueCooldownCoroutine());
+    }
+
+    // Handles the cooldown after a tongue attack
+    private IEnumerator TongueCooldownCoroutine()
+    {
+        inCooldown = true;
+        yield return new WaitForSeconds(tongueCooldown);
+        inCooldown = false;
+        if (InputManager.Instance.IsPendingAttack())
+        {
+            OnInitiateAttack();
+        }
+    }
+
+
+    // Sets whether the player can attack or not
+    // If setting to true, will push any pending attack input
+    public void SetCanAttack(bool value)
+    {
+        canAttack = value;
+        if (canAttack && InputManager.Instance.IsPendingAttack())
+            OnInitiateAttack();
     }
 
 
