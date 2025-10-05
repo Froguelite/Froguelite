@@ -12,6 +12,7 @@ public class PlayerAttack : MonoBehaviour
 
     public static PlayerAttack Instance { get; private set; }
 
+
     [Header("Tongue Settings")]
     [SerializeField] Transform tongue;
     [SerializeField] private bool stopMovementOnAttack = true;
@@ -76,7 +77,7 @@ public class PlayerAttack : MonoBehaviour
         {
             PlayerMovement.Instance.SetAttackingOverride(true);
         }
-        
+
         // Get mouse position in world space
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePosition.z = 0;
@@ -152,6 +153,13 @@ public class PlayerAttack : MonoBehaviour
         canAttack = value;
         if (canAttack && InputManager.Instance.IsPendingAttack())
             OnInitiateAttack();
+    }
+    
+
+    // Returns whether the player is currently attacking (extending or retracting)
+    public bool IsAttacking()
+    {
+        return isExtending || isRetracting;
     }
 
 

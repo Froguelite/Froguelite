@@ -1,5 +1,19 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+
+[System.Serializable]
+public class PerlinNoiseSettings
+{
+    public int octaves = 3;
+    public float persistence = 0.5f;
+    public float lacunarity = 2f;
+    public float noiseScale = 0.1f;
+    public float threshold = 0.4f; // Threshold to determine land vs water
+    public float landScale = 1f; // Scale for land area (higher = larger land area)
+    public float[] octaveOffsetsX; // Random offsets for each octave in X
+    public float[] octaveOffsetsY; // Random offsets for each octave in Y
+}
 
 public static class RoomTileHelper
 {
@@ -16,68 +30,75 @@ public static class RoomTileHelper
         int height,
         int offsetX,
         int offsetY,
-        int octaves = 3,
-        float persistence = 0.5f,
-        float lacunarity = 2f,
-        float noiseScale = 0.1f,
-        float threshold = 0.4f,
-        float landScale = 1f)
+        PerlinNoiseSettings noiseSettings)
     {
-        // Generate random offsets for each octave
-        float[] octaveOffsetsX = new float[octaves];
-        float[] octaveOffsetsY = new float[octaves];
-
-        for (int i = 0; i < octaves; i++)
-        {
-            octaveOffsetsX[i] = Random.Range(-1000f, 1000f);
-            octaveOffsetsY[i] = Random.Range(-1000f, 1000f);
-        }
-
         bool[,] roomLayout = new bool[width, height];
 
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                float noiseValue = 0f;
-                float amplitude = 1f;
-                float frequency = noiseScale;
-
-                // Combine multiple octaves of noise
-                for (int i = 0; i < octaves; i++)
-                {
-                    float sampleX = (x + octaveOffsetsX[i] + offsetX) * frequency;
-                    float sampleY = (y + octaveOffsetsY[i] + offsetY) * frequency;
-
-                    float octaveValue = Mathf.PerlinNoise(sampleX, sampleY);
-                    noiseValue += octaveValue * amplitude;
-
-                    amplitude *= persistence;
-                    frequency *= lacunarity;
-                }
-
-                // Normalize the noise value
-                noiseValue = Mathf.Clamp01(noiseValue);
-
-                // Apply radial falloff for island shape
-                float centerX = width * 0.5f;
-                float centerY = height * 0.5f;
-                float distanceFromCenter = Vector2.Distance(new Vector2(x, y), new Vector2(centerX, centerY));
-                float maxDistance = Mathf.Min(width, height) * 0.5f;
-
-                // Apply land scaling - smaller landScale makes land area smaller
-                float scaledDistance = distanceFromCenter / landScale;
-                float falloff = 1f - Mathf.Clamp01(scaledDistance / maxDistance);
-
-                // Apply a smooth falloff curve
-                falloff = Mathf.SmoothStep(0f, 1f, falloff);
-
-                float finalValue = noiseValue * falloff;
-                roomLayout[x, y] = finalValue > threshold;
+                roomLayout[x, y] = CoordinateMeetsTileGenThreshold(new Vector2(x + offsetX, y + offsetY), noiseSettings, width, height, offsetX, offsetY);
             }
         }
 
         return roomLayout;
+    }
+
+
+    // Helper function to get whether the given coordinate meets the tile generation threshold
+    public static bool CoordinateMeetsTileGenThreshold(Vector2 coord, PerlinNoiseSettings noiseSettings, int roomWidth, int roomHeight, int tileOffsetX, int tileOffsetY)
+    {
+        // Sample Perlin noise at this position
+        float finalValue = GetFullIslandGenValue(coord, noiseSettings, roomWidth, roomHeight, tileOffsetX, tileOffsetY);
+        return finalValue > noiseSettings.threshold;
+    }
+
+
+    // Helper function to get the full island generation noise value at a coordinate
+    private static float GetFullIslandGenValue(Vector2 coord, PerlinNoiseSettings noiseSettings, int roomWidth, int roomHeight, int tileOffsetX, float tileOffsetY)
+    {
+        float noiseValue = SamplePerlinNoise(coord.x, coord.y, noiseSettings);
+
+        // Apply radial falloff for island shape
+        float centerX = tileOffsetX + (roomWidth * 0.5f);
+        float centerY = tileOffsetY + (roomHeight * 0.5f);
+        float distanceFromCenter = Vector2.Distance(coord, new Vector2(centerX, centerY));
+        float maxDistance = Mathf.Min(roomWidth, roomHeight) * 0.5f;
+
+        // Apply land scaling - smaller landScale makes land area smaller
+        float scaledDistance = distanceFromCenter / noiseSettings.landScale;
+        float falloff = 1f - Mathf.Clamp01(scaledDistance / maxDistance);
+
+        // Apply a smooth falloff curve
+        falloff = Mathf.SmoothStep(0f, 1f, falloff);
+
+        return noiseValue * falloff;
+    }
+
+
+    // Helper function to sample Perlin noise at a given coordinate using the provided settings
+    public static float SamplePerlinNoise(float x, float y, PerlinNoiseSettings settings)
+    {
+        float noiseValue = 0f;
+        float amplitude = 1f;
+        float frequency = settings.noiseScale;
+
+        // Combine multiple octaves of noise
+        for (int i = 0; i < settings.octaves; i++)
+        {
+            float sampleX = (x + settings.octaveOffsetsX[i]) * frequency;
+            float sampleY = (y + settings.octaveOffsetsY[i]) * frequency;
+
+            float octaveValue = Mathf.PerlinNoise(sampleX, sampleY);
+            noiseValue += octaveValue * amplitude;
+
+            amplitude *= settings.persistence;
+            frequency *= settings.lacunarity;
+        }
+
+        // Normalize the noise value
+        return Mathf.Clamp01(noiseValue);
     }
 
 

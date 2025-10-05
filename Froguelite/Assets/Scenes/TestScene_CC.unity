@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5029274}
   - component: {fileID: 5029275}
+  - component: {fileID: 5029276}
   m_Layer: 0
   m_Name: Rooms
   m_TagString: Untagged
@@ -163,6 +164,79 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 780f12070df6a4c429d9654667e86dbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomFactory
+--- !u!114 &5029276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5029273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01f1fc851a222974381fd0f4128ebe6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FoliageFactory
+  foliageGroups:
+  - groupName: ClumpedBushes
+    foliageSpawnParams:
+    - foliagePrefab: {fileID: 1806051144689502209, guid: fd3e702b94ea407408ebd5267bc2f9d3, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 4399006562511419954, guid: 29ab5c814bdc7f844be13e689ffb060b, type: 3}
+      relativeWeight: 1
+    minDistance: 1.5
+    maxSamplingAttempts: 30
+    isLandGroup: 1
+    usePerlinFiltering: 1
+    matchWithRoomNoise: 1
+    perlinScale: 0.1
+    perlinThreshold: 0.7
+    perlinOffset: {x: 0, y: 0}
+  - groupName: Pebbles
+    foliageSpawnParams:
+    - foliagePrefab: {fileID: 3172530779058870057, guid: ef1be7bfa170675439f7b40531209edc, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 6374375056471459079, guid: d5e23600933f30348bf5ed8713c0d5a4, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 3362654494016721395, guid: f5d348e2439b63145942a553fd5ea530, type: 3}
+      relativeWeight: 1
+    minDistance: 4
+    maxSamplingAttempts: 30
+    isLandGroup: 1
+    usePerlinFiltering: 1
+    matchWithRoomNoise: 1
+    perlinScale: 0.1
+    perlinThreshold: 0.6
+    perlinOffset: {x: 0, y: 0}
+  - groupName: Rocks
+    foliageSpawnParams:
+    - foliagePrefab: {fileID: 3842618770890410296, guid: 148118e0928ff2f4084d227929314904, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 3414640707543707265, guid: 4b283f8f657c3f943a7b8ad28463fc61, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 3085661548409189427, guid: f32ba3248022e8245b6f028586103b51, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 626955764804759052, guid: 6604a7f6776052c4c8e38b4581bb37eb, type: 3}
+      relativeWeight: 1
+    minDistance: 4
+    maxSamplingAttempts: 30
+    isLandGroup: 1
+    usePerlinFiltering: 0
+    matchWithRoomNoise: 0
+    perlinScale: 0.1
+    perlinThreshold: 0.5
+    perlinOffset: {x: 0, y: 0}
+  - groupName: Trees
+    foliageSpawnParams:
+    - foliagePrefab: {fileID: 6694831354060108276, guid: afb64575222b631448c228d7f10c5b19, type: 3}
+      relativeWeight: 1
+    minDistance: 4
+    maxSamplingAttempts: 30
+    isLandGroup: 1
+    usePerlinFiltering: 1
+    matchWithRoomNoise: 1
+    perlinScale: 0.1
+    perlinThreshold: 0.9
+    perlinOffset: {x: 0, y: 0}
 --- !u!1001 &114868354
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -547,7 +621,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &914558924
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -561,6 +635,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZoneGenManager
   roomFactory: {fileID: 5029275}
+  foliageFactory: {fileID: 5029276}
   roomsTilemap: {fileID: 1108588416}
   zoneAutoTileSet: {fileID: 11400000, guid: 1063836c3e2dcd049ad2d56048fef9af, type: 2}
   roomParent: {fileID: 5029274}
@@ -743,8 +818,8 @@ TilemapRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1608445789
+  m_SortingLayer: -1
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -976,6 +1051,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -3145978915663630206, guid: db237cca1c4cf61498e9aff7d18e58e4, type: 3}
+    - target: {fileID: 759206523590291711, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
+      propertyPath: m_SortingOrder
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1517473338632819490, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
       propertyPath: m_Name
       value: Player
