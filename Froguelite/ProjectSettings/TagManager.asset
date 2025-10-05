@@ -8,6 +8,7 @@ TagManager:
   - Tongue
   - Door
   - Enemy
+  - Foliage
   layers:
   - Default
   - TransparentFX

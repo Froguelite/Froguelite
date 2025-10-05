@@ -42,13 +42,34 @@ public class RoomFactory : MonoBehaviour
                 break;
         }
 
-        // Get the room layout using Perlin with octaves (use default noise params)
+        // Set up the Perlin noise settings and make sure the room has a reference to its original used values
+        PerlinNoiseSettings noiseSettings = new PerlinNoiseSettings
+        {
+            octaves = 3,
+            persistence = 0.5f,
+            lacunarity = 2f,
+            noiseScale = 0.1f,
+            threshold = 0.4f
+        };
+        noiseSettings.landScale = landScale;
+        noiseSettings.octaveOffsetsX = new float[noiseSettings.octaves];
+        noiseSettings.octaveOffsetsY = new float[noiseSettings.octaves];
+
+        for (int i = 0; i < noiseSettings.octaves; i++)
+        {
+            noiseSettings.octaveOffsetsX[i] = Random.Range(-1000f, 1000f);
+            noiseSettings.octaveOffsetsY[i] = Random.Range(-1000f, 1000f);
+        }
+
+        roomData.originalNoiseSettings = noiseSettings;
+
+        // Generate the room layout using Perlin noise
         bool[,] newRoomLayout = RoomTileHelper.GenRoomTiles(
             width: roomLength,
             height: roomLength,
             offsetX: tileOffset.x,
             offsetY: tileOffset.y,
-            landScale: landScale
+            noiseSettings: noiseSettings
         );
 
         // Post process to smooth and ensure connectivity

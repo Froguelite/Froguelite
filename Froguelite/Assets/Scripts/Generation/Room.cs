@@ -67,6 +67,7 @@ public class RoomData
 
     public float genWeight = 1f; // Weight for random selection during generation (higher = more likely)
     public bool isLeaf = false; // Whether this room is a leaf node (dead end) in the graph
+    public PerlinNoiseSettings originalNoiseSettings; // Original noise settings used for generating the room layout
 
 
     #endregion
@@ -120,6 +121,52 @@ public class RoomData
 
 
     #endregion
+
+
+    #region OTHER HELPERS
+
+
+    // Returns the world space position of the given tile coordinate within the room
+    public Vector3 GetTileWorldPosition(Vector2Int tileCoord)
+    {
+        return new Vector3(roomCoordinate.x * roomLength + tileCoord.x + 0.5f, roomCoordinate.y * roomLength + tileCoord.y + 0.5f, 0);
+    }
+
+
+    // Returns whether the given tile coordinate is bordering a change in land/water on any cardinal direction
+    public bool IsTileBorderingChange(Vector2Int tileCoord)
+    {
+        bool currentTileIsLand = tileLayout[tileCoord.x, tileCoord.y];
+
+        // Check all four cardinal directions
+        Vector2Int[] directions = new Vector2Int[]
+        {
+            new Vector2Int(0, 1),  // Up
+            new Vector2Int(0, -1), // Down
+            new Vector2Int(-1, 0), // Left
+            new Vector2Int(1, 0)   // Right
+        };
+
+        foreach (Vector2Int dir in directions)
+        {
+            Vector2Int neighborCoord = tileCoord + dir;
+
+            // Ensure neighbor is within bounds
+            if (neighborCoord.x >= 0 && neighborCoord.x < roomLength && neighborCoord.y >= 0 && neighborCoord.y < roomLength)
+            {
+                if (tileLayout[neighborCoord.x, neighborCoord.y] != currentTileIsLand)
+                {
+                    return true; // Found a bordering change
+                }
+            }
+        }
+
+        return false; // No bordering changes found
+    }
+
+
+    #endregion
+
 
 }
 

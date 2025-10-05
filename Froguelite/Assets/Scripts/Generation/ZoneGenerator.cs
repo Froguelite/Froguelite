@@ -11,6 +11,7 @@ public class ZoneGenerator : MonoBehaviour
 
 
     [SerializeField] private RoomFactory roomFactory;
+    [SerializeField] private FoliageFactory foliageFactory;
     [SerializeField] private Tilemap roomsTilemap;
     [SerializeField] private AutoTileSet zoneAutoTileSet;
     [SerializeField] private Transform roomParent; // Parent object to organize spawned rooms
@@ -155,6 +156,16 @@ public class ZoneGenerator : MonoBehaviour
     {
         Room spawnedRoom = roomFactory.SpawnRoom(roomsTilemap, zoneAutoTileSet, roomParent, roomData, 32);
         spawnedRooms[gridPosition] = spawnedRoom;
+
+        // Generate foliage for the room
+        float foliageLandDensity = 1f;
+
+        if (roomData.roomType == Room.RoomType.Boss || roomData.roomType == Room.RoomType.Fly || roomData.roomType == Room.RoomType.Shop)
+        {
+            foliageLandDensity = 5f; // Less foliage in special rooms
+        }
+
+        foliageFactory.GenerateFoliageForRoom(spawnedRoom, foliageLandDensity);
     }
 
 
