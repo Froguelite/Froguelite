@@ -37,6 +37,7 @@ public class BossController : MonoBehaviour
     [SerializeField] private float shadowSnapDistance = 0.12f; // when closer than this we begin the final snap
     [SerializeField] private float shadowFinalLerpTime = 0.12f; // time over which to smoothly finish into the snap
     [SerializeField] private float reenableDelay = 0f;      // optional delay after landing before re-enabling
+    [SerializeField] private int maxAttackPhase1Repeats = 5;
 
 
     [Header("Movement / Visual")]
@@ -47,6 +48,7 @@ public class BossController : MonoBehaviour
 
     private State state = State.Idle;
     private Coroutine stateLoopCoroutine;
+    private int attackPhaseCount = 0;
 
     private void Reset()
     {
@@ -69,11 +71,19 @@ public class BossController : MonoBehaviour
         {
             if (state == State.AttackPhase)
             {
-                yield return StartCoroutine(PerformAttack1()); // shadow drop on player
+                if (attackPhaseCount < maxAttackPhase1Repeats)
+                {
+                    yield return StartCoroutine(PerformAttack1()); // shadow drop on player
+                    attackPhaseCount++;
+                }
+                else
+                {
                 yield return new WaitForSeconds(preAttack2Delay);
                 yield return StartCoroutine(PerformAttack2()); // off-island pacing + tongue
                 yield return StartCoroutine(LandOnIsland());
+                attackPhaseCount = 0;
                 state = State.DefensePhase;
+                }
             }
             else if (state == State.DefensePhase)
             {
@@ -146,8 +156,8 @@ public class BossController : MonoBehaviour
             while (t < fallTime)
             {
                 t += Time.deltaTime;
-                float u = t / fallTime;
-                u = u * u; // ease-in for heaviness
+                float u = Mathf.Clamp01(t / fallTime);
+                float eased = Mathf.SmoothStep(0f, 1f, u);
                 visualRoot.position = Vector3.Lerp(fallStart, fallTarget, u);
                 yield return null;
             }
