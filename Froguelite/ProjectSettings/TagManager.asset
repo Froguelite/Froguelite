@@ -9,6 +9,7 @@ TagManager:
   - Door
   - Enemy
   - Foliage
+  - Collectable
   layers:
   - Default
   - TransparentFX

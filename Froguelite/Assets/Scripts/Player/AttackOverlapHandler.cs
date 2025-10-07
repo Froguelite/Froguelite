@@ -39,6 +39,15 @@ public class AttackOverlapHandler : MonoBehaviour
                 door.OnInteract();
             }
         }
+        // Collectables
+        else if (collision.CompareTag("Collectable"))
+        {
+            ICollectable collectable = collision.GetComponent<ICollectable>();
+            if (collectable != null)
+            {
+                collectable.OnCollect();
+            }
+        }
         // Foliage
         else if (collision.CompareTag("Foliage"))
         {
