@@ -11,19 +11,17 @@ public class ItemRowUI : MonoBehaviour
     // Call this whenever the item changes
     public void Set(string displayName, Sprite sprite, int count)
     {
-        if (icon)
-        {
-            icon.sprite = sprite;
-            icon.enabled = true;
-        }
+        if (icon)  icon.sprite = sprite;
         
         // Show only the count as "x2", "x4" or just the number
         if (countLabel)
         {
             if (count > 1)
                 countLabel.text = $"x{count}";
+            else if (count == 1)
+                countLabel.text = "";  // Don't show "x1", just the icon
             else
-                countLabel.text = "";  // Don't show "x1" for single items
+                countLabel.text = "";  // Count is 0, show nothing
         }
     }
 }
