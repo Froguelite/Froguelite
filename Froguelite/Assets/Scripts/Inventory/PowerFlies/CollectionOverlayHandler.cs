@@ -67,7 +67,7 @@ public class CollectionOverlayHandler : MonoBehaviour
             contentParent.LeanMoveLocalY(contentStartY + contentMoveDistance, fadeDuration).setDelay(displayDuration).setEaseInQuad();
         });
 
-        flyNameText.text = powerFlyData.powerFlyName;
+        flyNameText.text = powerFlyData.powerFlyName.ToUpper();
         flyDescriptionText.text = powerFlyData.description;
 
     }

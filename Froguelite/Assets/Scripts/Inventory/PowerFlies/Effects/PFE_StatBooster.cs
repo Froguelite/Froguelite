@@ -4,35 +4,58 @@ using UnityEngine;
 public class PFE_StatBooster : PowerFlyEffect
 {
 
-    public enum StatType { Health, Damage, Speed, Range, Rate }
-    public StatType statToBoost;
-    public float boostAmount;
+    public enum StatType { Health, Damage, Speed, Range, Rate, Luck }
+    public enum BoostType { Base, Multiplier }
+
+    [System.Serializable]
+    public class StatBoost
+    {
+        public StatType statType;
+        public BoostType boostType;
+        public float boostAmount;
+    }
+
+    public StatBoost[] statBoosts;
 
     public override void ApplyEffect()
     {
-        switch (statToBoost)
+        foreach (var statBoost in statBoosts)
         {
-            case StatType.Health:
-                int newMaxHealth = Mathf.RoundToInt(StatsManager.Instance.playerHealth.maxHealth + boostAmount);
-                StatsManager.Instance.playerHealth.SetMaxHealth(newMaxHealth, true);
-                break;
-            case StatType.Damage:
-                StatsManager.Instance.playerDamage.baseValue += boostAmount;
-                break;
-            case StatType.Speed:
-                StatsManager.Instance.playerSpeed.baseValue += boostAmount;
-                break;
-            case StatType.Range:
-                StatsManager.Instance.playerRange.baseValue += boostAmount;
-                break;
-            case StatType.Rate:
-                StatsManager.Instance.playerRate.baseValue += boostAmount;
-                break;
-            default:
-                Debug.LogWarning("PFE_StatBooster: Unknown stat type!");
-                break;
-        }
+            StatsManager.Stat statToBoost = null;
 
-        Debug.Log($"Applied Stat Booster: Base {statToBoost} increased by {boostAmount}");
+            switch (statBoost.statType)
+            {
+                case StatType.Health:
+                    int newMaxHealth = Mathf.RoundToInt(StatsManager.Instance.playerHealth.maxHealth + statBoost.boostAmount);
+                    StatsManager.Instance.playerHealth.SetMaxHealth(newMaxHealth, true);
+                    Debug.Log($"Applied Stat Booster: {statBoost.statType} had its max increased by {statBoost.boostAmount}");
+                    continue;
+                case StatType.Damage:
+                    statToBoost = StatsManager.Instance.playerDamage;
+                    break;
+                case StatType.Speed:
+                    statToBoost = StatsManager.Instance.playerSpeed;
+                    break;
+                case StatType.Range:
+                    statToBoost = StatsManager.Instance.playerRange;
+                    break;
+                case StatType.Rate:
+                    statToBoost = StatsManager.Instance.playerRate;
+                    break;
+                case StatType.Luck:
+                    statToBoost = StatsManager.Instance.playerLuck;
+                    break;
+                default:
+                    Debug.LogWarning("PFE_StatBooster: Unknown stat type" + statBoost.statType + "! Ignoring.");
+                    continue;
+            }
+
+            if (statBoost.boostType == BoostType.Base)
+                statToBoost.AddToBaseValue(statBoost.boostAmount);
+            else
+                statToBoost.AddToMultiplier(statBoost.boostAmount);
+
+            Debug.Log($"Applied Stat Booster: {statBoost.statType} had its {statBoost.boostType} increased by {statBoost.boostAmount}");
+        }
     }
 }

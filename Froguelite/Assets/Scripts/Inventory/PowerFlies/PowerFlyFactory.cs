@@ -71,8 +71,10 @@ public class PowerFlyFactory : MonoBehaviour
     public PowerFlyData RollFlyForFlyRoom()
     {
         float commonWeight = 0.55f;
-        float uncommonWeight = .3f;
-        float rareWeight = 0.15f;
+        float uncommonWeight = .3f + (StatsManager.Instance.playerLuck.GetValueAsMultiplier() - 1f) * 0.2f;
+        uncommonWeight = Mathf.Min(uncommonWeight, 0f);
+        float rareWeight = 0.15f + (StatsManager.Instance.playerLuck.GetValueAsMultiplier() - 1f) * 0.2f;
+        rareWeight = Mathf.Min(rareWeight, 0f);
 
         return RollFlyWithWeights(commonWeight, uncommonWeight, rareWeight);
     }

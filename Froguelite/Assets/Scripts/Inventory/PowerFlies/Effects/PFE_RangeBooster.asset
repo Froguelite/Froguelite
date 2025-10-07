@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a26bc9c225986244a6a78efcc45ee46, type: 3}
   m_Name: PFE_RangeBooster
   m_EditorClassIdentifier: Assembly-CSharp::PFE_StatBooster
-  statToBoost: 3
-  boostAmount: 3
+  statBoosts:
+  - statType: 3
+    boostType: 0
+    boostAmount: 3
