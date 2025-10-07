@@ -16,5 +16,6 @@ MonoBehaviour:
   powerFlyName: Lucky Fly
   description: This one is lucky...
   flyRarity: 0
-  effect: {fileID: 11400000, guid: 2fe9b5f06037e5e45a549afe03b52a50, type: 2}
+  effects:
+  - {fileID: 11400000, guid: 2fe9b5f06037e5e45a549afe03b52a50, type: 2}
   onlyOneAllowed: 0

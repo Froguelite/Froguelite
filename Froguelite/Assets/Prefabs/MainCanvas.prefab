@@ -375,8 +375,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: FLY NAME
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8cb30a89264ecc142b8b081c8a1e909b, type: 2}
-  m_sharedMaterial: {fileID: -5254979904387300876, guid: 8cb30a89264ecc142b8b081c8a1e909b, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 956c98d8c4bc590438e35560de16678e, type: 2}
+  m_sharedMaterial: {fileID: 9009341770307270126, guid: 956c98d8c4bc590438e35560de16678e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -666,6 +666,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CollectionOverlayHandler
   overlayCanvasGroup: {fileID: 2544936112960932796}
   fadeDuration: 0.5
+  displayDuration: 2.5
   contentParent: {fileID: 780540285438404724}
   contentMoveDistance: 50
   flyNameText: {fileID: 5642433448256753431}
@@ -812,8 +813,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Fly description...
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8cb30a89264ecc142b8b081c8a1e909b, type: 2}
-  m_sharedMaterial: {fileID: -5254979904387300876, guid: 8cb30a89264ecc142b8b081c8a1e909b, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 956c98d8c4bc590438e35560de16678e, type: 2}
+  m_sharedMaterial: {fileID: 9009341770307270126, guid: 956c98d8c4bc590438e35560de16678e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

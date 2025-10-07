@@ -13,7 +13,7 @@ public class PowerFlyData : ScriptableObject
     public string powerFlyName;
     public string description;
     public FlyRarity flyRarity;
-    public PowerFlyEffect effect;
+    public PowerFlyEffect[] effects;
     public bool onlyOneAllowed = false;
 
 }

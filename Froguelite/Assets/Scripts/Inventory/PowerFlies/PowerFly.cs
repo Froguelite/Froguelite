@@ -185,8 +185,12 @@ public class PowerFly : MonoBehaviour, ICollectable
         PowerFlyFactory.Instance.MarkPowerFlyAsCollected(powerFlyData);
         StopBuzzing();
         StopBobbingAndRotation();
-        powerFlyData.effect.ApplyEffect();
-        
+
+        foreach (PowerFlyEffect effect in powerFlyData.effects)
+        {
+            effect.ApplyEffect();
+        }
+
         CollectionOverlayHandler.Instance.ShowPowerFlyCollected(powerFlyData);
         Destroy(gameObject);
     }

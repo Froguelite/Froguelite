@@ -16,5 +16,6 @@ MonoBehaviour:
   powerFlyName: Coffee Fly
   description: This one is jittery...
   flyRarity: 1
-  effect: {fileID: 11400000, guid: 335e9542ca32d994d959d9987568bce9, type: 2}
-  onlyOneAllowed: 0
+  effects:
+  - {fileID: 11400000, guid: 335e9542ca32d994d959d9987568bce9, type: 2}
+  onlyOneAllowed: 1
