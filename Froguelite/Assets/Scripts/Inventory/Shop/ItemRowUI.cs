@@ -6,12 +6,24 @@ using TMPro;
 public class ItemRowUI : MonoBehaviour
 {
     [SerializeField] Image icon;
-    [SerializeField] TextMeshProUGUI label;
+    [SerializeField] TextMeshProUGUI countLabel;  // Shows just the count number
 
     // Call this whenever the item changes
     public void Set(string displayName, Sprite sprite, int count)
     {
-        if (icon)  icon.sprite = sprite;
-        if (label) label.text  = count <= 1 ? displayName : $"{displayName} x{count}";
+        if (icon)
+        {
+            icon.sprite = sprite;
+            icon.enabled = true;
+        }
+        
+        // Show only the count as "x2", "x4" or just the number
+        if (countLabel)
+        {
+            if (count > 1)
+                countLabel.text = $"x{count}";
+            else
+                countLabel.text = "";  // Don't show "x1" for single items
+        }
     }
 }

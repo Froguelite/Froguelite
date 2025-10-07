@@ -8,6 +8,7 @@ public class Collectable_Lotus : GroundCollectable
 
     public override void OnCollect()
     {
+        InventoryManager.Instance.AddLotuses(1);
         if (itemDef != null)
         {
             InventoryManager.Instance.AddItem(itemDef, 1);
