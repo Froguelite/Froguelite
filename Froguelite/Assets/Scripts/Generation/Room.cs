@@ -35,6 +35,35 @@ public class Room : MonoBehaviour
     public void Initialize(RoomData roomData)
     {
         this.roomData = roomData;
+
+        // Perform any room-specific setup
+        switch (roomData.roomType)
+        {
+            case RoomType.Starter:
+                break;
+            case RoomType.Boss:
+                // TODO: Boss room specific setup
+                break;
+            case RoomType.Shop:
+                // TODO: Spawn shopkeeper and shop items
+                break;
+            case RoomType.Fly:
+                PowerFlyData rolledFly = PowerFlyFactory.Instance.RollFlyForFlyRoom();
+                if (rolledFly != null)
+                {
+                    Vector3 flyPosition = roomData.GetRoomCenterWorldPosition();
+                    PowerFlyFactory.Instance.SpawnPowerFly(rolledFly, transform, flyPosition);
+                }
+                else
+                {
+                    Debug.LogWarning("No Power Fly available to spawn in Fly Room.");
+                }
+                break;
+            case RoomType.Normal:
+            default:
+                // TODO: Spawn enemies
+                break;
+        }
     }
 
 
@@ -130,6 +159,13 @@ public class RoomData
     public Vector3 GetTileWorldPosition(Vector2Int tileCoord)
     {
         return new Vector3(roomCoordinate.x * roomLength + tileCoord.x + 0.5f, roomCoordinate.y * roomLength + tileCoord.y + 0.5f, 0);
+    }
+
+
+    // Returns the center of this room in world space
+    public Vector3 GetRoomCenterWorldPosition()
+    {
+        return new Vector3(roomCoordinate.x * roomLength + roomLength / 2f, roomCoordinate.y * roomLength + roomLength / 2f, 0);
     }
 
 

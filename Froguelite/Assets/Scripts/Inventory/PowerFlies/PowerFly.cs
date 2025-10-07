@@ -13,6 +13,7 @@ public class PowerFly : MonoBehaviour, ICollectable
     public PowerFlyData powerFlyData;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Transform buzzOffset;
+    [SerializeField] private bool setupOnStart = false;
     
     [Header("Buzzing Behavior")]
     [SerializeField] private float buzzRadius = 0.5f;
@@ -23,7 +24,7 @@ public class PowerFly : MonoBehaviour, ICollectable
     [SerializeField] private float bobDuration = 1.5f;
     [SerializeField] private float rotationAmount = 15f;
     [SerializeField] private float rotationDuration = 2f;
-    [SerializeField] private ItemDefinition itemDef; 
+    [SerializeField] private ItemDefinition itemDef;
     
     private Vector3 originalPosition;
     private Vector3 targetPosition;
@@ -41,12 +42,31 @@ public class PowerFly : MonoBehaviour, ICollectable
 
     void Start()
     {
+        if (setupOnStart && powerFlyData != null)
+        {
+            SetupFly();
+        }
+    }
+
+
+    // Sets up this power fly based on given power fly data
+    public void SetupFly(PowerFlyData powerFlyData)
+    {
+        this.powerFlyData = powerFlyData;
+        SetupFly();
+    }
+
+
+    // Sets up this power fly based on already assigned power fly data
+    public void SetupFly()
+    {
         spriteRenderer.sprite = powerFlyData.displayImg;
         originalPosition = transform.position;
         StartBuzzing();
         StartBobbingAndRotation();
     }
     
+
     void OnDestroy()
     {
         StopBuzzing();
@@ -162,6 +182,7 @@ public class PowerFly : MonoBehaviour, ICollectable
         }
 
         InventoryManager.Instance.AddPowerFly(powerFlyData);
+        PowerFlyFactory.Instance.MarkPowerFlyAsCollected(powerFlyData);
         StopBuzzing();
         StopBobbingAndRotation();
         powerFlyData.effect.ApplyEffect();

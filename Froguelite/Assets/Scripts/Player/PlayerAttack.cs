@@ -84,7 +84,7 @@ public class PlayerAttack : MonoBehaviour
 
         // Get target position for tongue extension
         Vector3 direction = (mousePosition - transform.position).normalized;
-        targetLocalPosition = direction * tongueDistance;
+        targetLocalPosition = direction * GetStatModifiedRange();
 
         isExtending = true;
     }
@@ -95,7 +95,7 @@ public class PlayerAttack : MonoBehaviour
     {
         if (isExtending)
         {
-            tongue.localPosition = Vector3.MoveTowards(tongue.localPosition, targetLocalPosition, tongueExtendSpeed * Time.fixedDeltaTime);
+            tongue.localPosition = Vector3.MoveTowards(tongue.localPosition, targetLocalPosition, GetStatModifiedExtendSpeed() * Time.fixedDeltaTime);
             if (Vector3.Distance(tongue.localPosition, targetLocalPosition) < 0.01f)
             {
                 StopTongueExtension();
@@ -103,7 +103,7 @@ public class PlayerAttack : MonoBehaviour
         }
         else if (isRetracting)
         {
-            tongue.localPosition = Vector3.MoveTowards(tongue.localPosition, Vector3.zero, tongueRetractSpeed * Time.fixedDeltaTime);
+            tongue.localPosition = Vector3.MoveTowards(tongue.localPosition, Vector3.zero, GetStatModifiedRetractSpeed() * Time.fixedDeltaTime);
 
             if (Vector3.Distance(tongue.localPosition, Vector3.zero) < 0.01f)
             {
@@ -137,7 +137,7 @@ public class PlayerAttack : MonoBehaviour
     private IEnumerator TongueCooldownCoroutine()
     {
         inCooldown = true;
-        yield return new WaitForSeconds(tongueCooldown);
+        yield return new WaitForSeconds(GetStatModifiedCooldown());
         inCooldown = false;
         if (InputManager.Instance.IsPendingAttack())
         {
@@ -154,12 +154,46 @@ public class PlayerAttack : MonoBehaviour
         if (canAttack && InputManager.Instance.IsPendingAttack())
             OnInitiateAttack();
     }
-    
+
 
     // Returns whether the player is currently attacking (extending or retracting)
     public bool IsAttacking()
     {
         return isExtending || isRetracting;
+    }
+
+
+    #endregion
+
+
+    #region STAT MODIFIERS
+
+
+    // Gets the tongue extend speed modified by player rate stat
+    private float GetStatModifiedExtendSpeed()
+    {
+        return tongueExtendSpeed * StatsManager.Instance.playerRate.GetValueAsMultiplier();
+    }
+
+
+    // Gets the tongue retract speed modified by player rate stat
+    private float GetStatModifiedRetractSpeed()
+    {
+        return tongueRetractSpeed * StatsManager.Instance.playerRate.GetValueAsMultiplier();
+    }
+
+
+    // Gets the tongue cooldown modified by player rate stat
+    private float GetStatModifiedCooldown()
+    {
+        return tongueCooldown / StatsManager.Instance.playerRate.GetValueAsMultiplier();
+    }
+
+
+    // Gets the tongue range modified by player range stat
+    private float GetStatModifiedRange()
+    {
+        return tongueDistance * StatsManager.Instance.playerRange.GetValueAsMultiplier();
     }
 
 

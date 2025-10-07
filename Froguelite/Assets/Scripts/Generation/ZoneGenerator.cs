@@ -10,6 +10,9 @@ public class ZoneGenerator : MonoBehaviour
     #region VARIABLES
 
 
+    [SerializeField] private bool generateZoneOnStart = true;
+    [SerializeField] private bool teleportPlayerToStarterRoom = true;
+    
     [SerializeField] private RoomFactory roomFactory;
     [SerializeField] private FoliageFactory foliageFactory;
     [SerializeField] private Tilemap roomsTilemap;
@@ -30,7 +33,8 @@ public class ZoneGenerator : MonoBehaviour
 
     void Start()
     {
-        GenerateZone();
+        if (generateZoneOnStart)
+            GenerateZone();
     }
 
 
@@ -48,7 +52,8 @@ public class ZoneGenerator : MonoBehaviour
 
         // TEMPORARY - Open all doors and set player position to starter room
         OpenAllDoors();
-        SetPlayerToStarterRoom();
+        if (teleportPlayerToStarterRoom)
+            SetPlayerToStarterRoom();
     }
 
 

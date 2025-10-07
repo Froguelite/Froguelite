@@ -14,7 +14,6 @@ public class PlayerMovement : MonoBehaviour
     public static PlayerMovement Instance { get; private set; }
 
     [SerializeField] private Collider2D playerCollider;
-    [SerializeField] private float moveSpeed = 2f;
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
@@ -66,7 +65,7 @@ public class PlayerMovement : MonoBehaviour
     public void ApplyMovement()
     {
         if (canMove && !isManualMoving && !isAttackingOverride)
-            rb.linearVelocity = moveInput * moveSpeed * Time.fixedDeltaTime * 100f;
+            rb.linearVelocity = moveInput * StatsManager.Instance.playerSpeed.GetValueAsMultiplier() * Time.fixedDeltaTime * 200f;
         else if (isManualMoving)
             HandleManualMove();
     }
