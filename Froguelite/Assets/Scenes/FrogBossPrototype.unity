@@ -12663,7 +12663,31 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
+      propertyPath: reenableDelay
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
       propertyPath: dropTravelTime
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
+      propertyPath: shadowMaxScale
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
+      propertyPath: shadowMinScale
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
+      propertyPath: tongueHoldTime
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
+      propertyPath: landingRecovery
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
+      propertyPath: shadowDragSpeed
       value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
@@ -12672,7 +12696,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
       propertyPath: shadowMoveSpeed
-      value: 10
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
       propertyPath: shadowTelegraph
@@ -12680,15 +12704,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
       propertyPath: overrideDropWait
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
       propertyPath: shadowFollowLerp
-      value: 0.5
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
+      propertyPath: shadowScaleSpeed
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
       propertyPath: offIslandMoveTime
-      value: 5
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
+      propertyPath: shadowFollowSpeed
+      value: 4.6
       objectReference: {fileID: 0}
     - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
       propertyPath: shadowSnapDistance
@@ -12701,6 +12733,10 @@ PrefabInstance:
     - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
       propertyPath: shadowReachThreshold
       value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
+      propertyPath: maxAttackPhase2Repeats
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 525587324961697284, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
       propertyPath: m_Simulated
