@@ -113,8 +113,9 @@ public class InventoryManager : MonoBehaviour
     // Adds a collected Power Fly to the player's inventory.
     public void AddPowerFly(PowerFlyData powerFly)
     {
-        if (powerFly != null && !collectedPowerFlies.Contains(powerFly))
+        if (powerFly != null)
         {
+            // Allow duplicate PowerFlyData - you can collect multiple of the same type
             collectedPowerFlies.Add(powerFly);
             OnPowerFlyCountChanged?.Invoke(collectedPowerFlies.Count);
             if (powerFlyDef) AddItem(powerFlyDef, 1);
@@ -133,7 +134,7 @@ public class InventoryManager : MonoBehaviour
     {
         Debug.Log($"InventoryManager.AddItem: def={def?.id}, amount={amount}");
 
-        if (def == null || string.IsNullOrEmpty(def.id) || amount == 0)
+        if (def == null || string.IsNullOrEmpty(def.id))
             return;
 
         if (!_items.TryGetValue(def.id, out var e))
