@@ -23,6 +23,7 @@ public class ZoneGenerator : MonoBehaviour
 
     private RoomData[,] roomGraph;
     private Dictionary<Vector2Int, Room> spawnedRooms = new Dictionary<Vector2Int, Room>();
+    private bool[,] combinedTileLayout; // Combined tile layout of the entire zone
 
 
     #endregion
@@ -48,7 +49,8 @@ public class ZoneGenerator : MonoBehaviour
     public void GenerateZone()
     {
         roomGraph = RoomGraphGenerator.GetRoomGraph(8);
-        SpawnRoomsFromGraph();
+        combinedTileLayout = SpawnRoomsFromGraph();
+        MinimapManager.Instance.InitializeMinimap(combinedTileLayout);
 
         // TEMPORARY - Open all doors and set player position to starter room
         OpenAllDoors();
@@ -104,12 +106,12 @@ public class ZoneGenerator : MonoBehaviour
 
 
     // Spawns rooms and doors from the room graph
-    private void SpawnRoomsFromGraph()
+    private bool[,] SpawnRoomsFromGraph()
     {
         if (roomGraph == null)
         {
             Debug.LogError("Room Graph is null - cannot spawn rooms");
-            return;
+            return null;
         }
 
         int width = roomGraph.GetLength(0);
@@ -153,6 +155,11 @@ public class ZoneGenerator : MonoBehaviour
         }
 
         Debug.Log($"Successfully spawned doors for all rooms");
+
+        // Third pass: Combine all room tile layouts into a single 2D bool array
+        bool[,] combinedTileLayout = CombineRoomTileLayouts();
+        
+        return combinedTileLayout;
     }
 
 
@@ -331,6 +338,72 @@ public class ZoneGenerator : MonoBehaviour
         if (roomGraph == null) return false;
         return position.x >= 0 && position.x < roomGraph.GetLength(0) &&
                position.y >= 0 && position.y < roomGraph.GetLength(1);
+    }
+
+    // Combines all individual room tile layouts into a single 2D bool array representing the entire zone
+    private bool[,] CombineRoomTileLayouts()
+    {
+        if (roomGraph == null)
+        {
+            Debug.LogError("Room graph is null - cannot combine tile layouts");
+            return null;
+        }
+
+        int roomGraphWidth = roomGraph.GetLength(0);
+        int roomGraphHeight = roomGraph.GetLength(1);
+        
+        // Find a room to get the room length (assuming all rooms are the same size)
+        int roomLength = 32; // Default fallback
+        for (int x = 0; x < roomGraphWidth && roomLength == 32; x++)
+        {
+            for (int y = 0; y < roomGraphHeight && roomLength == 32; y++)
+            {
+                RoomData room = roomGraph[x, y];
+                if (room != null && room.tileLayout != null)
+                {
+                    roomLength = room.roomLength;
+                    break;
+                }
+            }
+        }
+
+        // Calculate the total size of the combined tile layout
+        int totalWidth = roomGraphWidth * roomLength;
+        int totalHeight = roomGraphHeight * roomLength;
+        
+        // Create the combined tile layout (false = water by default)
+        bool[,] combinedLayout = new bool[totalWidth, totalHeight];
+
+        // Copy each room's tile layout into the appropriate position in the combined layout
+        for (int roomX = 0; roomX < roomGraphWidth; roomX++)
+        {
+            for (int roomY = 0; roomY < roomGraphHeight; roomY++)
+            {
+                RoomData room = roomGraph[roomX, roomY];
+                if (room != null && room.tileLayout != null)
+                {
+                    // Calculate the offset for this room in the combined layout
+                    int offsetX = roomX * roomLength;
+                    int offsetY = roomY * roomLength;
+                    
+                    // Copy this room's tile layout to the combined layout
+                    for (int tileX = 0; tileX < roomLength; tileX++)
+                    {
+                        for (int tileY = 0; tileY < roomLength; tileY++)
+                        {
+                            if (tileX < room.tileLayout.GetLength(0) && tileY < room.tileLayout.GetLength(1))
+                            {
+                                combinedLayout[offsetX + tileX, offsetY + tileY] = room.tileLayout[tileX, tileY];
+                            }
+                        }
+                    }
+                }
+                // If room is null, that area remains water (false) by default
+            }
+        }
+
+        Debug.Log($"Combined tile layouts into {totalWidth}x{totalHeight} array");
+        return combinedLayout;
     }
 
 
