@@ -713,8 +713,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1668fa2b975c5e42a2ec4ff38d01bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZoneGenManager
-  generateZoneOnStart: 0
-  teleportPlayerToStarterRoom: 0
+  generateZoneOnStart: 1
+  teleportPlayerToStarterRoom: 1
   roomFactory: {fileID: 5029275}
   foliageFactory: {fileID: 5029276}
   roomsTilemap: {fileID: 1108588416}
