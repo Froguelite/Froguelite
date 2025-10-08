@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: 5380948683010464507}
   - component: {fileID: 1187223973868761109}
   - component: {fileID: 818870589154261068}
+  - component: {fileID: 4124505514291379418}
+  - component: {fileID: 825508030968235699}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -86,8 +88,8 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -44025399
   m_SortingLayer: 0
-  m_SortingOrder: 1
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_SortingOrder: 0
+  m_Sprite: {fileID: -3145978915663630206, guid: db237cca1c4cf61498e9aff7d18e58e4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -268,7 +270,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::movementManager
   playerCollider: {fileID: 1187223973868761109}
-  moveSpeed: 2
   onReachManualMoveTarget:
     m_PersistentCalls:
       m_Calls: []
@@ -285,11 +286,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::tongueAttack
   tongue: {fileID: 6250527835233184733}
+  stopMovementOnAttack: 1
   tongueDistance: 3
   tongueExtendSpeed: 10
   tongueRetractSpeed: 25
   tongueCooldown: 0.5
-  canAttack: 1
 --- !u!58 &1187223973868761109
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -338,6 +339,73 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b576b42668423543bfe5425e9269d6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  overrideHealAnims: 0
+  needsBigBeat: 0
+  onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onHealthDamaged:
+    m_PersistentCalls:
+      m_Calls: []
+  onHealthHealed:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &4124505514291379418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1517473338632819490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9067adbf4b1871a42833b06359e708a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlipbookAnimator
+  sprites: []
+  frameDuration: 0.5
+  loopMethod: 0
+  playOnStart: 1
+  autoClearSpriteOnCompletion: 1
+  autoClearSpriteOnStart: 0
+--- !u!114 &825508030968235699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1517473338632819490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae53e41e46e9e4ce79f15cba1329eba3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimationController
+  animator: {fileID: 4124505514291379418}
+  spriteRenderer: {fileID: 759206523590291711}
+  idleSprites:
+  - {fileID: 281219642394274933, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
+  - {fileID: -734828009, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
+  - {fileID: 247172972, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
+  - {fileID: 1101157758, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
+  - {fileID: 1202423945, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
+  - {fileID: -322027493, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
+  - {fileID: 1129190686, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
+  - {fileID: 414299452, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
+  - {fileID: -955914580, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
+  idleFrameDuration: 0.5
+  movingSprites:
+  - {fileID: -2514483652790922229, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
+  - {fileID: 7992943585903652933, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
+  - {fileID: -8184664927771548580, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
+  - {fileID: -4361443774674926751, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
+  - {fileID: -7412748851008213020, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
+  - {fileID: 5233193744613133990, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
+  - {fileID: 1238996803826858621, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
+  - {fileID: -5487534286729226916, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
+  movingFrameDuration: 0.15
+  attackingSprites: []
+  attackingFrameDuration: 0.08
+  movementThreshold: 0.1
 --- !u!1 &8995246665631618221
 GameObject:
   m_ObjectHideFlags: 0

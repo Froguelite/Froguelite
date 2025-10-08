@@ -82,7 +82,6 @@ public class PlayerMovement : MonoBehaviour
             {
                 UpdateDrunkOffset();
                 finalMoveInput += drunkOffset;
-                Debug.Log("DRUNK! Offset: " + drunkOffset);
             }
             
             rb.linearVelocity = finalMoveInput * StatsManager.Instance.playerSpeed.GetValueAsMultiplier() * Time.fixedDeltaTime * 200f;
