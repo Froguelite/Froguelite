@@ -12,8 +12,18 @@ public class MinimapManager : MonoBehaviour
 
     public static MinimapManager Instance { get; private set; }
 
+    [SerializeField] private Color landColor = Color.green;
+    [SerializeField] private Color waterColor = Color.blue;
+
     [SerializeField] private Image minimapDisplayImg;
+    [SerializeField] private Image fullMapDisplayImg;
+    [SerializeField] private CanvasGroup fullMapCanvasGroup;
+    [SerializeField] private float fullMapFadeDuration = 0.2f; // Duration for fade in/out
+    [SerializeField] private Transform fullMapTransform;
     private Texture2D minimapTexture;
+
+    private float mapHidY = -1000f;
+    private float mapShownY = 0f;
 
 
     #endregion
@@ -42,39 +52,50 @@ public class MinimapManager : MonoBehaviour
     // Pans the minimap to be centered around the player's current position
     private void PanToPlayerPosition()
     {
-        if (minimapDisplayImg == null || minimapTexture == null || PlayerMovement.Instance == null)
+        if (minimapTexture == null || PlayerMovement.Instance == null)
             return;
 
         // Get the player's current world position
         Vector3 playerWorldPos = PlayerMovement.Instance.transform.position;
-        
+
         // Convert world position to texture coordinates (assuming 1:1 mapping as specified)
         Vector2 playerTexturePos = new Vector2(playerWorldPos.x, playerWorldPos.y);
-        
+
         // Get texture dimensions
         float textureWidth = minimapTexture.width;
         float textureHeight = minimapTexture.height;
-        
-        // Get the image's RectTransform
-        RectTransform imageRectTransform = minimapDisplayImg.rectTransform;
-        
-        // Calculate the offset needed to center the player position in the masked view area
-        // The image should be moved so that the player's texture position aligns with the center of the mask
-        
+
         // Convert player texture position to normalized coordinates (0-1)
         float normalizedX = playerTexturePos.x / textureWidth;
         float normalizedY = playerTexturePos.y / textureHeight;
-        
-        // Get the full size of the image (before masking)
-        Vector2 imageSize = imageRectTransform.sizeDelta;
-        
-        // Calculate the offset needed to center the player position
-        // Move the image so that the player's position appears at the center of the masked area
-        float offsetX = -(normalizedX - 0.5f) * imageSize.x;
-        float offsetY = -(normalizedY - 0.5f) * imageSize.y;
-        
-        // Apply the offset to the image position
-        imageRectTransform.anchoredPosition = new Vector2(offsetX, offsetY);
+
+        // Pan the main minimap display image
+        if (minimapDisplayImg != null)
+        {
+            RectTransform imageRectTransform = minimapDisplayImg.rectTransform;
+            Vector2 imageSize = imageRectTransform.sizeDelta;
+
+            // Calculate the offset needed to center the player position
+            float offsetX = -(normalizedX - 0.5f) * imageSize.x;
+            float offsetY = -(normalizedY - 0.5f) * imageSize.y;
+
+            // Apply the offset to the image position
+            imageRectTransform.anchoredPosition = new Vector2(offsetX, offsetY);
+        }
+
+        // Pan the full map display image
+        if (fullMapDisplayImg != null)
+        {
+            RectTransform fullMapRectTransform = fullMapDisplayImg.rectTransform;
+            Vector2 fullMapImageSize = fullMapRectTransform.sizeDelta;
+
+            // Calculate the offset needed to center the player position
+            float fullMapOffsetX = -(normalizedX - 0.5f) * fullMapImageSize.x;
+            float fullMapOffsetY = -(normalizedY - 0.5f) * fullMapImageSize.y;
+
+            // Apply the offset to the full map image position
+            fullMapRectTransform.anchoredPosition = new Vector2(fullMapOffsetX, fullMapOffsetY);
+        }
     }
 
 
@@ -101,10 +122,6 @@ public class MinimapManager : MonoBehaviour
         minimapTexture = new Texture2D(width, height, TextureFormat.RGB24, false);
         minimapTexture.filterMode = FilterMode.Point; // Use point filtering for pixel-perfect appearance
 
-        // Define colors
-        Color landColor = Color.green;  // True values (land)
-        Color waterColor = Color.blue;  // False/null values (water)
-
         // Generate the minimap pixels
         Color[] pixels = new Color[width * height];
 
@@ -125,15 +142,50 @@ public class MinimapManager : MonoBehaviour
         minimapTexture.SetPixels(pixels);
         minimapTexture.Apply();
 
-        // Assign the texture to the minimap display image
-        minimapDisplayImg.sprite = Sprite.Create(minimapTexture, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f));
-        minimapDisplayImg.preserveAspect = true;
+        // Assign the texture to both minimap display images
+        Sprite minimapSprite = Sprite.Create(minimapTexture, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f));
+
+        if (minimapDisplayImg != null)
+        {
+            minimapDisplayImg.sprite = minimapSprite;
+            minimapDisplayImg.preserveAspect = true;
+        }
+
+        if (fullMapDisplayImg != null)
+        {
+            fullMapDisplayImg.sprite = minimapSprite;
+            fullMapDisplayImg.preserveAspect = true;
+        }
 
         Debug.Log($"Minimap generated successfully with dimensions: {width}x{height}");
     }
 
 
     #endregion
-    
+
+
+    #region FULL MAP TOGGLE
+
+
+    public void ToggleFullMap(bool showMap)
+    {
+        LeanTween.cancel(fullMapTransform.gameObject);
+        LeanTween.cancel(fullMapCanvasGroup.gameObject);
+
+        if (showMap)
+        {
+            fullMapTransform.LeanMoveLocalY(mapShownY, fullMapFadeDuration).setEaseOutQuad();
+            fullMapCanvasGroup.LeanAlpha(1, fullMapFadeDuration);
+        }
+        else
+        {
+            fullMapTransform.LeanMoveLocalY(mapHidY, fullMapFadeDuration).setEaseOutQuad();
+            fullMapCanvasGroup.LeanAlpha(0, fullMapFadeDuration);
+        }
+    }
+
+
+    #endregion
+
 
 }
