@@ -1534,13 +1534,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d077dae5519855f4ca28a91682687a26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MinimapManager
-  landColor: {r: 0.11372549, g: 0.24705882, b: 0.16470589, a: 1}
-  waterColor: {r: 0.17254902, g: 0.24705882, b: 0.25490198, a: 1}
+  landColor: {r: 0.1399365, g: 0.304, b: 0.20266668, a: 1}
+  waterColor: {r: 0.15636924, g: 0.2238923, b: 0.231, a: 1}
+  unexploredColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   minimapDisplayImg: {fileID: 6244971607215789157}
   fullMapDisplayImg: {fileID: 1848718920927453167}
   fullMapCanvasGroup: {fileID: 5671357650621538482}
   fullMapFadeDuration: 0.2
   fullMapTransform: {fileID: 9076111316352967907}
+  mapExplorationUpdateInterval: 0.1
+  mapViewRadius: 20
 --- !u!1 &8259919066679541699
 GameObject:
   m_ObjectHideFlags: 0
