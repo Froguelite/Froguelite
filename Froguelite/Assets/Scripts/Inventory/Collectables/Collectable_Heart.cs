@@ -28,7 +28,10 @@ public class Collectable_Heart : GroundCollectable
         baseScale = displayImage.transform.localScale;
 
         // Subscribe to health change event to trigger beating animation
-        HealthBeatEventHandler.Instance.smallBeatEvent1.AddListener(PulseSmallBeat);
+        if (HealthBeatEventHandler.Instance != null)
+        {
+            HealthBeatEventHandler.Instance.smallBeatEvent1.AddListener(PulseSmallBeat);
+        }
     }
 
 

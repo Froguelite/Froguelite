@@ -35,8 +35,11 @@ public class CollectedItemsHUD : MonoBehaviour
 
     void Start()
     {
-        // Use Start instead of OnEnable to ensure InventoryManager has initialized
+        // Use Start instead of OnEnable to ensure InventoryManager has initialized in Awake
         inv = InventoryManager.Instance;
+        Debug.Log($"[ItemHUD] Start called, inv = { (inv == null ? "null" : inv.name) }");
+        Debug.Log($"[ItemHUD] LotusSlot = {(lotusSlot ? "assigned" : "NULL")}");
+        Debug.Log($"[ItemHUD] WoodpeckerSlot = {(woodpeckerSlot ? "assigned" : "NULL")}");
 
         if (inv == null) 
         {
@@ -46,9 +49,11 @@ public class CollectedItemsHUD : MonoBehaviour
 
         inv.OnItemChanged += HandleItemChanged;
         inv.OnPowerFlyCountChanged += HandlePowerFlyCountChanged;
+        Debug.Log($"[ItemHUD] Subscribed to events. Current items count: {inv.Items.Count}");
 
         foreach (var kv in inv.Items)
         {
+            Debug.Log($"[ItemHUD] Initializing item: {kv.Key} x{kv.Value.count}");
             HandleItemChanged(kv.Value);
         }
             
@@ -68,17 +73,31 @@ public class CollectedItemsHUD : MonoBehaviour
 
     void HandleItemChanged(InventoryManager.Entry e)
     {
+        Debug.Log($"[ItemHUD] HandleItemChanged called: {e.id} x{e.count}, icon={(e.icon ? "yes" : "NO")}");
+        
         // Skip PowerFly - handled separately
-        if (e.id == "Powerfly") return;
+        if (e.id == "Powerfly") 
+        {
+            Debug.Log($"[ItemHUD] Skipping Powerfly (handled separately)");
+            return;
+        }
         
         // Find the appropriate slot for this item type
         ItemRowUI targetSlot = GetSlotForItem(e.id);
+        Debug.Log($"[ItemHUD] Target slot for {e.id}: {(targetSlot ? targetSlot.name : "NULL")}");
         
         if (targetSlot != null)
         {
+            Debug.Log($"[ItemHUD] Setting slot {targetSlot.name}: display={e.display}, count={e.count}");
             targetSlot.Set(e.display, e.icon, e.count);
             // Show slot if count > 0, hide if count is 0
-            targetSlot.gameObject.SetActive(e.count > 0);
+            bool shouldShow = e.count > 0;
+            Debug.Log($"[ItemHUD] Setting {targetSlot.name} active={shouldShow}");
+            targetSlot.gameObject.SetActive(shouldShow);
+        }
+        else
+        {
+            Debug.LogError($"[ItemHUD] No slot found for item: {e.id}");
         }
     }
     
@@ -90,8 +109,6 @@ public class CollectedItemsHUD : MonoBehaviour
     void UpdatePowerFlyDisplay()
     {
         if (inv == null || powerFlyContainer == null || powerFlyRow == null) return;
-        
-        Debug.Log($"[PowerFly] Updating display. Count: {inv.collectedPowerFlies.Count}");
         
         // Clear existing power fly icons
         foreach (Transform child in powerFlyContainer)
@@ -106,43 +123,27 @@ public class CollectedItemsHUD : MonoBehaviour
         if (hasPowerFlies && powerFlyIconPrefab != null)
         {
             // Create an icon for each collected power fly
-            int index = 0;
             foreach (var powerFly in inv.collectedPowerFlies)
             {
-                Debug.Log($"[PowerFly] Creating icon {index}: sprite={(powerFly.displayImg ? powerFly.displayImg.name : "NULL")}");
-                
                 GameObject iconObj = Instantiate(powerFlyIconPrefab, powerFlyContainer);
-                iconObj.name = $"PowerFlyIcon_{index}";
                 
                 // Set proper size for the icon
                 RectTransform iconRect = iconObj.GetComponent<RectTransform>();
                 if (iconRect)
                 {
                     iconRect.sizeDelta = new Vector2(40, 40); // Fixed size 40x40
-                    iconRect.localPosition = Vector3.zero;
+                    iconRect.anchorMin = new Vector2(0, 0.5f);
+                    iconRect.anchorMax = new Vector2(0, 0.5f);
+                    iconRect.pivot = new Vector2(0.5f, 0.5f);
                 }
                 
                 Image iconImage = iconObj.GetComponent<Image>();
-                if (iconImage)
+                if (iconImage && powerFly.displayImg)
                 {
-                    if (powerFly.displayImg)
-                    {
-                        iconImage.sprite = powerFly.displayImg;
-                        iconImage.preserveAspect = true;
-                        Debug.Log($"[PowerFly] Icon {index} sprite set to: {powerFly.displayImg.name}");
-                    }
-                    else
-                    {
-                        Debug.LogError($"[PowerFly] PowerFly {index} has NO displayImg sprite assigned!");
-                    }
+                    iconImage.sprite = powerFly.displayImg;
+                    iconImage.preserveAspect = true;
                 }
-                
-                index++;
             }
-        }
-        else if (powerFlyIconPrefab == null)
-        {
-            Debug.LogError("[PowerFly] PowerFlyIcon prefab is NOT assigned to ItemHUD!");
         }
     }
     
