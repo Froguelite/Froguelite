@@ -31,6 +31,22 @@ public class UIManager : MonoBehaviour
         int gameStartIndex = (int) UIPanels.GameStart;
         uiPanels[gameStartIndex].panelObject.SetActive(true);
         currentPanel = uiPanels[gameStartIndex].panelObject;
+
+        //Check array index equals UIPanels enum count
+        int panelCount = System.Enum.GetNames(typeof(UIPanels)).Length;
+
+        if (uiPanels.Length != panelCount)
+        {
+            Debug.LogError("UIManager: UIPanels array length does not match UIPanels enum count.");
+        }
+
+        for (int i = 0; i < uiPanels.Length; i++)
+        {
+            if(i != ( (int) uiPanels[i].panel))
+            {
+                Debug.LogError("UIManager: UIPanels array is not in the correct order. Please ensure the order matches the UIPanels enum.");
+            }
+        }
     }
 
     // Update is called once per frame
