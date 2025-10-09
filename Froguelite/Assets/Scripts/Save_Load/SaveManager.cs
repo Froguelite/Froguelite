@@ -173,6 +173,12 @@ public class SaveManager : MonoBehaviour
         LoadDataToScript();
     }
 
+    public static string GetFullPath()
+    {
+        CheckInstance();
+        return Instance.fullPath;
+    }
+
     #endregion
 
     #region HELPERS
