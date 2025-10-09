@@ -173,10 +173,10 @@ public class SaveManager : MonoBehaviour
         LoadDataToScript();
     }
 
-    public static string GetFullPath()
+    public static string GetFileNameEnd()
     {
         CheckInstance();
-        return Instance.fullPath;
+        return Instance.fileNameEnd;
     }
 
     #endregion

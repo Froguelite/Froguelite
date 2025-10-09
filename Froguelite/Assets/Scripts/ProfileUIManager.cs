@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +17,8 @@ public class ProfileUIManager : MonoBehaviour
     [SerializeField] private GameObject[] addSlots; //Holds references to the "Add Profile" buttons in the UI
 
     private GameObject[] profileCards;
+
+    private string testSceneName = "TestScene-Load-AA"; //TO DO: Replace with actual scene name from saved data
 
     private const int maxProfiles = 3;
 
@@ -51,6 +55,9 @@ public class ProfileUIManager : MonoBehaviour
         {
             Debug.LogError("Add slots length does not match max profiles.");
         }
+
+        //Create profile cards for existing profiles
+        CreateExistingProfiles();
     }
 
     // Update is called once per frame
@@ -66,6 +73,7 @@ public class ProfileUIManager : MonoBehaviour
     public void CreateNewProfile(int profileNumber)
     {
         //Check if profileNumber is already exists
+        Debug.Log("Profile number: " + profileNumber);
         if (profileCards[profileNumber] != null)
         {
             Debug.LogWarning("Profile number " + profileNumber + " already exists.");
@@ -75,7 +83,7 @@ public class ProfileUIManager : MonoBehaviour
         //Create Profile Card
         GameObject newCard = Instantiate(profileCardPrefab, this.transform);
         ProfileCard cardScript = newCard.GetComponent<ProfileCard>();
-        cardScript.Initialize(profileNumber);
+        cardScript.Initialize(profileNumber, testSceneName);
         profileCards[profileNumber] = newCard;
 
         //Set Transform
@@ -85,9 +93,25 @@ public class ProfileUIManager : MonoBehaviour
         addSlots[profileNumber].SetActive(false);
     }
 
-    private void CreateExistingProfiles()
+    private void CreateSavedProfile(int profileNumber)
     {
+        //Temporary: Use same method as CreateNewProfile for now
+        CreateNewProfile(profileNumber);
+    }
 
+    public void CreateExistingProfiles()
+    {
+        string SaveProfilePath = SaveManager.GetFileNameEnd();
+
+        //TO DO: Check for existing save files and create profile cards accordingly
+        string folderPath = Application.persistentDataPath;
+        List<int> existingProfiles = GetSavedProfileNumbers(folderPath, SaveProfilePath);
+
+        //Create profile cards for existing profiles
+        foreach (int profileNum in existingProfiles)
+        {
+            CreateSavedProfile(profileNum);
+        }
     }
 
     public void DeleteProfile(int profileNumber)
@@ -104,4 +128,36 @@ public class ProfileUIManager : MonoBehaviour
 
     #endregion
 
+    #region HELPER METHODS
+    private List<int> GetSavedProfileNumbers(string folderPath, string fileNameEnd)
+    {
+        // Get all files that match "profile_*_savefile.json"
+        string[] files = Directory.GetFiles(folderPath, "profile_*" + fileNameEnd);
+
+        List<int> profileNumbers = new List<int>();
+
+        foreach (string file in files)
+        {
+            // Extract the filename only (no path)
+            string fileName = Path.GetFileName(file);
+
+            // Example: "profile_3_savefile.json"
+            // Remove "profile_" and "_savefile.json"
+            string numberPart = fileName
+                .Replace("profile_", "")
+                .Replace(fileNameEnd, "");
+
+            // Try parse the number
+            if (int.TryParse(numberPart, out int num))
+            {
+                profileNumbers.Add(num);
+            }
+        }
+
+        // Optional: sort for convenience
+        profileNumbers.Sort();
+
+        return profileNumbers;
+    }
+    #endregion
 }

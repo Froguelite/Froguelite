@@ -8,15 +8,16 @@ public class ProfileCard : MonoBehaviour
 
     [SerializeField] private int profileNumber; //1, 2 or 3
 
-    [SerializeField] private string sceneToLoad; //TO DO: populate with saved data from profile
+    private string sceneToLoad;
 
     #endregion
 
     #region SETUP
 
-    public void Initialize(int profile)
+    public void Initialize(int profile, string profileScene)
     {
         profileNumber = profile;
+        sceneToLoad = profileScene;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
