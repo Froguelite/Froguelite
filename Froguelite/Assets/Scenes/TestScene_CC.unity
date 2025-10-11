@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 5029275}
   - component: {fileID: 5029276}
   - component: {fileID: 5029277}
+  - component: {fileID: 5029278}
   m_Layer: 0
   m_Name: Rooms
   m_TagString: Untagged
@@ -291,6 +292,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PowerFlyFactory
   powerFlyPrefab: {fileID: 8927312566676857175, guid: 5af1f5f16fd1c2a49a9e5a76443f7c2a, type: 3}
+--- !u!114 &5029278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5029273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f43d1bc56b555644a46b6f7966229d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorManager
 --- !u!1001 &57144936
 PrefabInstance:
   m_ObjectHideFlags: 0
