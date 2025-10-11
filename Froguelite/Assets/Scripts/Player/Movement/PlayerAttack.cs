@@ -20,6 +20,7 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] float tongueExtendSpeed = 10f;
     [SerializeField] float tongueRetractSpeed = 25f;
     [SerializeField] float tongueCooldown = 0.5f;
+    private Vector3 tongueStartOffset;
 
     private Vector3 targetLocalPosition;
     private bool isExtending = false;
@@ -44,6 +45,7 @@ public class PlayerAttack : MonoBehaviour
         }
 
         Instance = this;
+        tongueStartOffset = tongue.localPosition;
     }
 
 
@@ -83,8 +85,8 @@ public class PlayerAttack : MonoBehaviour
         mousePosition.z = 0;
 
         // Get target position for tongue extension
-        Vector3 direction = (mousePosition - transform.position).normalized;
-        targetLocalPosition = direction * GetStatModifiedRange();
+        Vector3 direction = (mousePosition - tongue.position).normalized;
+        targetLocalPosition = direction * GetStatModifiedRange() + tongueStartOffset;
 
         isExtending = true;
     }
@@ -103,9 +105,9 @@ public class PlayerAttack : MonoBehaviour
         }
         else if (isRetracting)
         {
-            tongue.localPosition = Vector3.MoveTowards(tongue.localPosition, Vector3.zero, GetStatModifiedRetractSpeed() * Time.fixedDeltaTime);
+            tongue.localPosition = Vector3.MoveTowards(tongue.localPosition, tongueStartOffset, GetStatModifiedRetractSpeed() * Time.fixedDeltaTime);
 
-            if (Vector3.Distance(tongue.localPosition, Vector3.zero) < 0.01f)
+            if (Vector3.Distance(tongue.localPosition, tongueStartOffset) < 0.01f)
             {
                 StopTongueRetraction();
             }
@@ -129,7 +131,7 @@ public class PlayerAttack : MonoBehaviour
     {
         PlayerMovement.Instance.SetAttackingOverride(false);
         isRetracting = false;
-        tongue.localPosition = Vector3.zero;
+        tongue.localPosition = tongueStartOffset;
         StartCoroutine(TongueCooldownCoroutine());
     }
 

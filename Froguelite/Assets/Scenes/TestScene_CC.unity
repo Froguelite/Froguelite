@@ -228,7 +228,13 @@ MonoBehaviour:
     perlinOffset: {x: 0, y: 0}
   - groupName: Trees
     foliageSpawnParams:
-    - foliagePrefab: {fileID: 6694831354060108276, guid: afb64575222b631448c228d7f10c5b19, type: 3}
+    - foliagePrefab: {fileID: 3842618770890410296, guid: 6f7fda9315dc8bb4888e87a6be7ffe36, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 3842618770890410296, guid: 4f13570ee659b1c40a0151f8c42f2707, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 3842618770890410296, guid: bb405fa403bb37f428ca4ccad10333e7, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 3842618770890410296, guid: 46aea86c815ea2b499fec10dcfc2969a, type: 3}
       relativeWeight: 1
     minDistance: 4
     maxSamplingAttempts: 30
@@ -238,7 +244,7 @@ MonoBehaviour:
     perlinScale: 0.1
     perlinThreshold: 0.9
     perlinOffset: {x: 0, y: 0}
-  - groupName: Water
+  - groupName: Reeds
     foliageSpawnParams:
     - foliagePrefab: {fileID: 7689728936983971840, guid: 4eefd41dd8b043c449919ed70181af05, type: 3}
       relativeWeight: 1
@@ -247,6 +253,24 @@ MonoBehaviour:
     - foliagePrefab: {fileID: 3411685485012188673, guid: 7cff4e11f9e6eba4e9d379b0dccd8436, type: 3}
       relativeWeight: 0.6
     minDistance: 3
+    maxSamplingAttempts: 30
+    isLandGroup: 0
+    usePerlinFiltering: 0
+    matchWithRoomNoise: 0
+    perlinScale: 0.1
+    perlinThreshold: 0.9
+    perlinOffset: {x: 0, y: 0}
+  - groupName: WaterTrees
+    foliageSpawnParams:
+    - foliagePrefab: {fileID: 3842618770890410296, guid: e319468cd92c2454580ef0f03388e907, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 3842618770890410296, guid: e77d0d6b31e88cb46b7fe4db34f0e813, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 3842618770890410296, guid: 4a467cddc9d0d4a4faadd43c4b0a35e3, type: 3}
+      relativeWeight: 0.6
+    - foliagePrefab: {fileID: 3842618770890410296, guid: a2bdca81abda3be4ebc7aabdbf87a9b5, type: 3}
+      relativeWeight: 0.6
+    minDistance: 5
     maxSamplingAttempts: 30
     isLandGroup: 0
     usePerlinFiltering: 0
@@ -477,7 +501,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 818870589154261068, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
   m_PrefabInstance: {fileID: 1166802433}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1985578433}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5b576b42668423543bfe5425e9269d6c, type: 3}
@@ -1209,14 +1233,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 759206523590291711, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -3145978915663630206, guid: db237cca1c4cf61498e9aff7d18e58e4, type: 3}
-    - target: {fileID: 759206523590291711, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
-      propertyPath: m_SortingOrder
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1517473338632819490, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
       propertyPath: m_Name
       value: Player
@@ -1264,13 +1280,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1517473338632819490, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1985578435}
-    - targetCorrespondingSourceObject: {fileID: 1517473338632819490, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1985578434}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
 --- !u!1001 &1214812017
 PrefabInstance:
@@ -1625,72 +1635,6 @@ Transform:
 Transform:
   m_CorrespondingSourceObject: {fileID: 7204099349995723073, guid: 15c3b8a64d6b4af4c8028d6da7336629, type: 3}
   m_PrefabInstance: {fileID: 1709043651}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1985578433 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1517473338632819490, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
-  m_PrefabInstance: {fileID: 1166802433}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1985578434
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1985578433}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae53e41e46e9e4ce79f15cba1329eba3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimationController
-  animator: {fileID: 1985578435}
-  spriteRenderer: {fileID: 1985578442}
-  idleSprites:
-  - {fileID: 281219642394274933, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
-  - {fileID: -734828009, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
-  - {fileID: 247172972, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
-  - {fileID: 1101157758, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
-  - {fileID: 1202423945, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
-  - {fileID: -322027493, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
-  - {fileID: 1129190686, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
-  - {fileID: 414299452, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
-  - {fileID: -955914580, guid: 49abebc66a6019e469bc94e408f57c9d, type: 3}
-  idleFrameDuration: 0.5
-  movingSprites:
-  - {fileID: -2514483652790922229, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
-  - {fileID: 7992943585903652933, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
-  - {fileID: -8184664927771548580, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
-  - {fileID: -4361443774674926751, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
-  - {fileID: -7412748851008213020, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
-  - {fileID: 5233193744613133990, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
-  - {fileID: 1238996803826858621, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
-  - {fileID: -5487534286729226916, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
-  movingFrameDuration: 0.15
-  attackingSprites: []
-  attackingFrameDuration: 0.08
-  movementThreshold: 0.1
---- !u!114 &1985578435
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1985578433}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9067adbf4b1871a42833b06359e708a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FlipbookAnimator
-  sprites: []
-  frameDuration: 0.5
-  loopMethod: 0
-  playOnStart: 1
-  autoClearSpriteOnCompletion: 1
-  autoClearSpriteOnStart: 0
---- !u!212 &1985578442 stripped
-SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 759206523590291711, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
-  m_PrefabInstance: {fileID: 1166802433}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &2007659614
 GameObject:

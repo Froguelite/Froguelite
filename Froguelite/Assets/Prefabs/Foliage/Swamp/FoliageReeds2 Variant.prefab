@@ -14,7 +14,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2663155597882258910, guid: 8f84bc8dde0996f418d6d586912503e0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.177
+      value: 0.279
       objectReference: {fileID: 0}
     - target: {fileID: 2663155597882258910, guid: 8f84bc8dde0996f418d6d586912503e0, type: 3}
       propertyPath: m_LocalPosition.z
@@ -93,7 +93,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3603271037828610348, guid: ceead2bd7207312498eea49864452239, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.324
+      value: 0.148
       objectReference: {fileID: 0}
     - target: {fileID: 3603271037828610348, guid: ceead2bd7207312498eea49864452239, type: 3}
       propertyPath: m_LocalPosition.z
@@ -149,6 +149,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3047296665374429688, guid: bf17ec4c28d11ad448a67b77806af749, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 2914520997440800221, guid: 40d8e064ff8ce1f499b1e9698a305055, type: 3}
+    - target: {fileID: 3047296665374429688, guid: bf17ec4c28d11ad448a67b77806af749, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: bafd8f9ac0199dd4da1884cf0d181447, type: 2}
     - target: {fileID: 5633799429799184587, guid: bf17ec4c28d11ad448a67b77806af749, type: 3}
       propertyPath: destroyParticles
       value: 

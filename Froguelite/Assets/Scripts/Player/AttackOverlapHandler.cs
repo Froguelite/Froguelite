@@ -52,6 +52,12 @@ public class AttackOverlapHandler : MonoBehaviour
         else if (collision.CompareTag("Foliage"))
         {
             Foliage foliage = collision.GetComponent<Foliage>();
+
+            if (foliage == null)
+                foliage = collision.GetComponentInParent<Foliage>();
+            if (foliage == null)
+                return;
+                
             // If it's impassable, stop the tongue extension
             if (foliage.IsImpassable())
             {
