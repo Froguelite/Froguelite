@@ -15,6 +15,7 @@ public class PlayerAttack : MonoBehaviour
 
     [Header("Tongue Settings")]
     [SerializeField] Transform tongue;
+    [SerializeField] private PlayerAnimationController animationController;
     [SerializeField] private bool stopMovementOnAttack = true;
     [SerializeField] float tongueDistance = 3f;
     [SerializeField] float tongueExtendSpeed = 10f;
@@ -87,6 +88,12 @@ public class PlayerAttack : MonoBehaviour
         // Get target position for tongue extension
         Vector3 direction = (mousePosition - tongue.position).normalized;
         targetLocalPosition = direction * GetStatModifiedRange() + tongueStartOffset;
+
+        // Play attack animation
+        if (animationController != null)
+        {
+            animationController.PlayAttackAnimation(direction);
+        }
 
         isExtending = true;
     }

@@ -32,6 +32,8 @@ public class PowerFly : MonoBehaviour, ICollectable
     
     private LTDescr bobTween;
     private LTDescr rotationTween;
+    
+    private bool hasBeenCollected = false;
 
 
     #endregion
@@ -176,6 +178,21 @@ public class PowerFly : MonoBehaviour, ICollectable
     // On collect, apply the effect and destroy the game object
     public void OnCollect()
     {
+        // Prevent duplicate collection
+        if (hasBeenCollected) return;
+        hasBeenCollected = true;
+        
+        // Immediately disable collider and hide all visuals
+        Collider2D collider = GetComponent<Collider2D>();
+        if (collider != null) collider.enabled = false;
+        
+        // Disable all sprite renderers (main sprite + shadow)
+        SpriteRenderer[] allSprites = GetComponentsInChildren<SpriteRenderer>();
+        foreach (SpriteRenderer sprite in allSprites)
+        {
+            sprite.enabled = false;
+        }
+        
         if (itemDef != null)
         {
             InventoryManager.Instance.AddItem(itemDef, 1);

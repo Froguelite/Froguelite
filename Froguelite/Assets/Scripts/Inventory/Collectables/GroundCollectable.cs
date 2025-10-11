@@ -15,6 +15,8 @@ public abstract class GroundCollectable : MonoBehaviour, ICollectable
     [SerializeField] protected float rotationFrequency = 0.75f;
     [SerializeField] protected float bobbingAmount = 0.1f;
     [SerializeField] protected float bobbingFrequency = 1f;
+    
+    protected bool hasBeenCollected = false;
 
 
     #endregion
