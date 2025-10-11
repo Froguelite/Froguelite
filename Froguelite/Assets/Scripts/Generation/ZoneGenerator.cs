@@ -257,6 +257,7 @@ public class ZoneGenerator : MonoBehaviour
         );
 
         Vector3 doorLandingWorldPos = Vector3.zero;
+        Vector3 otherRoomLaunchWorldPos = Vector3.zero;
         if (IsValidRoomPosition(adjacentRoomGridPos) && roomGraph[adjacentRoomGridPos.x, adjacentRoomGridPos.y] != null)
         {
             RoomData adjacentRoom = roomGraph[adjacentRoomGridPos.x, adjacentRoomGridPos.y];
@@ -265,11 +266,21 @@ public class ZoneGenerator : MonoBehaviour
                 adjacentRoom.roomCoordinate.y * adjacentRoom.roomLength + doorLandingPos.y + 0.5f,
                 -0.1f
             );
+
+            // Calculate the other room's launch position (where the door in the adjacent room launches from)
+            Door.DoorDirection oppositeDirection = GetOppositeDirection(direction);
+            Vector2Int otherRoomDoorLaunchPos = RoomTileHelper.GetDoorLocation(adjacentRoom.tileLayout, oppositeDirection, true);
+            otherRoomLaunchWorldPos = new Vector3(
+                adjacentRoom.roomCoordinate.x * adjacentRoom.roomLength + otherRoomDoorLaunchPos.x + 0.5f,
+                adjacentRoom.roomCoordinate.y * adjacentRoom.roomLength + otherRoomDoorLaunchPos.y + 0.5f,
+                -0.1f
+            );
         }
 
         // Set door launch and landing positions in door data
         doorData.launchPosition = doorLaunchWorldPos;
         doorData.landingPosition = doorLandingWorldPos;
+        doorData.otherRoomLaunchPosition = otherRoomLaunchWorldPos;
 
         // Spawn the door prefab at the launch position
         Door doorInstance = Instantiate(doorPrefab, doorLaunchWorldPos, Quaternion.identity);

@@ -449,13 +449,13 @@ public static class RoomGraphGenerator
                             if (!doorData.isImpassable && !doorData.isLocked)
                             {
                                 // Lock this door
-                                room.SetDoor(doorEntry.Key, new DoorData
+                                /* room.SetDoor(doorEntry.Key, new DoorData
                                 {
                                     isImpassable = false,
                                     isOpen = false,
                                     isLocked = true,
                                     direction = doorData.direction
-                                });
+                                }); */
 
                                 // Find and lock the corresponding door in the connected room
                                 Vector2Int adjacentPos = Vector2Int.zero;
