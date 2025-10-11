@@ -13,7 +13,6 @@ public class DoorManager : MonoBehaviour
     public static DoorManager Instance { get; private set; }
 
     private List<Door> allDoors = new List<Door>();
-    private bool isTraveling = false;
 
 
     #endregion
@@ -76,7 +75,6 @@ public class DoorManager : MonoBehaviour
     // Called when the player starts travelling through a door
     public void OnTravelStarted()
     {
-        isTraveling = true;
         CloseAllDoors(true);
     }
 
@@ -84,7 +82,6 @@ public class DoorManager : MonoBehaviour
     // Called when the player finishes travelling through a door
     public void OnTravelEnded()
     {
-        isTraveling = false;
         OpenAllDoors(true);
     }
 
