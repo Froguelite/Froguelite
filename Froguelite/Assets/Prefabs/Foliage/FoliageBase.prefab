@@ -47,8 +47,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Foliage
   foliageCollider: {fileID: 1626903784455613151}
+  foliageSprite: {fileID: 8690161108491031668}
   isDestructable: 1
   isImpassable: 0
+  destroyParticles: {fileID: 0}
 --- !u!58 &1626903784455613151
 CircleCollider2D:
   m_ObjectHideFlags: 0

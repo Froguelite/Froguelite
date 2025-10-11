@@ -238,6 +238,22 @@ MonoBehaviour:
     perlinScale: 0.1
     perlinThreshold: 0.9
     perlinOffset: {x: 0, y: 0}
+  - groupName: Water
+    foliageSpawnParams:
+    - foliagePrefab: {fileID: 7689728936983971840, guid: 4eefd41dd8b043c449919ed70181af05, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 8113393330908795516, guid: 78fbb020704ff624faddf641759c72c4, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 3411685485012188673, guid: 7cff4e11f9e6eba4e9d379b0dccd8436, type: 3}
+      relativeWeight: 0.6
+    minDistance: 3
+    maxSamplingAttempts: 30
+    isLandGroup: 0
+    usePerlinFiltering: 0
+    matchWithRoomNoise: 0
+    perlinScale: 0.1
+    perlinThreshold: 0.9
+    perlinOffset: {x: 0, y: 0}
 --- !u!114 &5029277
 MonoBehaviour:
   m_ObjectHideFlags: 0
