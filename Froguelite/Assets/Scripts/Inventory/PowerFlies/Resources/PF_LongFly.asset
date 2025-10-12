@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63ee0f7713f8c34bba32b8bbee26cfb, type: 3}
   m_Name: PF_LongFly
   m_EditorClassIdentifier: Assembly-CSharp::PowerFlyData
-  displayImg: {fileID: 21300000, guid: 97cfb7c4992346c46aa54e76712ec406, type: 3}
+  displayImg: {fileID: -9165364305613031875, guid: 017bf00d55a26564fa8692067fbdb04a, type: 3}
   powerFlyName: Long Fly
   description: This one is long...
   flyRarity: 0
