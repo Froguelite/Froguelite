@@ -119,7 +119,8 @@ public class PlayerAnimationController : MonoBehaviour
             case AnimationState.Attacking:
                 if (attackingSprites != null && attackingSprites.Length > 0)
                 {
-                    animator.SetSprites(attackingSprites, attackingFrameDuration, FlipbookLoopMethod.Once);
+                    float effectiveFrameDuration = attackingFrameDuration / StatsManager.Instance.playerRate.GetValueAsMultiplier();
+                    animator.SetSprites(attackingSprites, effectiveFrameDuration, FlipbookLoopMethod.Once);
                     animator.Play();
                 }
                 break;
@@ -166,7 +167,8 @@ public class PlayerAnimationController : MonoBehaviour
         // Calculate attack animation duration based on sprites and frame duration
         if (attackingSprites != null && attackingSprites.Length > 0)
         {
-            return attackingSprites.Length * attackingFrameDuration;
+            float effectiveFrameDuration = attackingFrameDuration / StatsManager.Instance.playerRate.GetValueAsMultiplier();
+            return attackingSprites.Length * effectiveFrameDuration;
         }
         
         return 0.5f; // Default fallback
