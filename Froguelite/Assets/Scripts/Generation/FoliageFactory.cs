@@ -104,7 +104,7 @@ public class FoliageFactory : MonoBehaviour
     // Spawns a foliage instance at the specified world position
     private void SpawnFoliageAtWorldPosition(Foliage foliagePrefab, Room room, Vector2 worldPosition)
     {
-        Vector3 spawnPosition = new Vector3(worldPosition.x, worldPosition.y, -0.1f);
+        Vector3 spawnPosition = new Vector3(worldPosition.x, worldPosition.y, 0f);
         spawnPosition += new Vector3(Random.Range(-.2f, .2f), Random.Range(-.2f, .2f), 0); // Small random offset
         Foliage spawnedFoliage = Instantiate(foliagePrefab, room.transform);
         spawnedFoliage.transform.position = spawnPosition;

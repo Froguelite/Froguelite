@@ -20,6 +20,22 @@ public class PlayerHealth : MonoBehaviour
     public UnityEvent onHealthDamaged; // Event triggered when the player takes damage
     public UnityEvent onHealthHealed;  // Event triggered when the player is healed
 
+    private float timeSinceLastDamage = 0f;
+    private const float damageCooldown = 0.3f; // Minimum time between damage instances
+
+
+    #endregion
+
+
+    #region MONOBEHAVIOUR
+
+
+    // Update
+    void Update()
+    {
+        timeSinceLastDamage += Time.deltaTime;
+    }
+
 
     #endregion
 
@@ -80,8 +96,12 @@ public class PlayerHealth : MonoBehaviour
     // Damages player by given amount; if health drops to 0 or below, player dies
     public void DamagePlayer(int dmgAmount)
     {
+        if (timeSinceLastDamage < damageCooldown)
+            return;
+
         if (currentHealth > 0)
         {
+            timeSinceLastDamage = 0f;
             currentHealth -= dmgAmount;
             if (currentHealth < 0)
             {

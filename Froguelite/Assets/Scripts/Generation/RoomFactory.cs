@@ -104,7 +104,7 @@ public class RoomFactory : MonoBehaviour
         roomObject.transform.SetParent(roomParent);
 
         // Create and configure the enemy navigation plane
-        SpawnEnemyNavPlane(roomObject, roomData, roomLength);
+        //SpawnEnemyNavPlane(roomObject, roomData, roomLength);
 
         return roomComponent;
     }

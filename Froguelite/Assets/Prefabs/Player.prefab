@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6663584459598315437}
   m_Layer: 0
   m_Name: DamageCollider
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
