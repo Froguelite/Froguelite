@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -34,6 +35,7 @@ public class MeleeEnemy : MonoBehaviour, IEnemy
 
     [Header("Visual Effects")]
     [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private List<Sprite> possibleSprites; // List of possible sprites for random selection
     [SerializeField] private float flashDuration = 0.2f; // How long the red flash lasts
     [SerializeField] private Color flashColor = Color.red; // Color to flash when hit
 
@@ -70,6 +72,13 @@ public class MeleeEnemy : MonoBehaviour, IEnemy
 
         rb.bodyType = RigidbodyType2D.Kinematic;
         originalColor = spriteRenderer.color;
+
+        // Assign a random sprite from the list if available
+        if (possibleSprites != null && possibleSprites.Count > 0)
+        {
+            int randomIndex = Random.Range(0, possibleSprites.Count);
+            spriteRenderer.sprite = possibleSprites[randomIndex];
+        }
     }
 
 
@@ -94,6 +103,9 @@ public class MeleeEnemy : MonoBehaviour, IEnemy
                 NavCirclePlayer();
                 break;
         }
+
+        // Update sprite flip based on direction to target
+        UpdateSpriteFlip();
     }
 
 
@@ -261,6 +273,29 @@ public class MeleeEnemy : MonoBehaviour, IEnemy
         {
             spriteRenderer.color = newColor;
         });
+    }
+
+
+    // Updates sprite flip based on horizontal direction to target
+    private void UpdateSpriteFlip()
+    {
+        if (spriteRenderer == null || navTarget == null) return;
+
+        // Get the direction to the target
+        Vector3 directionToTarget = navTarget.position - transform.position;
+        
+        // Flip sprite based on horizontal direction
+        if (directionToTarget.x < 0)
+        {
+            // Target is to the left, face left
+            spriteRenderer.flipX = false;
+        }
+        else if (directionToTarget.x > 0)
+        {
+            // Target is to the right, face right
+            spriteRenderer.flipX = true;
+        }
+        // If directionToTarget.x == 0, keep current facing direction
     }
 
 
