@@ -82,7 +82,8 @@ public class DoorManager : MonoBehaviour
     // Called when the player finishes travelling through a door
     public void OnTravelEnded()
     {
-        OpenAllDoors(true);
+        // Notify the new room that the player has entered it
+        RoomManager.Instance.GetRoomAtWorldPosition(PlayerMovement.Instance.transform.position)?.OnPlayerEnter();
     }
 
 

@@ -55,6 +55,16 @@ public class ZoneGenerator : MonoBehaviour
         combinedTileLayout = SpawnRoomsFromGraph();
         MinimapManager.Instance.InitializeMinimap(combinedTileLayout);
 
+        // Initialize the RoomManager with the generated rooms
+        if (RoomManager.Instance != null)
+        {
+            RoomManager.Instance.Initialize(roomGraph, spawnedRooms);
+        }
+        else
+        {
+            Debug.LogWarning("RoomManager Instance is null - rooms will not be managed properly");
+        }
+
         // TEMPORARY - Open all doors and set player position to starter room
         OpenAllDoors();
         if (teleportPlayerToStarterRoom)

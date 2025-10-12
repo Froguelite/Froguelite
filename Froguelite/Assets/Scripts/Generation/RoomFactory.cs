@@ -7,15 +7,6 @@ public class RoomFactory : MonoBehaviour
     // RoomFactory handles the creation of room instances
 
 
-    #region VARIABLES
-
-
-    [SerializeField] private BoxCollider2D enemyNavPlane;
-
-
-    #endregion
-
-
     #region ROOM SPAWNING
 
 
@@ -103,50 +94,10 @@ public class RoomFactory : MonoBehaviour
         roomComponent.Initialize(roomData);
         roomObject.transform.SetParent(roomParent);
 
-        // Create and configure the enemy navigation plane
-        //SpawnEnemyNavPlane(roomObject, roomData, roomLength);
+        // Generate enemies for the room
+        roomComponent.GenerateEnemies();
 
         return roomComponent;
-    }
-
-
-    #endregion
-
-
-    #region ENEMY NAVIGATION PLANE
-
-
-    // Spawns an enemy navigation plane that covers the full area of the room
-    private void SpawnEnemyNavPlane(GameObject roomObject, RoomData roomData, int roomLength)
-    {
-        if (enemyNavPlane == null)
-        {
-            Debug.LogWarning("Enemy nav plane prefab is not assigned in RoomFactory");
-            return;
-        }
-
-        // Create the enemy nav plane as a child of the room
-        BoxCollider2D navPlaneInstance = Instantiate(enemyNavPlane, roomObject.transform);
-        navPlaneInstance.name = "EnemyNavPlane";
-
-        // Calculate the room bounds in world coordinates
-        Vector3 roomWorldOffset = new Vector3(
-            roomData.roomCoordinate.x * roomLength,
-            roomData.roomCoordinate.y * roomLength,
-            0
-        );
-
-        // Position the nav plane at the center of the room
-        Vector3 roomCenter = roomWorldOffset + new Vector3(roomLength * 0.5f, roomLength * 0.5f, 0);
-        navPlaneInstance.transform.position = roomCenter;
-
-        // Set the size of the BoxCollider to cover the entire room
-        navPlaneInstance.size = new Vector3(roomLength, roomLength, 1f);
-
-        // Ensure it's positioned slightly above the ground for proper navigation
-        Vector3 navPlanePosition = navPlaneInstance.transform.position;
-        navPlanePosition.z = 0.5f; // Position it slightly above the tilemap
-        navPlaneInstance.transform.position = navPlanePosition;
     }
 
 

@@ -36,11 +36,14 @@ public class MeleeEnemy : MonoBehaviour, IEnemy
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private float flashDuration = 0.2f; // How long the red flash lasts
     [SerializeField] private Color flashColor = Color.red; // Color to flash when hit
-    
+
     private Transform navTarget;
     private float circleAngle = 0f; // Current angle for circle movement
     private bool isKnockedBack = false; // Tracks if enemy is currently being knocked back
     private Color originalColor; // Store the original sprite color
+
+    private Room parentRoom;
+    private bool engagedWithPlayer = false;
 
 
     #endregion
@@ -49,15 +52,22 @@ public class MeleeEnemy : MonoBehaviour, IEnemy
     #region MONOBEHAVIOUR AND SETUP
 
 
+    // Initializes this enemy with its parent room
+    public void InitializeEnemy(Room parentRoom)
+    {
+        this.parentRoom = parentRoom;
+    }
+
+
     // Awake
     private void Awake()
     {
         navAgent.updateRotation = false;
         navAgent.updateUpAxis = false;
-        
+
         // Initialize health
         currentHealth = maxHealth;
-        
+
         rb.bodyType = RigidbodyType2D.Kinematic;
         originalColor = spriteRenderer.color;
     }
@@ -66,23 +76,23 @@ public class MeleeEnemy : MonoBehaviour, IEnemy
     // Update
     private void Update()
     {
-        // Don't move via NavMesh if currently being knocked back
-        if (!isKnockedBack && navAgent != null && navAgent.enabled && navAgent.isOnNavMesh)
+        if (navAgent == null || navTarget == null) return;
+        if (isKnockedBack) return;
+        if (!engagedWithPlayer) return;
+
+        switch (movementType)
         {
-            switch (movementType)
-            {
-                case EnemyMovementType.GetNear:
-                    NavNearPlayer();
-                    break;
+            case EnemyMovementType.GetNear:
+                NavNearPlayer();
+                break;
 
-                case EnemyMovementType.FullChase:
-                    NavFullChase();
-                    break;
+            case EnemyMovementType.FullChase:
+                NavFullChase();
+                break;
 
-                case EnemyMovementType.Circle:
-                    NavCirclePlayer();
-                    break;
-            }
+            case EnemyMovementType.Circle:
+                NavCirclePlayer();
+                break;
         }
     }
 
@@ -99,6 +109,7 @@ public class MeleeEnemy : MonoBehaviour, IEnemy
         if (PlayerMovement.Instance != null)
         {
             navTarget = PlayerMovement.Instance.transform;
+            engagedWithPlayer = true;
         }
     }
 
@@ -189,6 +200,22 @@ public class MeleeEnemy : MonoBehaviour, IEnemy
     }
 
 
+    // Kills this enemy
+    public void Die()
+    {
+        if (parentRoom != null)
+            parentRoom.OnEnemyDefeated(this);
+            
+        Destroy(gameObject);
+    }
+
+
+    #endregion
+
+
+    #region KNOCKBACK AND EFFECTS
+
+
     // Applies knockback force away from the player
     public void ApplyKnockback(float knockbackForce)
     {
@@ -237,14 +264,7 @@ public class MeleeEnemy : MonoBehaviour, IEnemy
     }
 
 
-    // Kills this enemy
-    public void Die()
-    {
-        Destroy(gameObject);
-    }
-
-
     #endregion
 
-    
+
 }

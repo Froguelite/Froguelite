@@ -24,6 +24,8 @@ public class Room : MonoBehaviour
 
     public List<Door> doors { get; private set; } = new List<Door>();
 
+    public List<IEnemy> enemies { get; private set; } = new List<IEnemy>();
+
 
     #endregion
 
@@ -71,6 +73,104 @@ public class Room : MonoBehaviour
     public void AddDoor(Door door)
     {
         doors.Add(door);
+    }
+
+
+    // Generates a few enemies for this room
+    public void GenerateEnemies()
+    {
+        if (roomData.roomType != RoomType.Normal)
+            return; // Only spawn enemies in normal rooms
+
+        int enemyCount = UnityEngine.Random.Range(2, 5); // Random number of enemies between 2 and 4
+
+        for (int i = 0; i < enemyCount; i++)
+        {
+            Vector2 spawnPosition = GetRandomEnemySpawnPosition();
+            enemies.Add(EnemyFactory.Instance.SpawnRandomEnemy(this, spawnPosition));
+        }
+    }
+
+
+    // Returns a random valid spawn position on land within this room
+    private Vector2 GetRandomEnemySpawnPosition()
+    {
+        List<Vector2Int> validTiles = new List<Vector2Int>();
+
+        // Collect all walkable (land) tiles
+        for (int x = 0; x < roomData.roomLength; x++)
+        {
+            for (int y = 0; y < roomData.roomLength; y++)
+            {
+                if (roomData.tileLayout[x, y]) // true = walkable/land
+                {
+                    validTiles.Add(new Vector2Int(x, y));
+                }
+            }
+        }
+
+        // If no valid tiles found, return center of room as fallback
+        if (validTiles.Count == 0)
+        {
+            Debug.LogWarning("No valid spawn positions found in room. Using room center as fallback.");
+            return roomData.GetRoomCenterWorldPosition();
+        }
+
+        // Select a random valid tile
+        Vector2Int randomTile = validTiles[UnityEngine.Random.Range(0, validTiles.Count)];
+
+        // Convert tile coordinate to world position
+        Vector3 worldPos = roomData.GetTileWorldPosition(randomTile);
+        return new Vector2(worldPos.x, worldPos.y);
+    }
+
+
+    #endregion
+
+
+    #region PLAYER ENTER AND LEAVE CONDITIONS
+
+
+    // Called when the player enters the room
+    public void OnPlayerEnter()
+    {
+        // If no enemies are present, we are safe to open all doors (room is clear)
+        if (enemies.Count == 0)
+        {
+            DoorManager.Instance.OpenAllDoors(true);
+            return;
+        }
+
+        // Otherwise, there are enemies. Engage them with the player.
+        foreach (IEnemy enemy in enemies)
+        {
+            enemy.BeginPlayerChase();
+        }
+    }
+
+
+    // Called when a particular enemy is defeated
+    public void OnEnemyDefeated(MeleeEnemy defeatedEnemy)
+    {
+        if (enemies.Contains(defeatedEnemy))
+        {
+            enemies.Remove(defeatedEnemy);
+        }
+
+        // If all enemies are defeated, mark room as cleared
+        if (enemies.Count == 0)
+        {
+            RoomManager.Instance.SpawnRoomClearItems(defeatedEnemy.transform.position);
+            OnRoomCleared();
+        }
+    }
+
+
+    // Called when the room is cleared of all enemies
+    private void OnRoomCleared()
+    {
+        // Open all doors when room is cleared
+        DoorManager.Instance.OpenAllDoors(true);
     }
 
 
