@@ -1,4 +1,6 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ProfileCard : MonoBehaviour
 {
@@ -6,18 +8,32 @@ public class ProfileCard : MonoBehaviour
 
     #region VARIABLES
 
-    [SerializeField] private int profileNumber; //1, 2 or 3
+    //[SerializeField] private int profileNumber; //1, 2 or 3
 
-    private string sceneToLoad;
+    //private string sceneToLoad;
+
+    private ProfileCardData profileData;
+
+    [SerializeField] private TextMeshProUGUI profileNameText;
 
     #endregion
 
     #region SETUP
 
-    public void Initialize(int profile, string profileScene)
+    //public void Initialize(int profile, string profileScene)
+    //{
+    //    profileNumber = profile;
+    //    sceneToLoad = profileScene;
+    //}
+
+    public void Initialize(ProfileCardData data)
     {
-        profileNumber = profile;
-        sceneToLoad = profileScene;
+        profileData = data;
+
+        if(profileNameText != null)
+        {
+            profileNameText.text = profileData.name;
+        }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -39,12 +55,12 @@ public class ProfileCard : MonoBehaviour
     public void OnStartProfile()
     {
         //LevelManager.Instance.LoadScene(sceneToLoad);
-        UIManager.Instance.OnProfileStartClick(sceneToLoad);
+        UIManager.Instance.OnProfileStartClick(profileData.sceneToLoad);
     }
 
     public void OnDeleteProfile()
     {
-        ProfileUIManager.Instance.DeleteProfile(profileNumber);
+        ProfileUIManager.Instance.DeleteProfile(profileData);
     }
 
     #endregion

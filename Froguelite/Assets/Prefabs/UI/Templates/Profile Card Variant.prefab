@@ -350,7 +350,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3556848730259753899, guid: 3e336caf7df5c854f925d57b80b49fba, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3556848730259753899, guid: 3e336caf7df5c854f925d57b80b49fba, type: 3}
       propertyPath: m_AnchorMax.y
@@ -358,7 +358,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3556848730259753899, guid: 3e336caf7df5c854f925d57b80b49fba, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3556848730259753899, guid: 3e336caf7df5c854f925d57b80b49fba, type: 3}
       propertyPath: m_AnchorMin.y
@@ -390,23 +390,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3556848730259753899, guid: 3e336caf7df5c854f925d57b80b49fba, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3556848730259753899, guid: 3e336caf7df5c854f925d57b80b49fba, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3556848730259753899, guid: 3e336caf7df5c854f925d57b80b49fba, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3556848730259753899, guid: 3e336caf7df5c854f925d57b80b49fba, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -200
+      value: -150
       objectReference: {fileID: 0}
     - target: {fileID: 3556848730259753899, guid: 3e336caf7df5c854f925d57b80b49fba, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -50
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3556848730259753899, guid: 3e336caf7df5c854f925d57b80b49fba, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -479,8 +479,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02db72ab2491c0a42b67b10ba2ef17c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProfileCard
-  profileNumber: 0
-  sceneToLoad: TestScene-Load-AA
+  profileNameText: {fileID: 5613436333732051640}
 --- !u!1001 &4650440314057552386
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -491,15 +490,31 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 968063127886284986, guid: 3106999c91c6da542a8af800a8ca9f57, type: 3}
       propertyPath: m_text
-      value: Profile
+      value: Profile Name
       objectReference: {fileID: 0}
     - target: {fileID: 968063127886284986, guid: 3106999c91c6da542a8af800a8ca9f57, type: 3}
       propertyPath: m_fontSize
       value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 968063127886284986, guid: 3106999c91c6da542a8af800a8ca9f57, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0.38581347
+      objectReference: {fileID: 0}
+    - target: {fileID: 968063127886284986, guid: 3106999c91c6da542a8af800a8ca9f57, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0.9622642
+      objectReference: {fileID: 0}
+    - target: {fileID: 968063127886284986, guid: 3106999c91c6da542a8af800a8ca9f57, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0.7457788
+      objectReference: {fileID: 0}
+    - target: {fileID: 968063127886284986, guid: 3106999c91c6da542a8af800a8ca9f57, type: 3}
       propertyPath: m_fontSizeBase
       value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 968063127886284986, guid: 3106999c91c6da542a8af800a8ca9f57, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4284675518
       objectReference: {fileID: 0}
     - target: {fileID: 968063127886284986, guid: 3106999c91c6da542a8af800a8ca9f57, type: 3}
       propertyPath: m_VerticalAlignment
@@ -591,7 +606,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7530444225341881299, guid: 3106999c91c6da542a8af800a8ca9f57, type: 3}
       propertyPath: m_Name
-      value: Profile Text (TMP)
+      value: Profile Name Text (TMP)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -603,3 +618,14 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5820261317592572636, guid: 3106999c91c6da542a8af800a8ca9f57, type: 3}
   m_PrefabInstance: {fileID: 4650440314057552386}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5613436333732051640 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 968063127886284986, guid: 3106999c91c6da542a8af800a8ca9f57, type: 3}
+  m_PrefabInstance: {fileID: 4650440314057552386}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
