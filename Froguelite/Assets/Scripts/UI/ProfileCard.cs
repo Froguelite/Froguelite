@@ -38,7 +38,8 @@ public class ProfileCard : MonoBehaviour
 
     public void OnStartProfile()
     {
-        LevelManager.Instance.LoadScene(sceneToLoad);
+        //LevelManager.Instance.LoadScene(sceneToLoad);
+        UIManager.Instance.OnProfileStartClick(sceneToLoad);
     }
 
     public void OnDeleteProfile()

@@ -8,7 +8,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private UIPanelObject[] uiPanels; //Array to hold references to different UI panels
 
-    private GameObject currentPanel;
+    private UIPanels currentPanel;
 
     #endregion
 
@@ -30,7 +30,7 @@ public class UIManager : MonoBehaviour
         // Initialize to the starting panel, e.g., GameStart
         int gameStartIndex = (int) UIPanels.GameStart;
         uiPanels[gameStartIndex].panelObject.SetActive(true);
-        currentPanel = uiPanels[gameStartIndex].panelObject;
+        currentPanel = UIPanels.GameStart;
 
         //Check array index equals UIPanels enum count
         int panelCount = System.Enum.GetNames(typeof(UIPanels)).Length;
@@ -56,7 +56,7 @@ public class UIManager : MonoBehaviour
     }
     #endregion
 
-    #region ON BUTTON CLICK METHODS
+    #region PANEL CONTROL METHODS
 
     public void OnStartGameClick()
     {
@@ -72,11 +72,23 @@ public class UIManager : MonoBehaviour
     public void OnProfilesClick()
     {
         //Switch to Profile Menu panel
-        int profileMenuIndex = (int)UIPanels.ProfileMenu;
-        PanelSwitch(currentPanel, uiPanels[profileMenuIndex].panelObject);
+        PanelSwitch(currentPanel, UIPanels.ProfileMenu);
 
         ////Create profile cards for existing profiles
         //ProfileUIManager.Instance.CreateExistingProfiles();
+    }
+
+    public void OnProfileStartClick(string sceneToLoad)
+    {
+        //Switch to Loading Screen and call LevelManager to load scene
+        PanelSwitch(currentPanel, UIPanels.LoadingScreen);
+        LevelManager.Instance.LoadScene(sceneToLoad);
+    }
+
+    public void OnSceneLoadReturn()
+    {
+        //Scene loaded, switch to corresponding panel, currently set to Main Menu
+        PanelSwitch(currentPanel, UIPanels.MainMenu);
     }
 
     public void OnExitClick()
@@ -92,13 +104,15 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region HELPER METHODS
-    private void PanelSwitch(GameObject current, GameObject next)
+    private void PanelSwitch(UIPanels current, UIPanels next)
     {
         //Set current panel to inactive
-        current.SetActive(false);
+        int currentIndex = (int)current;
+        uiPanels[currentIndex].panelObject.SetActive(false);
 
         //Set next panel to active
-        next.SetActive(true);
+        int nextIndex = (int)next;
+        uiPanels[nextIndex].panelObject.SetActive(true);
 
         //Update current panel reference
         currentPanel = next;
@@ -109,11 +123,13 @@ public class UIManager : MonoBehaviour
 
 public enum UIPanels
 {
+    //NULL,
     GameStart,
-    //MainMenu,
+    MainMenu,
     //OptionsMenu,
     ProfileMenu,
-    InGameHUD,
+    LoadingScreen,
+    //InGameHUD,
     //PauseMenu
 }
 

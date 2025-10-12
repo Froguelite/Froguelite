@@ -46,18 +46,18 @@ public class LevelManager : MonoBehaviour
         var scene = SceneManager.LoadSceneAsync(sceneName);
         scene.allowSceneActivation = false;
 
-        loadingPanel.SetActive(true);
+        //loadingPanel.SetActive(true);
 
         do
         {
-            await Task.Delay(100); //For demo purposes
+            await Task.Delay(100);
             progressBar.fillAmount = scene.progress;
-           // await System.Threading.Tasks.Task.Yield();
         } while (scene.progress < 0.9f);
 
         await Task.Delay(500); //For demo purposes
 
         scene.allowSceneActivation = true;
-        loadingPanel.SetActive(false);
+        //loadingPanel.SetActive(false);
+        UIManager.Instance.OnSceneLoadReturn();
     }
 }
