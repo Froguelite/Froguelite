@@ -157,7 +157,8 @@ public class ProfileUIManager : MonoBehaviour
         newCard.transform.position = addSlots[profileNumber].transform.position;
 
         //Disable Add Slot for profile number
-        addSlots[profileNumber].SetActive(false);
+        //addSlots[profileNumber].SetActive(false);
+        addSlots[profileNumber].GetComponent<Button>().interactable = false;
     }
 
     private void CreateSavedProfile(ProfileCardData cardData)
@@ -177,7 +178,8 @@ public class ProfileUIManager : MonoBehaviour
         newCard.transform.position = addSlots[cardData.profileNumber].transform.position;
 
         //Disable Add Slot for profile number
-        addSlots[cardData.profileNumber].SetActive(false);
+        //addSlots[cardData.profileNumber].SetActive(false);
+        addSlots[cardData.profileNumber].GetComponent<Button>().interactable = false;
     }
 
     public void CreateExistingProfiles()
@@ -214,7 +216,8 @@ public class ProfileUIManager : MonoBehaviour
         profileCards[cardData.profileNumber] = null;
 
         //Enable Add Slot for profile number
-        addSlots[cardData.profileNumber].SetActive(true);
+        //addSlots[cardData.profileNumber].SetActive(true);
+        addSlots[cardData.profileNumber].GetComponent<Button>().interactable = true;
 
         //Remove from profileCardDataList
         profileCardDataList.profiles.Remove(cardData);
