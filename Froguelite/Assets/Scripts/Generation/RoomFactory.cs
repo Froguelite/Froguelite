@@ -93,6 +93,10 @@ public class RoomFactory : MonoBehaviour
         Room roomComponent = roomObject.AddComponent<Room>();
         roomComponent.Initialize(roomData);
         roomObject.transform.SetParent(roomParent);
+
+        // Generate enemies for the room
+        roomComponent.GenerateEnemies();
+
         return roomComponent;
     }
 

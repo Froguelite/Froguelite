@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using NavMeshPlus.Components;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -16,6 +18,7 @@ public class ZoneGenerator : MonoBehaviour
     [SerializeField] private RoomFactory roomFactory;
     [SerializeField] private FoliageFactory foliageFactory;
     [SerializeField] private Tilemap roomsTilemap;
+    [SerializeField] private NavMeshSurface navigationSurface;
     [SerializeField] private AutoTileSet zoneAutoTileSet;
     [SerializeField] private Transform roomParent; // Parent object to organize spawned rooms
 
@@ -52,10 +55,23 @@ public class ZoneGenerator : MonoBehaviour
         combinedTileLayout = SpawnRoomsFromGraph();
         MinimapManager.Instance.InitializeMinimap(combinedTileLayout);
 
+        // Initialize the RoomManager with the generated rooms
+        if (RoomManager.Instance != null)
+        {
+            RoomManager.Instance.Initialize(roomGraph, spawnedRooms);
+        }
+        else
+        {
+            Debug.LogWarning("RoomManager Instance is null - rooms will not be managed properly");
+        }
+
         // TEMPORARY - Open all doors and set player position to starter room
         OpenAllDoors();
         if (teleportPlayerToStarterRoom)
             SetPlayerToStarterRoom();
+
+        // Regenerate the NavMesh for the new layout
+        navigationSurface.BuildNavMesh();
     }
 
 
@@ -136,6 +152,10 @@ public class ZoneGenerator : MonoBehaviour
                 {
                     SpawnRoom(room, new Vector2Int(x, y));
                 }
+                else
+                {
+                    SpawnEmptyRoom(new Vector2Int(x, y));
+                }
             }
         }
 
@@ -178,6 +198,53 @@ public class ZoneGenerator : MonoBehaviour
         }
 
         foliageFactory.GenerateFoliageForRoom(spawnedRoom, foliageLandDensity);
+    }
+
+
+    // Spawns an empty room area filled with water tiles instead of generating a room
+    private void SpawnEmptyRoom(Vector2Int gridPosition)
+    {
+        if (roomGraph == null)
+        {
+            Debug.LogError("Room Graph is null - cannot spawn empty room");
+            return;
+        }
+
+        // Calculate room length - use the same size as other rooms (32 by default)
+        int roomLength = 32;
+        
+        // Try to get room length from existing rooms if available
+        for (int x = 0; x < roomGraph.GetLength(0) && roomLength == 32; x++)
+        {
+            for (int y = 0; y < roomGraph.GetLength(1) && roomLength == 32; y++)
+            {
+                RoomData room = roomGraph[x, y];
+                if (room != null && room.tileLayout != null)
+                {
+                    roomLength = room.roomLength;
+                    break;
+                }
+            }
+        }
+
+        // Get the tile offset for this empty room area
+        Vector2Int tileOffset = new Vector2Int(
+            gridPosition.x * roomLength,
+            gridPosition.y * roomLength
+        );
+
+        // Create a layout that's entirely water (all false values)
+        bool[,] waterLayout = new bool[roomLength, roomLength];
+        // No need to set values since bool arrays initialize to false (water)
+
+        // Apply the water tiles to the tilemap using auto-tiling
+        RoomTileHelper.SetTilemapToLayoutWithAutoTiling(
+            waterLayout,
+            roomsTilemap,
+            zoneAutoTileSet,
+            tileOffset.x,
+            tileOffset.y
+        );
     }
 
 

@@ -58,6 +58,7 @@ public class StatsManager : MonoBehaviour
     public Stat playerSpeed { get; private set; }
     public Stat playerRange { get; private set; }
     public Stat playerRate { get; private set; }
+    public Stat playerKnockback { get; private set; }
     public Stat playerLuck { get; private set; }
 
 
@@ -97,6 +98,7 @@ public class StatsManager : MonoBehaviour
         playerSpeed = new Stat(5f, 1f);
         playerRange = new Stat(5f, 1f);
         playerRate = new Stat(5f, 1f);
+        playerKnockback = new Stat(5f, 1f);
         playerLuck = new Stat(5f, 1f);
     }
 

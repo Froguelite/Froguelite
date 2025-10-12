@@ -27,8 +27,15 @@ public class AttackOverlapHandler : MonoBehaviour
         // Check if the collider belongs to an enemy
         if (collision.CompareTag("Enemy"))
         {
-            Debug.Log("Enemy hit by attack!");
-            // TODO
+            IEnemy enemy = collision.GetComponent<IEnemy>();
+            if (enemy == null)
+                enemy = collision.GetComponentInParent<IEnemy>();
+
+            if (enemy != null)
+            {
+                enemy.DamageEnemy(StatsManager.Instance.playerDamage.GetValue(), StatsManager.Instance.playerKnockback.GetValue());
+                PlayerAttack.Instance.StopTongueExtension(false);
+            }
         }
         // Doors
         else if (collision.CompareTag("Door"))
