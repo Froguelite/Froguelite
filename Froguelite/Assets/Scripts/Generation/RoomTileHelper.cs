@@ -346,6 +346,13 @@ public static class RoomTileHelper
 
         if (center)
         {
+            // Special case: If only one cardinal direction has land, treat as water
+            int cardinalLandCount = (top ? 1 : 0) + (right ? 1 : 0) + (bottom ? 1 : 0) + (left ? 1 : 0);
+            if (cardinalLandCount == 1)
+            {
+                return AutoTileSet.AutoTileType.FullWater;
+            }
+
             // Check if all four direct adjacencies are filled
             // This means we are either full land or need to check for 3/4 land tiles
             if (top && right && bottom && left)
@@ -360,30 +367,105 @@ public static class RoomTileHelper
                     return AutoTileSet.AutoTileType.ThreeQuarterLandTopRight;
                 if (!topLeft && topRight && bottomLeft && bottomRight)
                     return AutoTileSet.AutoTileType.ThreeQuarterLandTopLeft;
+
+                // Special case: If all cardinals are filled but exactly two corners are water
+                // and those corners are on the same side, treat as half-water on that side
+                int waterCornerCount = (!topLeft ? 1 : 0) + (!topRight ? 1 : 0) + (!bottomLeft ? 1 : 0) + (!bottomRight ? 1 : 0);
+                if (waterCornerCount == 2)
+                {
+                    // Check if both water corners are on the left side
+                    if (!topLeft && !bottomLeft)
+                        return AutoTileSet.AutoTileType.HalfWaterLeft;
+                    // Check if both water corners are on the right side
+                    if (!topRight && !bottomRight)
+                        return AutoTileSet.AutoTileType.HalfWaterRight;
+                    // Check if both water corners are on the top
+                    if (!topLeft && !topRight)
+                        return AutoTileSet.AutoTileType.HalfWaterTop;
+                    // Check if both water corners are on the bottom
+                    if (!bottomLeft && !bottomRight)
+                        return AutoTileSet.AutoTileType.HalfWaterBottom;
+                }
             }
 
             // If we made it this far, at least one of the four direct adjacencies are empty
             // This means we have to be either flat 1/2 land tiles or 1/4 land tiles
 
             // Check flat for 1/2 land tiles
+            // But if there's water in an enclosed corner, downgrade to 1/4 tile instead
             if (top && right && bottom && !left)
+            {
+                // Check enclosed corners (top-right and bottom-right)
+                if (!topRight)
+                    return AutoTileSet.AutoTileType.ThreeQuarterWaterBottomRight; // Ignore top cardinal, use bottom-left quarter
+                if (!bottomRight)
+                    return AutoTileSet.AutoTileType.ThreeQuarterWaterTopRight; // Ignore bottom cardinal, use top-left quarter
                 return AutoTileSet.AutoTileType.HalfWaterLeft;
+            }
             if (top && right && !bottom && left)
+            {
+                // Check enclosed corners (top-left and top-right)
+                if (!topLeft)
+                    return AutoTileSet.AutoTileType.ThreeQuarterWaterTopRight; // Ignore left cardinal, use bottom-right quarter
+                if (!topRight)
+                    return AutoTileSet.AutoTileType.ThreeQuarterWaterTopLeft; // Ignore right cardinal, use bottom-left quarter
                 return AutoTileSet.AutoTileType.HalfWaterBottom;
+            }
             if (top && !right && bottom && left)
+            {
+                // Check enclosed corners (top-left and bottom-left)
+                if (!topLeft)
+                    return AutoTileSet.AutoTileType.ThreeQuarterWaterBottomLeft; // Ignore top cardinal, use bottom-right quarter
+                if (!bottomLeft)
+                    return AutoTileSet.AutoTileType.ThreeQuarterWaterTopLeft; // Ignore bottom cardinal, use top-right quarter
                 return AutoTileSet.AutoTileType.HalfWaterRight;
+            }
             if (!top && right && bottom && left)
+            {
+                // Check enclosed corners (bottom-left and bottom-right)
+                if (!bottomLeft)
+                    return AutoTileSet.AutoTileType.ThreeQuarterWaterBottomRight; // Ignore left cardinal, use top-right quarter
+                if (!bottomRight)
+                    return AutoTileSet.AutoTileType.ThreeQuarterWaterBottomLeft; // Ignore right cardinal, use top-left quarter
                 return AutoTileSet.AutoTileType.HalfWaterTop;
+            }
 
-            // Check corners for 1/4 land tiles
+            // Check corners for 1/4 land tiles (2 adjacent cardinals filled)
+            // But if the enclosed corner is water, default to water instead
             if (top && right && !bottom && !left)
+            {
+                // Check if the enclosed corner (top-right) is water
+                if (!topRight)
+                    return AutoTileSet.AutoTileType.FullWater;
                 return AutoTileSet.AutoTileType.ThreeQuarterWaterTopRight;
+            }
             if (top && !right && !bottom && left)
+            {
+                // Check if the enclosed corner (top-left) is water
+                if (!topLeft)
+                    return AutoTileSet.AutoTileType.FullWater;
                 return AutoTileSet.AutoTileType.ThreeQuarterWaterTopLeft;
+            }
             if (!top && right && bottom && !left)
+            {
+                // Check if the enclosed corner (bottom-right) is water
+                if (!bottomRight)
+                    return AutoTileSet.AutoTileType.FullWater;
                 return AutoTileSet.AutoTileType.ThreeQuarterWaterBottomRight;
+            }
             if (!top && !right && bottom && left)
+            {
+                // Check if the enclosed corner (bottom-left) is water
+                if (!bottomLeft)
+                    return AutoTileSet.AutoTileType.FullWater;
                 return AutoTileSet.AutoTileType.ThreeQuarterWaterBottomLeft;
+            }
+
+            // Check diagonal pairs (opposite cardinals filled)
+            if (top && !right && bottom && !left)
+                return AutoTileSet.AutoTileType.HalfWaterRight; // Vertical water strip on sides
+            if (!top && right && !bottom && left)
+                return AutoTileSet.AutoTileType.HalfWaterTop; // Horizontal water strip on top/bottom
 
             // If we made it this far, this tile type is strange and not supported. Return a flat land tile.
             return AutoTileSet.AutoTileType.FullLand;
