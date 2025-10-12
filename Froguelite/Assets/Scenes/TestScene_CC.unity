@@ -1420,6 +1420,46 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 825508030968235699, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
+      propertyPath: attackingSprites.Array.size
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 825508030968235699, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
+      propertyPath: 'attackingSprites.Array.data[0]'
+      value: 
+      objectReference: {fileID: -1434855787490310881, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+    - target: {fileID: 825508030968235699, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
+      propertyPath: 'attackingSprites.Array.data[1]'
+      value: 
+      objectReference: {fileID: -8355704333563391931, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+    - target: {fileID: 825508030968235699, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
+      propertyPath: 'attackingSprites.Array.data[2]'
+      value: 
+      objectReference: {fileID: 3291127978802301477, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+    - target: {fileID: 825508030968235699, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
+      propertyPath: 'attackingSprites.Array.data[3]'
+      value: 
+      objectReference: {fileID: -8667011191098777123, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+    - target: {fileID: 825508030968235699, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
+      propertyPath: 'attackingSprites.Array.data[4]'
+      value: 
+      objectReference: {fileID: -6541682701421941442, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+    - target: {fileID: 825508030968235699, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
+      propertyPath: 'attackingSprites.Array.data[5]'
+      value: 
+      objectReference: {fileID: -3289099029017889582, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+    - target: {fileID: 825508030968235699, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
+      propertyPath: 'attackingSprites.Array.data[6]'
+      value: 
+      objectReference: {fileID: 6868891886332664550, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+    - target: {fileID: 825508030968235699, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
+      propertyPath: 'attackingSprites.Array.data[7]'
+      value: 
+      objectReference: {fileID: -8238694808984575434, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+    - target: {fileID: 825508030968235699, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
+      propertyPath: 'attackingSprites.Array.data[8]'
+      value: 
+      objectReference: {fileID: -749034433948679102, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
     - target: {fileID: 1517473338632819490, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
       propertyPath: m_Name
       value: Player
