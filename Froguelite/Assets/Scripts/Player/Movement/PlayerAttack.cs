@@ -15,12 +15,18 @@ public class PlayerAttack : MonoBehaviour
 
     [Header("Tongue Settings")]
     [SerializeField] Transform tongue;
+    [SerializeField] private PlayerAnimationController animationController;
     [SerializeField] private bool stopMovementOnAttack = true;
     [SerializeField] float tongueDistance = 3f;
     [SerializeField] float tongueExtendSpeed = 10f;
     [SerializeField] float tongueRetractSpeed = 25f;
     [SerializeField] float tongueCooldown = 0.5f;
     private Vector3 tongueStartOffset;
+
+    [Header("Tongue Visual Settings")]
+    [SerializeField] private SpriteRenderer tongueVisual;
+    [SerializeField] private Transform playerMouth;
+    [SerializeField] private float tongueWidth = 0.2f;
 
     private Vector3 targetLocalPosition;
     private bool isExtending = false;
@@ -46,6 +52,14 @@ public class PlayerAttack : MonoBehaviour
 
         Instance = this;
         tongueStartOffset = tongue.localPosition;
+
+        // Initialize tongue visual as hidden
+        if (tongueVisual != null)
+        {
+            tongueVisual.enabled = false;
+            // Also enable the GameObject if it was disabled in editor
+            tongueVisual.gameObject.SetActive(true);
+        }
     }
 
 
@@ -88,6 +102,12 @@ public class PlayerAttack : MonoBehaviour
         Vector3 direction = (mousePosition - tongue.position).normalized;
         targetLocalPosition = direction * GetStatModifiedRange() + tongueStartOffset;
 
+        // Play attack animation
+        if (animationController != null)
+        {
+            animationController.PlayAttackAnimation(direction);
+        }
+
         isExtending = true;
     }
 
@@ -112,6 +132,9 @@ public class PlayerAttack : MonoBehaviour
                 StopTongueRetraction();
             }
         }
+
+        // Update the tongue visual to stretch/retract
+        UpdateTongueVisual();
     }
 
     // Stops the tongue extension and starts retraction
@@ -162,6 +185,51 @@ public class PlayerAttack : MonoBehaviour
     public bool IsAttacking()
     {
         return isExtending || isRetracting;
+    }
+
+
+    #endregion
+
+
+    #region TONGUE VISUAL
+
+
+    // Updates the tongue visual to stretch between the player's mouth and tongue tip
+    private void UpdateTongueVisual()
+    {
+        // Skip if visual is not assigned
+        if (tongueVisual == null) return;
+
+        // Show visual only when extending or retracting
+        bool shouldShow = isExtending || isRetracting;
+        tongueVisual.enabled = shouldShow;
+
+        if (!shouldShow) return;
+
+        // Use player mouth position as start, or tongue's parent position if mouth not assigned
+        Vector3 mouthPos = playerMouth != null ? playerMouth.position : tongue.parent.position;
+        Vector3 tipPos = tongue.position;
+
+        // Calculate distance and direction
+        float distance = Vector3.Distance(mouthPos, tipPos);
+        Vector3 direction = tipPos - mouthPos;
+
+        // Position visual at midpoint between mouth and tip
+        tongueVisual.transform.position = (mouthPos + tipPos) / 2f;
+        tongueVisual.transform.position = new Vector3(
+            tongueVisual.transform.position.x,
+            tongueVisual.transform.position.y,
+            0f  // Ensure Z position is 0 for 2D
+        );
+
+        // Scale the visual to match the distance
+        // Y-axis is the length, X-axis is the width
+        tongueVisual.transform.localScale = new Vector3(tongueWidth, distance, 1f);
+
+        // Rotate to point in the correct direction
+        // Subtract 90 degrees because sprites typically face "up" by default
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+        tongueVisual.transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
 
