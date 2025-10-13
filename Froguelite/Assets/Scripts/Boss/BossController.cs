@@ -43,7 +43,7 @@ public class BossController : MonoBehaviour
     [SerializeField] private float landingRecovery = 0.25f;
     [SerializeField] private float reenableDelay = 0f;      // optional delay after landing before re-enabling
     [SerializeField] private int maxAttackPhase1Repeats = 5;
-    [SerializeField] private int jumpDamage = 10;
+    [SerializeField] private int jumpDamage = 1;
     [SerializeField] private float jumpElevation = 0.5f;      // local visual elevation during "in-air"
 
     [Header("Phase 2 (Tongue) ATTACK")]
@@ -66,7 +66,7 @@ public class BossController : MonoBehaviour
     [SerializeField] private float stompTelegraphTime = 1f;   // Wind-up before stomp
     [SerializeField] private float stompRadius = 3f;          // damage radius
     [SerializeField] private float stompRecoveryTime = 2f;
-    [SerializeField] private int stompDamage = 10;            // Damage dealt on stomp
+    [SerializeField] private int stompDamage = 1;            // Damage dealt on stomp
     [SerializeField] private float aoeFadeTime = 0.3f;
     [SerializeField] private float aoeHoldTime = 0.2f;
 
@@ -74,7 +74,7 @@ public class BossController : MonoBehaviour
     private Coroutine stateLoopCoroutine;
     private int attackPhaseCount = 0;
     #endregion
-
+    
     #region Initialization
     private void Reset()
     {
@@ -401,6 +401,7 @@ public class BossController : MonoBehaviour
             if (hit.CompareTag("Player"))
             {
                 Debug.Log($"Player hit by stomp, took {damage} damage.");
+                StatsManager.Instance.playerHealth.DamagePlayer(stompDamage);
             }
         }
     }
@@ -416,6 +417,7 @@ public class BossController : MonoBehaviour
             if (hit.CompareTag("Player"))
             {
                 Debug.Log($"Player hit by jump at {center}, took {damage} damage.");
+                StatsManager.Instance.playerHealth.DamagePlayer(jumpDamage);
             }
         }
     }

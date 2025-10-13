@@ -37,6 +37,21 @@ public class AttackOverlapHandler : MonoBehaviour
                 PlayerAttack.Instance.StopTongueExtension(false);
             }
         }
+
+        // Check if the collider belongs to a boss
+        if (collision.CompareTag("Boss"))
+        {
+            BossController boss = collision.GetComponent<BossController>();
+            if (boss == null)
+                boss = collision.GetComponentInParent<BossController>();
+
+            if (boss != null)
+            {
+                //boss.DamageEnemy(StatsManager.Instance.playerDamage.GetValue(), StatsManager.Instance.playerKnockback.GetValue());
+                PlayerAttack.Instance.StopTongueExtension(false);
+            }
+        }
+
         // Doors
         else if (collision.CompareTag("Door"))
         {
