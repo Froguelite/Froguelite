@@ -11,6 +11,7 @@ public class RoomFactory : MonoBehaviour
 
 
     [SerializeField] private ShopAlternate shopAlternatePrefab;
+    [SerializeField] private GameObject bossTempPrefab;
 
 
     #endregion
@@ -110,6 +111,14 @@ public class RoomFactory : MonoBehaviour
         if (roomData.roomType == Room.RoomType.Shop)
         {
             roomComponent.GenerateShop(shopAlternatePrefab);
+        }
+
+        // If this is a boss room, spawn the boss
+        if (roomData.roomType == Room.RoomType.Boss)
+        {
+            Vector2 bossSpawnPosition = roomData.GetRoomCenterWorldPosition();
+            GameObject bossObject = Instantiate(bossTempPrefab, bossSpawnPosition, Quaternion.identity);
+            bossObject.transform.SetParent(roomObject.transform);
         }
 
         return roomComponent;

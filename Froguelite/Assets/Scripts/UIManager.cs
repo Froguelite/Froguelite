@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private UIPanelObject[] uiPanels; //Array to hold references to different UI panels
     [SerializeField] private CanvasGroup deathScreenMainCanvasGroup, deathScreenTextCanvasGroup;
+    [SerializeField] private CanvasGroup winScreenMainCanvasGroup, winScreenTextCanvasGroup;
 
     private UIPanels currentPanel;
 
@@ -122,11 +123,16 @@ public class UIManager : MonoBehaviour
 
     #endregion
 
-    #region DEATH SCREEN
+    #region DEATH SCREEN AND WIN SCREEN
 
     public void ShowDeathScreen()
     {
         StartCoroutine(DeathScreenCo());
+    }
+
+    public void ShowWinScreen()
+    {
+        StartCoroutine(WinScreenCo());
     }
 
     private IEnumerator DeathScreenCo()
@@ -151,6 +157,34 @@ public class UIManager : MonoBehaviour
 
         deathScreenTextCanvasGroup.LeanAlpha(0f, 0.5f);
         deathScreenTextCanvasGroup.transform.LeanScale(Vector3.one * deathTextBigScale, 0.5f).setEaseOutCubic();
+
+        yield return new WaitForSeconds(1.5f);
+
+        ResetGame();
+    }
+
+    private IEnumerator WinScreenCo()
+    {
+        float winTextBigScale = 1.3f;
+
+        LeanTween.cancel(winScreenMainCanvasGroup.gameObject);
+        LeanTween.cancel(winScreenTextCanvasGroup.gameObject);
+        winScreenMainCanvasGroup.alpha = 0f;
+        winScreenTextCanvasGroup.alpha = 0f;
+        winScreenTextCanvasGroup.transform.localScale = Vector3.one * winTextBigScale;
+
+        PanelSwitch(UIPanels.WinScreen);
+
+        winScreenMainCanvasGroup.LeanAlpha(1f, 0.5f);
+        yield return new WaitForSeconds(0.5f);
+
+        winScreenTextCanvasGroup.transform.LeanScale(Vector3.one, 0.5f).setEaseInCubic();
+        winScreenTextCanvasGroup.LeanAlpha(1f, 0.5f);
+
+        yield return new WaitForSeconds(4f);
+
+        winScreenTextCanvasGroup.LeanAlpha(0f, 0.5f);
+        winScreenTextCanvasGroup.transform.LeanScale(Vector3.one * winTextBigScale, 0.5f).setEaseOutCubic();
 
         yield return new WaitForSeconds(1.5f);
 
@@ -193,6 +227,7 @@ public enum UIPanels
     ProfileMenu,
     LoadingScreen,
     DeathScreen,
+    WinScreen,
     //InGameHUD,
     //PauseMenu
 }

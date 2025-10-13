@@ -61,6 +61,11 @@ public class GameManager : MonoBehaviour
         SetPlayerState(PlayerState.Dead);
         UIManager.Instance.ShowDeathScreen();
     }
+    
+    public void OnWin()
+    {
+        UIManager.Instance.ShowWinScreen();
+    }
 
 
     #endregion
