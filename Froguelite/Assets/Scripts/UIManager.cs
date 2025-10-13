@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
@@ -7,6 +8,7 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
 
     [SerializeField] private UIPanelObject[] uiPanels; //Array to hold references to different UI panels
+    [SerializeField] private CanvasGroup deathScreenMainCanvasGroup, deathScreenTextCanvasGroup;
 
     private UIPanels currentPanel;
 
@@ -30,7 +32,7 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         // Initialize to the starting panel, e.g., GameStart
-        int gameStartIndex = (int) UIPanels.GameStart;
+        int gameStartIndex = (int)UIPanels.GameStart;
         uiPanels[gameStartIndex].panelObject.SetActive(true);
         currentPanel = UIPanels.GameStart;
         previousPanel = UIPanels.None;
@@ -45,7 +47,7 @@ public class UIManager : MonoBehaviour
 
         for (int i = 0; i < uiPanels.Length; i++)
         {
-            if(i != ( (int) uiPanels[i].panel))
+            if (i != ((int)uiPanels[i].panel))
             {
                 Debug.LogError("UIManager: UIPanels array is not in the correct order. Please ensure the order matches the UIPanels enum.");
             }
@@ -55,11 +57,18 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
     #endregion
 
     #region PANEL CONTROL METHODS
+
+    // Resets the game, returning to the menu
+    public void ResetGame()
+    {
+        PanelSwitch(UIPanels.LoadingScreen);
+        LevelManager.Instance.LoadScene("MenuScene");
+    }
 
     public void OnStartGameClick()
     {
@@ -76,13 +85,13 @@ public class UIManager : MonoBehaviour
     public void OnBackClick()
     {
         //Switch to previous panel
-        PanelSwitch(currentPanel, previousPanel);
+        PanelSwitch(previousPanel);
     }
 
     public void OnProfilesClick()
     {
         //Switch to Profile Menu panel
-        PanelSwitch(currentPanel, UIPanels.ProfileMenu);
+        PanelSwitch(UIPanels.ProfileMenu);
 
         ////Create profile cards for existing profiles
         //ProfileUIManager.Instance.CreateExistingProfiles();
@@ -91,44 +100,83 @@ public class UIManager : MonoBehaviour
     public void OnProfileStartClick(string sceneToLoad)
     {
         //Switch to Loading Screen and call LevelManager to load scene
-        PanelSwitch(currentPanel, UIPanels.LoadingScreen);
+        PanelSwitch(UIPanels.LoadingScreen);
         LevelManager.Instance.LoadScene(sceneToLoad);
     }
 
-    public void OnSceneLoadReturn()
+    public void OnSceneLoadReturn(UIPanels panelToReturnTo)
     {
-        //Scene loaded, switch to corresponding panel, currently set to Main Menu
-        PanelSwitch(currentPanel, UIPanels.MainMenu);
+        //Scene loaded, switch to corresponding panel
+        PanelSwitch(panelToReturnTo);
     }
 
     public void OnExitClick()
     {
-        #if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-        #else
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
             Application.Quit();
-        #endif
-                Debug.Log("Application Quit");
+#endif
+        Debug.Log("Application Quit");
+    }
+
+    #endregion
+
+    #region DEATH SCREEN
+
+    public void ShowDeathScreen()
+    {
+        StartCoroutine(DeathScreenCo());
+    }
+
+    private IEnumerator DeathScreenCo()
+    {
+        float deathTextBigScale = 1.3f;
+
+        LeanTween.cancel(deathScreenMainCanvasGroup.gameObject);
+        LeanTween.cancel(deathScreenTextCanvasGroup.gameObject);
+        deathScreenMainCanvasGroup.alpha = 0f;
+        deathScreenTextCanvasGroup.alpha = 0f;
+        deathScreenTextCanvasGroup.transform.localScale = Vector3.one * deathTextBigScale;
+
+        PanelSwitch(UIPanels.DeathScreen);
+
+        deathScreenMainCanvasGroup.LeanAlpha(1f, 0.5f);
+        yield return new WaitForSeconds(0.5f);
+
+        deathScreenTextCanvasGroup.transform.LeanScale(Vector3.one, 0.5f).setEaseInCubic();
+        deathScreenTextCanvasGroup.LeanAlpha(1f, 0.5f);
+
+        yield return new WaitForSeconds(4f);
+
+        deathScreenTextCanvasGroup.LeanAlpha(0f, 0.5f);
+        deathScreenTextCanvasGroup.transform.LeanScale(Vector3.one * deathTextBigScale, 0.5f).setEaseOutCubic();
+
+        yield return new WaitForSeconds(1.5f);
+
+        ResetGame();
     }
 
     #endregion
 
     #region HELPER METHODS
-    private void PanelSwitch(UIPanels current, UIPanels next)
+    private void PanelSwitch(UIPanels next)
     {
         //Set current panel to inactive
-        int currentIndex = (int)current;
-        uiPanels[currentIndex].panelObject?.SetActive(false);
+        int currentIndex = (int)currentPanel;
+        if (uiPanels[currentIndex].panelObject != null)
+            uiPanels[currentIndex].panelObject.SetActive(false);
 
         //Set next panel to active
         int nextIndex = (int)next;
-        uiPanels[nextIndex].panelObject?.SetActive(true);
+        if (uiPanels[nextIndex].panelObject != null)
+            uiPanels[nextIndex].panelObject.SetActive(true);
 
         //Update previous and current panel reference
-        if(current != UIPanels.LoadingScreen)
+        if (currentPanel != UIPanels.LoadingScreen)
         {
             //Only update previous panel if current panel is not Loading Screen
-            previousPanel = current;
+            previousPanel = currentPanel;
         }
         currentPanel = next;
     }
@@ -144,6 +192,7 @@ public enum UIPanels
     //OptionsMenu,
     ProfileMenu,
     LoadingScreen,
+    DeathScreen,
     //InGameHUD,
     //PauseMenu
 }

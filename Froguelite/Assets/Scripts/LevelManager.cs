@@ -57,7 +57,35 @@ public class LevelManager : MonoBehaviour
         await Task.Delay(500); //For demo purposes
 
         scene.allowSceneActivation = true;
-        //loadingPanel.SetActive(false);
-        UIManager.Instance.OnSceneLoadReturn();
+
+        // Temporary, might need adjustment to be cleaner -
+        // If we are loading the main scene, wait for ZoneGenerator to be ready then generate zone
+        if (sceneName == "MainScene")
+        {
+            await GenerateZoneAndSetup();
+            UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
+        }
+        else
+        {
+            UIManager.Instance.OnSceneLoadReturn(UIPanels.GameStart);
+        }
+    }
+
+    private async Task GenerateZoneAndSetup()
+    {
+        // Wait for ZoneGenerator to be ready
+        while (ZoneGenerator.Instance == null)
+        {
+            await Task.Delay(100);
+        }
+
+        // Generate the zone
+        ZoneGenerator.Instance.GenerateZone();
+
+        // Wait for the zone to be generated
+        while (!ZoneGenerator.Instance.zoneGenerated)
+        {
+            await Task.Delay(100);
+        }
     }
 }
