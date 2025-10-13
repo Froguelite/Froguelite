@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f63ee0f7713f8c34bba32b8bbee26cfb, type: 3}
+  m_Name: PF_BoozeFly
+  m_EditorClassIdentifier: Assembly-CSharp::PowerFlyData
+  displayImg: {fileID: 6822559612097784117, guid: 9b54eddff2f344c4a9bb8fc46fd7170e, type: 3}
+  powerFlyName: Booze Fly
+  description: This one is drunk...
+  flyRarity: 1
+  effects:
+  - {fileID: 11400000, guid: 2c5d6e0592168bc46a8ea97707d3f341, type: 2}
+  - {fileID: 11400000, guid: 7be48e3d663d74740aea99e716f60153, type: 2}
+  onlyOneAllowed: 1

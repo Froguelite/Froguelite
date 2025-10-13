@@ -15,6 +15,10 @@ public abstract class GroundCollectable : MonoBehaviour, ICollectable
     [SerializeField] protected float rotationFrequency = 0.75f;
     [SerializeField] protected float bobbingAmount = 0.1f;
     [SerializeField] protected float bobbingFrequency = 1f;
+    [SerializeField] protected bool doHeartbeat = false;
+    protected Vector3 baseScale;
+
+    protected bool hasBeenCollected = false;
 
 
     #endregion
@@ -40,8 +44,11 @@ public abstract class GroundCollectable : MonoBehaviour, ICollectable
             spriteRenderer.sprite = displayImg;
         }
 
+        baseScale = spriteRenderer.transform.localScale;
+
         // Start floating animation
         StartFloatingAnimation();
+        ResetBeatAnim();
     }
 
     // Create floating and rotating animation using LeanTween
@@ -67,6 +74,42 @@ public abstract class GroundCollectable : MonoBehaviour, ICollectable
                 .setDelay(randomRotationDelay);
         }
     }
+
+
+    #endregion
+
+
+    #region BEATING ANIMATION
+
+
+    // Resets the beating animation by subscribing to health change events
+    public void ResetBeatAnim()
+    {
+        if (!doHeartbeat) return;
+        HealthBeatEventHandler.Instance?.smallBeatEvent1.RemoveListener(PulseSmallBeat);
+
+        // Subscribe to health change event to trigger beating animation
+        if (HealthBeatEventHandler.Instance != null)
+        {
+            HealthBeatEventHandler.Instance.smallBeatEvent1.AddListener(PulseSmallBeat);
+        }
+    }
+
+
+    // Pulses a single small beat
+    // Should be called automatically via event callbacks
+    //-------------------------------------//
+    public void PulseSmallBeat()
+    //-------------------------------------//
+    {
+        LeanTween.value(spriteRenderer.gameObject, baseScale * HealthBeatEventHandler.smallBeatScale, baseScale, HealthBeatEventHandler.smallBeatDuration)
+        .setEaseInQuad()
+        .setOnUpdate((Vector3 val) =>
+        {
+            spriteRenderer.transform.localScale = val;
+        });
+
+    } // END PulseSmallBeat
 
 
     #endregion

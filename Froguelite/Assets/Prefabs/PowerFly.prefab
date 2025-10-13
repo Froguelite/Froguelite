@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 8927312566676857175}
   m_Layer: 0
   m_Name: PowerFly
-  m_TagString: Untagged
+  m_TagString: Collectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -140,8 +140,8 @@ MonoBehaviour:
   onPlayerOverlap:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Collectable_Woodpecker, Assembly-CSharp
+      - m_Target: {fileID: 8927312566676857175}
+        m_TargetAssemblyTypeName: PowerFly, Assembly-CSharp
         m_MethodName: OnCollect
         m_Mode: 1
         m_Arguments:
@@ -204,13 +204,14 @@ MonoBehaviour:
   powerFlyData: {fileID: 0}
   spriteRenderer: {fileID: 6513072093862656709}
   buzzOffset: {fileID: 4961350283629907946}
+  setupOnStart: 0
   buzzRadius: 0.5
-  buzzSpeed: 2
   directionChangeInterval: 0.3
   bobHeight: 0.2
   bobDuration: 0.3
   rotationAmount: 10
   rotationDuration: 0.2
+  itemDef: {fileID: 0}
 --- !u!1 &5534749219680855998
 GameObject:
   m_ObjectHideFlags: 0

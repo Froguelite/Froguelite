@@ -17,6 +17,7 @@ public class InputManager : MonoBehaviour
 
     private InputAction moveAction;
     private InputAction attackAction;
+    private InputAction mapAction;
 
     private bool pendingAttack = false;
     private Vector2 pendingMoveInput = Vector2.zero;
@@ -66,6 +67,7 @@ public class InputManager : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         moveAction = playerInput.actions["Move"];
         attackAction = playerInput.actions["Attack"];
+        mapAction = playerInput.actions["Map"];
     }
 
 
@@ -76,6 +78,9 @@ public class InputManager : MonoBehaviour
         moveAction.canceled += OnMoveCanceled;
         attackAction.started += OnAttackStart;
         attackAction.canceled += OnAttackEnd;
+
+        mapAction.started += OnOpenMap;
+        mapAction.canceled += OnCloseMap;
     }
 
 
@@ -86,6 +91,9 @@ public class InputManager : MonoBehaviour
         moveAction.canceled -= OnMoveCanceled;
         attackAction.started -= OnAttackStart;
         attackAction.canceled -= OnAttackEnd;
+
+        mapAction.started -= OnOpenMap;
+        mapAction.canceled -= OnCloseMap;
     }
 
 
@@ -110,7 +118,7 @@ public class InputManager : MonoBehaviour
         PlayerMovement.Instance.SetMoveInputAxes(pendingMoveInput);
     }
 
-    
+
     // Pushes any pending movement inputs again to the movement script
     public void PushAnyPendingMovement()
     {
@@ -143,6 +151,26 @@ public class InputManager : MonoBehaviour
     public bool IsPendingAttack()
     {
         return pendingAttack;
+    }
+
+
+    #endregion
+
+
+    #region MAP
+
+
+    // Called when the map action is started
+    public void OnOpenMap(InputAction.CallbackContext context)
+    {
+        MinimapManager.Instance.ToggleFullMap(true);
+    }
+
+
+    // Called when the map action is stopped
+    public void OnCloseMap(InputAction.CallbackContext context)
+    {
+        MinimapManager.Instance.ToggleFullMap(false);
     }
 
 

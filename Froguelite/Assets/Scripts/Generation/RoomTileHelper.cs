@@ -1,5 +1,19 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+
+[System.Serializable]
+public class PerlinNoiseSettings
+{
+    public int octaves = 3;
+    public float persistence = 0.5f;
+    public float lacunarity = 2f;
+    public float noiseScale = 0.1f;
+    public float threshold = 0.4f; // Threshold to determine land vs water
+    public float landScale = 1f; // Scale for land area (higher = larger land area)
+    public float[] octaveOffsetsX; // Random offsets for each octave in X
+    public float[] octaveOffsetsY; // Random offsets for each octave in Y
+}
 
 public static class RoomTileHelper
 {
@@ -16,68 +30,75 @@ public static class RoomTileHelper
         int height,
         int offsetX,
         int offsetY,
-        int octaves = 3,
-        float persistence = 0.5f,
-        float lacunarity = 2f,
-        float noiseScale = 0.1f,
-        float threshold = 0.4f,
-        float landScale = 1f)
+        PerlinNoiseSettings noiseSettings)
     {
-        // Generate random offsets for each octave
-        float[] octaveOffsetsX = new float[octaves];
-        float[] octaveOffsetsY = new float[octaves];
-
-        for (int i = 0; i < octaves; i++)
-        {
-            octaveOffsetsX[i] = Random.Range(-1000f, 1000f);
-            octaveOffsetsY[i] = Random.Range(-1000f, 1000f);
-        }
-
         bool[,] roomLayout = new bool[width, height];
 
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                float noiseValue = 0f;
-                float amplitude = 1f;
-                float frequency = noiseScale;
-
-                // Combine multiple octaves of noise
-                for (int i = 0; i < octaves; i++)
-                {
-                    float sampleX = (x + octaveOffsetsX[i] + offsetX) * frequency;
-                    float sampleY = (y + octaveOffsetsY[i] + offsetY) * frequency;
-
-                    float octaveValue = Mathf.PerlinNoise(sampleX, sampleY);
-                    noiseValue += octaveValue * amplitude;
-
-                    amplitude *= persistence;
-                    frequency *= lacunarity;
-                }
-
-                // Normalize the noise value
-                noiseValue = Mathf.Clamp01(noiseValue);
-
-                // Apply radial falloff for island shape
-                float centerX = width * 0.5f;
-                float centerY = height * 0.5f;
-                float distanceFromCenter = Vector2.Distance(new Vector2(x, y), new Vector2(centerX, centerY));
-                float maxDistance = Mathf.Min(width, height) * 0.5f;
-
-                // Apply land scaling - smaller landScale makes land area smaller
-                float scaledDistance = distanceFromCenter / landScale;
-                float falloff = 1f - Mathf.Clamp01(scaledDistance / maxDistance);
-
-                // Apply a smooth falloff curve
-                falloff = Mathf.SmoothStep(0f, 1f, falloff);
-
-                float finalValue = noiseValue * falloff;
-                roomLayout[x, y] = finalValue > threshold;
+                roomLayout[x, y] = CoordinateMeetsTileGenThreshold(new Vector2(x + offsetX, y + offsetY), noiseSettings, width, height, offsetX, offsetY);
             }
         }
 
         return roomLayout;
+    }
+
+
+    // Helper function to get whether the given coordinate meets the tile generation threshold
+    public static bool CoordinateMeetsTileGenThreshold(Vector2 coord, PerlinNoiseSettings noiseSettings, int roomWidth, int roomHeight, int tileOffsetX, int tileOffsetY)
+    {
+        // Sample Perlin noise at this position
+        float finalValue = GetFullIslandGenValue(coord, noiseSettings, roomWidth, roomHeight, tileOffsetX, tileOffsetY);
+        return finalValue > noiseSettings.threshold;
+    }
+
+
+    // Helper function to get the full island generation noise value at a coordinate
+    private static float GetFullIslandGenValue(Vector2 coord, PerlinNoiseSettings noiseSettings, int roomWidth, int roomHeight, int tileOffsetX, float tileOffsetY)
+    {
+        float noiseValue = SamplePerlinNoise(coord.x, coord.y, noiseSettings);
+
+        // Apply radial falloff for island shape
+        float centerX = tileOffsetX + (roomWidth * 0.5f);
+        float centerY = tileOffsetY + (roomHeight * 0.5f);
+        float distanceFromCenter = Vector2.Distance(coord, new Vector2(centerX, centerY));
+        float maxDistance = Mathf.Min(roomWidth, roomHeight) * 0.5f;
+
+        // Apply land scaling - smaller landScale makes land area smaller
+        float scaledDistance = distanceFromCenter / noiseSettings.landScale;
+        float falloff = 1f - Mathf.Clamp01(scaledDistance / maxDistance);
+
+        // Apply a smooth falloff curve
+        falloff = Mathf.SmoothStep(0f, 1f, falloff);
+
+        return noiseValue * falloff;
+    }
+
+
+    // Helper function to sample Perlin noise at a given coordinate using the provided settings
+    public static float SamplePerlinNoise(float x, float y, PerlinNoiseSettings settings)
+    {
+        float noiseValue = 0f;
+        float amplitude = 1f;
+        float frequency = settings.noiseScale;
+
+        // Combine multiple octaves of noise
+        for (int i = 0; i < settings.octaves; i++)
+        {
+            float sampleX = (x + settings.octaveOffsetsX[i]) * frequency;
+            float sampleY = (y + settings.octaveOffsetsY[i]) * frequency;
+
+            float octaveValue = Mathf.PerlinNoise(sampleX, sampleY);
+            noiseValue += octaveValue * amplitude;
+
+            amplitude *= settings.persistence;
+            frequency *= settings.lacunarity;
+        }
+
+        // Normalize the noise value
+        return Mathf.Clamp01(noiseValue);
     }
 
 
@@ -325,6 +346,13 @@ public static class RoomTileHelper
 
         if (center)
         {
+            // Special case: If only one cardinal direction has land, treat as water
+            int cardinalLandCount = (top ? 1 : 0) + (right ? 1 : 0) + (bottom ? 1 : 0) + (left ? 1 : 0);
+            if (cardinalLandCount == 1)
+            {
+                return AutoTileSet.AutoTileType.FullWater;
+            }
+
             // Check if all four direct adjacencies are filled
             // This means we are either full land or need to check for 3/4 land tiles
             if (top && right && bottom && left)
@@ -339,30 +367,118 @@ public static class RoomTileHelper
                     return AutoTileSet.AutoTileType.ThreeQuarterLandTopRight;
                 if (!topLeft && topRight && bottomLeft && bottomRight)
                     return AutoTileSet.AutoTileType.ThreeQuarterLandTopLeft;
+
+                // Special case: If all cardinals are filled but exactly two corners are water
+                // and those corners are on the same side, treat as half-water on that side
+                int waterCornerCount = (!topLeft ? 1 : 0) + (!topRight ? 1 : 0) + (!bottomLeft ? 1 : 0) + (!bottomRight ? 1 : 0);
+                if (waterCornerCount == 2)
+                {
+                    // Check if both water corners are on the left side
+                    if (!topLeft && !bottomLeft)
+                        return AutoTileSet.AutoTileType.HalfWaterLeft;
+                    // Check if both water corners are on the right side
+                    if (!topRight && !bottomRight)
+                        return AutoTileSet.AutoTileType.HalfWaterRight;
+                    // Check if both water corners are on the top
+                    if (!topLeft && !topRight)
+                        return AutoTileSet.AutoTileType.HalfWaterTop;
+                    // Check if both water corners are on the bottom
+                    if (!bottomLeft && !bottomRight)
+                        return AutoTileSet.AutoTileType.HalfWaterBottom;
+                }
+
+                // Special case: If all cardinals are filled but only one corner is land, treat as 1/4 land on that corner
+                if (waterCornerCount == 3)
+                {
+                    if (topLeft && !topRight && !bottomLeft && !bottomRight)
+                        return AutoTileSet.AutoTileType.ThreeQuarterWaterBottomRight;
+                    if (!topLeft && topRight && !bottomLeft && !bottomRight)
+                        return AutoTileSet.AutoTileType.ThreeQuarterWaterBottomLeft;
+                    if (!topLeft && !topRight && bottomLeft && !bottomRight)
+                        return AutoTileSet.AutoTileType.ThreeQuarterWaterTopRight;
+                    if (!topLeft && !topRight && !bottomLeft && bottomRight)
+                        return AutoTileSet.AutoTileType.ThreeQuarterWaterTopLeft;
+                }
             }
 
             // If we made it this far, at least one of the four direct adjacencies are empty
             // This means we have to be either flat 1/2 land tiles or 1/4 land tiles
 
             // Check flat for 1/2 land tiles
+            // But if there's water in an enclosed corner, downgrade to 1/4 tile instead
             if (top && right && bottom && !left)
+            {
+                // Check enclosed corners (top-right and bottom-right)
+                if (!topRight)
+                    return AutoTileSet.AutoTileType.ThreeQuarterWaterBottomRight; // Ignore top cardinal, use bottom-left quarter
+                if (!bottomRight)
+                    return AutoTileSet.AutoTileType.ThreeQuarterWaterTopRight; // Ignore bottom cardinal, use top-left quarter
                 return AutoTileSet.AutoTileType.HalfWaterLeft;
+            }
             if (top && right && !bottom && left)
+            {
+                // Check enclosed corners (top-left and top-right)
+                if (!topLeft)
+                    return AutoTileSet.AutoTileType.ThreeQuarterWaterTopRight; // Ignore left cardinal, use bottom-right quarter
+                if (!topRight)
+                    return AutoTileSet.AutoTileType.ThreeQuarterWaterTopLeft; // Ignore right cardinal, use bottom-left quarter
                 return AutoTileSet.AutoTileType.HalfWaterBottom;
+            }
             if (top && !right && bottom && left)
+            {
+                // Check enclosed corners (top-left and bottom-left)
+                if (!topLeft)
+                    return AutoTileSet.AutoTileType.ThreeQuarterWaterBottomLeft; // Ignore top cardinal, use bottom-right quarter
+                if (!bottomLeft)
+                    return AutoTileSet.AutoTileType.ThreeQuarterWaterTopLeft; // Ignore bottom cardinal, use top-right quarter
                 return AutoTileSet.AutoTileType.HalfWaterRight;
+            }
             if (!top && right && bottom && left)
+            {
+                // Check enclosed corners (bottom-left and bottom-right)
+                if (!bottomLeft)
+                    return AutoTileSet.AutoTileType.ThreeQuarterWaterBottomRight; // Ignore left cardinal, use top-right quarter
+                if (!bottomRight)
+                    return AutoTileSet.AutoTileType.ThreeQuarterWaterBottomLeft; // Ignore right cardinal, use top-left quarter
                 return AutoTileSet.AutoTileType.HalfWaterTop;
+            }
 
-            // Check corners for 1/4 land tiles
+            // Check corners for 1/4 land tiles (2 adjacent cardinals filled)
+            // But if the enclosed corner is water, default to water instead
             if (top && right && !bottom && !left)
+            {
+                // Check if the enclosed corner (top-right) is water
+                if (!topRight)
+                    return AutoTileSet.AutoTileType.FullWater;
                 return AutoTileSet.AutoTileType.ThreeQuarterWaterTopRight;
+            }
             if (top && !right && !bottom && left)
+            {
+                // Check if the enclosed corner (top-left) is water
+                if (!topLeft)
+                    return AutoTileSet.AutoTileType.FullWater;
                 return AutoTileSet.AutoTileType.ThreeQuarterWaterTopLeft;
+            }
             if (!top && right && bottom && !left)
+            {
+                // Check if the enclosed corner (bottom-right) is water
+                if (!bottomRight)
+                    return AutoTileSet.AutoTileType.FullWater;
                 return AutoTileSet.AutoTileType.ThreeQuarterWaterBottomRight;
+            }
             if (!top && !right && bottom && left)
+            {
+                // Check if the enclosed corner (bottom-left) is water
+                if (!bottomLeft)
+                    return AutoTileSet.AutoTileType.FullWater;
                 return AutoTileSet.AutoTileType.ThreeQuarterWaterBottomLeft;
+            }
+
+            // Check diagonal pairs (opposite cardinals filled)
+            if (top && !right && bottom && !left)
+                return AutoTileSet.AutoTileType.HalfWaterRight; // Vertical water strip on sides
+            if (!top && right && !bottom && left)
+                return AutoTileSet.AutoTileType.HalfWaterTop; // Horizontal water strip on top/bottom
 
             // If we made it this far, this tile type is strange and not supported. Return a flat land tile.
             return AutoTileSet.AutoTileType.FullLand;

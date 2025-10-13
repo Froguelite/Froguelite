@@ -7,6 +7,16 @@ public class RoomFactory : MonoBehaviour
     // RoomFactory handles the creation of room instances
 
 
+    #region VARIABLES
+
+
+    [SerializeField] private ShopAlternate shopAlternatePrefab;
+    [SerializeField] private GameObject bossTempPrefab;
+
+
+    #endregion
+
+
     #region ROOM SPAWNING
 
 
@@ -32,7 +42,7 @@ public class RoomFactory : MonoBehaviour
                 landScale = 1.95f;
                 break;
             case Room.RoomType.Shop:
-                landScale = 0.5f;
+                landScale = 0.8f;
                 break;
             case Room.RoomType.Fly:
                 landScale = 0.5f;
@@ -42,13 +52,34 @@ public class RoomFactory : MonoBehaviour
                 break;
         }
 
-        // Get the room layout using Perlin with octaves (use default noise params)
+        // Set up the Perlin noise settings and make sure the room has a reference to its original used values
+        PerlinNoiseSettings noiseSettings = new PerlinNoiseSettings
+        {
+            octaves = 3,
+            persistence = 0.5f,
+            lacunarity = 2f,
+            noiseScale = 0.1f,
+            threshold = 0.4f
+        };
+        noiseSettings.landScale = landScale;
+        noiseSettings.octaveOffsetsX = new float[noiseSettings.octaves];
+        noiseSettings.octaveOffsetsY = new float[noiseSettings.octaves];
+
+        for (int i = 0; i < noiseSettings.octaves; i++)
+        {
+            noiseSettings.octaveOffsetsX[i] = Random.Range(-1000f, 1000f);
+            noiseSettings.octaveOffsetsY[i] = Random.Range(-1000f, 1000f);
+        }
+
+        roomData.originalNoiseSettings = noiseSettings;
+
+        // Generate the room layout using Perlin noise
         bool[,] newRoomLayout = RoomTileHelper.GenRoomTiles(
             width: roomLength,
             height: roomLength,
             offsetX: tileOffset.x,
             offsetY: tileOffset.y,
-            landScale: landScale
+            noiseSettings: noiseSettings
         );
 
         // Post process to smooth and ensure connectivity
@@ -72,6 +103,24 @@ public class RoomFactory : MonoBehaviour
         Room roomComponent = roomObject.AddComponent<Room>();
         roomComponent.Initialize(roomData);
         roomObject.transform.SetParent(roomParent);
+
+        // Generate enemies for the room
+        roomComponent.GenerateEnemies();
+
+        // If this is a shop, generate shop items
+        if (roomData.roomType == Room.RoomType.Shop)
+        {
+            roomComponent.GenerateShop(shopAlternatePrefab);
+        }
+
+        // If this is a boss room, spawn the boss
+        if (roomData.roomType == Room.RoomType.Boss)
+        {
+            Vector2 bossSpawnPosition = roomData.GetRoomCenterWorldPosition();
+            GameObject bossObject = Instantiate(bossTempPrefab, bossSpawnPosition, Quaternion.identity);
+            bossObject.transform.SetParent(roomObject.transform);
+        }
+
         return roomComponent;
     }
 

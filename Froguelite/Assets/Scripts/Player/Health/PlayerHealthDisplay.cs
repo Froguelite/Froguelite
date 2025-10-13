@@ -49,14 +49,19 @@ public class PlayerHealthDisplay : MonoBehaviour
         }
 
         // Set initial max and remaining health
-        SetMaxHealth(healthManager.maxHealth, false);
+        SetMaxHealth(healthManager.maxHealth);
         SetRemainingHealth(healthManager.currentHealth, false);
 
         // Subscribe to health change events
         healthManager.onHealthChanged.AddListener(() =>
         {
             SetMaxHealth(healthManager.maxHealth);
-            SetRemainingHealth(healthManager.currentHealth);
+            SetRemainingHealth(healthManager.currentHealth, !StatsManager.Instance.playerHealth.overrideHealAnims);
+            if (StatsManager.Instance.playerHealth.needsBigBeat)
+            {
+                PerformBigBeatOnTopHealth(true);
+                StatsManager.Instance.playerHealth.needsBigBeat = false;
+            }
         });
 
         // Begin beating top heart
@@ -93,7 +98,7 @@ public class PlayerHealthDisplay : MonoBehaviour
 
     // Sets the maximum health. Heals to full when increased.
     //-------------------------------------//
-    public void SetMaxHealth(int maxHealth, bool animateTransition = false)
+    public void SetMaxHealth(int maxHealth)
     //-------------------------------------//
     {
         if (this.maxHealth == maxHealth)
@@ -110,36 +115,11 @@ public class PlayerHealthDisplay : MonoBehaviour
         // Displayed < max, we need to add more health
         if (displayedMaxHealth < maxHealth)
         {
-            // Heal all existing health if necessary
-            foreach (HealthSingleDisplay healthDisplay in healthDisplays)
-            {
-                if (healthDisplay != null)
-                {
-                    if (animateTransition)
-                    {
-                        healthDisplay.SetToFull();
-                    }
-                    else
-                    {
-                        healthDisplay.SetToFullImmediate();
-                    }
-                }
-            }
-
             // Add new health displays
             while (displayedMaxHealth < maxHealth)
             {
                 HealthSingleDisplay newHealthDisplay = Instantiate(singleHealthDisplayPrefab, healthSpawnTransform);
                 newHealthDisplay.SetupHealthDisplay(this);
-
-                if (animateTransition)
-                {
-                    newHealthDisplay.SetToFull();
-                }
-                else
-                {
-                    newHealthDisplay.SetToFullImmediate();
-                }
 
                 healthDisplays.Add(newHealthDisplay);
                 displayedMaxHealth += 2;
@@ -395,6 +375,22 @@ public class PlayerHealthDisplay : MonoBehaviour
         }
 
     } // END UpdateTopHealthBeatAnimation
+
+
+    // Performs a single big beat animation on the top health display
+    //-------------------------------------//
+    public void PerformBigBeatOnTopHealth(bool includeEmptyHearts = false)
+    //-------------------------------------//
+    {
+        if (includeEmptyHearts)
+        {
+            healthDisplays[healthDisplays.Count - 1].PerformBigBeat();
+        }
+        else if (currentTopHealthDisplay != null)
+        {
+            currentTopHealthDisplay.PerformBigBeat();
+        }
+    }
 
 
     #endregion

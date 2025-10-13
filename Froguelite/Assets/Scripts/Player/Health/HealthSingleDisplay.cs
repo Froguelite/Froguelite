@@ -33,6 +33,8 @@ public class HealthSingleDisplay : MonoBehaviour
 
     private ResourceFullness currentFullness = ResourceFullness.Full;
 
+    private bool performingBigBeat = false;
+
 
     #endregion
 
@@ -119,9 +121,9 @@ public class HealthSingleDisplay : MonoBehaviour
         if (currentFullness == ResourceFullness.Full)
             return;
 
-        LeanTween.cancel(enabledImg.gameObject);
-        enabledImg.color = standardColor;
-        enabledImg.transform.localScale = Vector3.one;
+        //LeanTween.cancel(enabledImg.gameObject);
+        //enabledImg.color = standardColor;
+        //enabledImg.transform.localScale = Vector3.one;
 
         enabledImg.sprite = enabledFullSprite;
         enabledImg.enabled = true;
@@ -156,7 +158,7 @@ public class HealthSingleDisplay : MonoBehaviour
     public void SetToEmptyImmediate()
     //-------------------------------------//
     {
-        LeanTween.cancel(enabledImg.gameObject);
+        //LeanTween.cancel(enabledImg.gameObject);
         enabledImg.sprite = null;
         enabledImg.enabled = false;
 
@@ -238,9 +240,10 @@ public class HealthSingleDisplay : MonoBehaviour
 
     // Performs a single big beat
     //-------------------------------------//
-    private void PerformBigBeat()
+    public void PerformBigBeat()
     //-------------------------------------//
     {
+        performingBigBeat = true;
         LeanTween.cancel(enabledImg.gameObject);
 
         enabledImg.color = glowingColor;
@@ -252,11 +255,18 @@ public class HealthSingleDisplay : MonoBehaviour
         });
         enabledImg.transform.LeanScale(Vector3.one, HealthBeatEventHandler.bigBeatDuration).setEaseInQuad().setOnComplete(() =>
         {
+            performingBigBeat = false;
             if (shouldAnimateBeating)
             {
                 StartSmallBeatsAnim();
             }
         });
+        if (StatsManager.Instance.playerHealth.needsBigBeat)
+        {
+            LeanTween.cancel(disabledImg.gameObject);
+            disabledImg.transform.localScale = Vector3.one * HealthBeatEventHandler.bigBeatScale;
+            disabledImg.transform.LeanScale(Vector3.one, HealthBeatEventHandler.bigBeatDuration).setEaseInQuad();
+        }
 
     } // END PerformBigBeat
 
@@ -316,6 +326,9 @@ public class HealthSingleDisplay : MonoBehaviour
     public void PulseSmallBeat()
     //-------------------------------------//
     {
+        if (performingBigBeat)
+            return;
+
         // Size
         LeanTween.value(enabledImg.gameObject, Vector3.one * HealthBeatEventHandler.smallBeatScale, Vector3.one, HealthBeatEventHandler.smallBeatDuration)
         .setEaseInQuad()

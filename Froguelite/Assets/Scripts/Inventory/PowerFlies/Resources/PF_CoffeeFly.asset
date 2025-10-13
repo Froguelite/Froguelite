@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f63ee0f7713f8c34bba32b8bbee26cfb, type: 3}
+  m_Name: PF_CoffeeFly
+  m_EditorClassIdentifier: Assembly-CSharp::PowerFlyData
+  displayImg: {fileID: 4791104369061880812, guid: 415fd89fdd8f68748ad48b4628f44518, type: 3}
+  powerFlyName: Coffee Fly
+  description: This one is jittery...
+  flyRarity: 1
+  effects:
+  - {fileID: 11400000, guid: 335e9542ca32d994d959d9987568bce9, type: 2}
+  onlyOneAllowed: 1

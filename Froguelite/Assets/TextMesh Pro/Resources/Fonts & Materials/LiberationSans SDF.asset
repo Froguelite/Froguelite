@@ -15,7 +15,7 @@ Material:
   m_InvalidKeywords:
   - _ALPHATEST_ON
   - _EMISSION
-  m_LightmapFlags: 1
+  m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -151,8 +151,8 @@ Material:
     - _FaceUVSpeed: {r: 0, g: 0, b: 0, a: 0}
     - _IsoPerimeter: {r: 0, g: 0, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _OutlineColor1: {r: 0, g: 1, b: 1, a: 1}
-    - _OutlineColor2: {r: 0.009433985, g: 0.02534519, b: 1, a: 1}
+    - _OutlineColor1: {r: 0, g: 1, b: 1, a: 0}
+    - _OutlineColor2: {r: 0.009433985, g: 0.02534519, b: 1, a: 0}
     - _OutlineColor3: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineOffset1: {r: 0, g: 0, b: 0, a: 0}
     - _OutlineOffset2: {r: 0, g: 0, b: 0, a: 0}

@@ -10,7 +10,7 @@ public static class RoomGraphGenerator
     #region GENERATION
 
 
-    public static RoomData[,] GetRoomGraph(int maxDistFromStarter)
+    public static RoomData[,] GetRoomGraph(int maxDistFromStarter, int roomSizeScaler = 1)
     {
         // STEP 1: Create empty graph with starter room in center
         //-----------------------------------------//
@@ -24,7 +24,7 @@ public static class RoomGraphGenerator
 
         // STEP 2: Generate path to boss room; 4-6 rooms long, always "away" from starter room, ends with boss room.
         //-----------------------------------------//
-        int pathLength = Random.Range(4, 7);
+        int pathLength = Random.Range(1, 3) + roomSizeScaler;
         for (int i = 0; i < pathLength; i++)
         {
             // Place a normal room in a random direction away from the starter room
@@ -36,7 +36,7 @@ public static class RoomGraphGenerator
 
         // STEP 3: Randomly add new normal rooms branching off existing rooms (weighted by genWeight)
         //-----------------------------------------//
-        int numAdditionalRooms = Random.Range(5, 10);
+        int numAdditionalRooms = Random.Range(2, 5) + roomSizeScaler;
         for (int i = 0; i < numAdditionalRooms; i++)
         {
             AddNormalLeafRoom(roomGraph, out roomGraph, out Vector2Int newRoomPosOut);
@@ -449,13 +449,13 @@ public static class RoomGraphGenerator
                             if (!doorData.isImpassable && !doorData.isLocked)
                             {
                                 // Lock this door
-                                room.SetDoor(doorEntry.Key, new DoorData
+                                /* room.SetDoor(doorEntry.Key, new DoorData
                                 {
                                     isImpassable = false,
                                     isOpen = false,
                                     isLocked = true,
                                     direction = doorData.direction
-                                });
+                                }); */
 
                                 // Find and lock the corresponding door in the connected room
                                 Vector2Int adjacentPos = Vector2Int.zero;

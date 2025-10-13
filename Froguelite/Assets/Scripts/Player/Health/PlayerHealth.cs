@@ -13,25 +13,77 @@ public class PlayerHealth : MonoBehaviour
     public int currentHealth { get; private set; }
     public int maxHealth { get; private set; }
 
+    public bool overrideHealAnims = false;
+    public bool needsBigBeat = false;
+
     public UnityEvent onHealthChanged; // Event triggered when health changes (damage or heal)
     public UnityEvent onHealthDamaged; // Event triggered when the player takes damage
     public UnityEvent onHealthHealed;  // Event triggered when the player is healed
+
+    private float timeSinceLastDamage = 0f;
+    private const float damageCooldown = 0.3f; // Minimum time between damage instances
 
 
     #endregion
 
 
-    #region MONOBEHAVIOUR AND SETUP
+    #region MONOBEHAVIOUR
 
 
-    private void Start()
+    // Update
+    void Update()
     {
-        // TODO: Load player health here
+        timeSinceLastDamage += Time.deltaTime;
+    }
 
-        maxHealth = 6;
-        currentHealth = maxHealth;
 
+    #endregion
+
+
+    #region MANUAL SETTING
+
+
+    public void SetMaxHealth(int newMaxHealth, bool healDifference)
+    {
+        if (newMaxHealth > maxHealth)
+        {
+            needsBigBeat = true;
+        }
+
+        if (healDifference && newMaxHealth > maxHealth)
+        {
+            int healthDiff = newMaxHealth - maxHealth;
+            currentHealth += healthDiff;
+        }
+
+        maxHealth = newMaxHealth;
+
+        if (currentHealth > maxHealth)
+            currentHealth = maxHealth;
+
+        overrideHealAnims = true;
+        StartCoroutine(ResetOverrideHealAnims());
         onHealthChanged.Invoke();
+    }
+
+
+    public void SetCurrentHealth(int newCurrentHealth, bool animateTransition)
+    {
+        currentHealth = Mathf.Clamp(newCurrentHealth, 0, maxHealth);
+        if (!animateTransition)
+        {
+            overrideHealAnims = true;
+            StartCoroutine(ResetOverrideHealAnims());
+        }
+        onHealthChanged.Invoke();
+    }
+
+
+    private System.Collections.IEnumerator ResetOverrideHealAnims()
+    {
+        yield return new WaitForEndOfFrame();
+        overrideHealAnims = false;
+        needsBigBeat = false;
     }
 
 
@@ -44,8 +96,12 @@ public class PlayerHealth : MonoBehaviour
     // Damages player by given amount; if health drops to 0 or below, player dies
     public void DamagePlayer(int dmgAmount)
     {
+        if (timeSinceLastDamage < damageCooldown)
+            return;
+
         if (currentHealth > 0)
         {
+            timeSinceLastDamage = 0f;
             currentHealth -= dmgAmount;
             if (currentHealth < 0)
             {
@@ -87,10 +143,16 @@ public class PlayerHealth : MonoBehaviour
     // Kills the player and initializes death sequence
     public void KillPlayer()
     {
+        if (GameManager.Instance.currentPlayerState == GameManager.PlayerState.Dead)
+            return;
+            
         currentHealth = 0;
         Debug.Log("Player Died :(");
+        GameManager.Instance.OnDeath();
     }
 
 
     #endregion
+
+
 }

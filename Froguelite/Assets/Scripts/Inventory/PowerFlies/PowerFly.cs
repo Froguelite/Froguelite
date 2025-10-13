@@ -13,6 +13,7 @@ public class PowerFly : MonoBehaviour, ICollectable
     public PowerFlyData powerFlyData;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Transform buzzOffset;
+    [SerializeField] private bool setupOnStart = false;
     
     [Header("Buzzing Behavior")]
     [SerializeField] private float buzzRadius = 0.5f;
@@ -23,7 +24,7 @@ public class PowerFly : MonoBehaviour, ICollectable
     [SerializeField] private float bobDuration = 1.5f;
     [SerializeField] private float rotationAmount = 15f;
     [SerializeField] private float rotationDuration = 2f;
-    [SerializeField] private ItemDefinition itemDef; 
+    [SerializeField] private ItemDefinition itemDef;
     
     private Vector3 originalPosition;
     private Vector3 targetPosition;
@@ -31,6 +32,8 @@ public class PowerFly : MonoBehaviour, ICollectable
     
     private LTDescr bobTween;
     private LTDescr rotationTween;
+    
+    private bool hasBeenCollected = false;
 
 
     #endregion
@@ -41,12 +44,31 @@ public class PowerFly : MonoBehaviour, ICollectable
 
     void Start()
     {
+        if (setupOnStart && powerFlyData != null)
+        {
+            SetupFly();
+        }
+    }
+
+
+    // Sets up this power fly based on given power fly data
+    public void SetupFly(PowerFlyData powerFlyData)
+    {
+        this.powerFlyData = powerFlyData;
+        SetupFly();
+    }
+
+
+    // Sets up this power fly based on already assigned power fly data
+    public void SetupFly()
+    {
         spriteRenderer.sprite = powerFlyData.displayImg;
         originalPosition = transform.position;
         StartBuzzing();
         StartBobbingAndRotation();
     }
     
+
     void OnDestroy()
     {
         StopBuzzing();
@@ -156,15 +178,37 @@ public class PowerFly : MonoBehaviour, ICollectable
     // On collect, apply the effect and destroy the game object
     public void OnCollect()
     {
+        // Prevent duplicate collection
+        if (hasBeenCollected) return;
+        hasBeenCollected = true;
+        
+        // Immediately disable collider and hide all visuals
+        Collider2D collider = GetComponent<Collider2D>();
+        if (collider != null) collider.enabled = false;
+        
+        // Disable all sprite renderers (main sprite + shadow)
+        SpriteRenderer[] allSprites = GetComponentsInChildren<SpriteRenderer>();
+        foreach (SpriteRenderer sprite in allSprites)
+        {
+            sprite.enabled = false;
+        }
+        
         if (itemDef != null)
         {
             InventoryManager.Instance.AddItem(itemDef, 1);
         }
 
         InventoryManager.Instance.AddPowerFly(powerFlyData);
+        PowerFlyFactory.Instance.MarkPowerFlyAsCollected(powerFlyData);
         StopBuzzing();
         StopBobbingAndRotation();
-        powerFlyData.effect.ApplyEffect();
+
+        foreach (PowerFlyEffect effect in powerFlyData.effects)
+        {
+            effect.ApplyEffect();
+        }
+
+        CollectionOverlayHandler.Instance.ShowPowerFlyCollected(powerFlyData);
         Destroy(gameObject);
     }
 

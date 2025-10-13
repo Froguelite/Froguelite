@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   id: Lotus
   displayName: Lotus
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 19f2ad9d1e116a644a39e9e72ffa2519, type: 3}
   showInInventory: 1

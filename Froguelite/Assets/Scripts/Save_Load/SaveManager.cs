@@ -173,6 +173,12 @@ public class SaveManager : MonoBehaviour
         LoadDataToScript();
     }
 
+    public static string GetFileNameEnd()
+    {
+        CheckInstance();
+        return Instance.fileNameEnd;
+    }
+
     #endregion
 
     #region HELPERS

@@ -1,5 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using NavMeshPlus.Components;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -10,8 +13,16 @@ public class ZoneGenerator : MonoBehaviour
     #region VARIABLES
 
 
+    public static ZoneGenerator Instance;
+    public bool zoneGenerated { get; private set; } = false;
+
+    [SerializeField] private bool generateZoneOnStart = true;
+    [SerializeField] private bool teleportPlayerToStarterRoom = true;
+    
     [SerializeField] private RoomFactory roomFactory;
+    [SerializeField] private FoliageFactory foliageFactory;
     [SerializeField] private Tilemap roomsTilemap;
+    [SerializeField] private NavMeshSurface navigationSurface;
     [SerializeField] private AutoTileSet zoneAutoTileSet;
     [SerializeField] private Transform roomParent; // Parent object to organize spawned rooms
 
@@ -19,6 +30,7 @@ public class ZoneGenerator : MonoBehaviour
 
     private RoomData[,] roomGraph;
     private Dictionary<Vector2Int, Room> spawnedRooms = new Dictionary<Vector2Int, Room>();
+    private bool[,] combinedTileLayout; // Combined tile layout of the entire zone
 
 
     #endregion
@@ -26,10 +38,22 @@ public class ZoneGenerator : MonoBehaviour
 
     #region MONOBEHAVIOUR AND SETUP
 
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+            return;
+        }
+        
+        Instance = this;
+    }
+
 
     void Start()
     {
-        GenerateZone();
+        if (generateZoneOnStart)
+            GenerateZone();
     }
 
 
@@ -42,12 +66,32 @@ public class ZoneGenerator : MonoBehaviour
     // Generates the zone by creating a room graph and spawning rooms and doors
     public void GenerateZone()
     {
+        // TODO: Temporary, chooses a random seed every time
+        UnityEngine.Random.InitState(UnityEngine.Random.Range(int.MinValue, int.MaxValue));
+
         roomGraph = RoomGraphGenerator.GetRoomGraph(8);
-        SpawnRoomsFromGraph();
+        combinedTileLayout = SpawnRoomsFromGraph();
+        MinimapManager.Instance.InitializeMinimap(combinedTileLayout);
+
+        // Initialize the RoomManager with the generated rooms
+        if (RoomManager.Instance != null)
+        {
+            RoomManager.Instance.Initialize(roomGraph, spawnedRooms);
+        }
+        else
+        {
+            Debug.LogWarning("RoomManager Instance is null - rooms will not be managed properly");
+        }
 
         // TEMPORARY - Open all doors and set player position to starter room
         OpenAllDoors();
-        SetPlayerToStarterRoom();
+        if (teleportPlayerToStarterRoom)
+            SetPlayerToStarterRoom();
+
+        // Regenerate the NavMesh for the new layout
+        navigationSurface.BuildNavMesh();
+
+        zoneGenerated = true;
     }
 
 
@@ -86,8 +130,9 @@ public class ZoneGenerator : MonoBehaviour
 
         // Set the player position
         PlayerMovement.Instance.transform.position = starterRoomCenter;
-
-        Debug.Log($"Set player position to starter room center: {starterRoomCenter}");
+        
+        // Force the camera to update immediately to the new player position
+        ForceCameraUpdate();
     }
 
 
@@ -98,12 +143,12 @@ public class ZoneGenerator : MonoBehaviour
 
 
     // Spawns rooms and doors from the room graph
-    private void SpawnRoomsFromGraph()
+    private bool[,] SpawnRoomsFromGraph()
     {
         if (roomGraph == null)
         {
             Debug.LogError("Room Graph is null - cannot spawn rooms");
-            return;
+            return null;
         }
 
         int width = roomGraph.GetLength(0);
@@ -128,6 +173,10 @@ public class ZoneGenerator : MonoBehaviour
                 {
                     SpawnRoom(room, new Vector2Int(x, y));
                 }
+                else
+                {
+                    SpawnEmptyRoom(new Vector2Int(x, y));
+                }
             }
         }
 
@@ -147,6 +196,11 @@ public class ZoneGenerator : MonoBehaviour
         }
 
         Debug.Log($"Successfully spawned doors for all rooms");
+
+        // Third pass: Combine all room tile layouts into a single 2D bool array
+        bool[,] combinedTileLayout = CombineRoomTileLayouts();
+        
+        return combinedTileLayout;
     }
 
 
@@ -155,6 +209,63 @@ public class ZoneGenerator : MonoBehaviour
     {
         Room spawnedRoom = roomFactory.SpawnRoom(roomsTilemap, zoneAutoTileSet, roomParent, roomData, 32);
         spawnedRooms[gridPosition] = spawnedRoom;
+
+        // Generate foliage for the room
+        float foliageLandDensity = 1f;
+
+        if (roomData.roomType == Room.RoomType.Boss || roomData.roomType == Room.RoomType.Fly || roomData.roomType == Room.RoomType.Shop)
+        {
+            foliageLandDensity = 5f; // Less foliage in special rooms
+        }
+
+        foliageFactory.GenerateFoliageForRoom(spawnedRoom, foliageLandDensity);
+    }
+
+
+    // Spawns an empty room area filled with water tiles instead of generating a room
+    private void SpawnEmptyRoom(Vector2Int gridPosition)
+    {
+        if (roomGraph == null)
+        {
+            Debug.LogError("Room Graph is null - cannot spawn empty room");
+            return;
+        }
+
+        // Calculate room length - use the same size as other rooms (32 by default)
+        int roomLength = 32;
+        
+        // Try to get room length from existing rooms if available
+        for (int x = 0; x < roomGraph.GetLength(0) && roomLength == 32; x++)
+        {
+            for (int y = 0; y < roomGraph.GetLength(1) && roomLength == 32; y++)
+            {
+                RoomData room = roomGraph[x, y];
+                if (room != null && room.tileLayout != null)
+                {
+                    roomLength = room.roomLength;
+                    break;
+                }
+            }
+        }
+
+        // Get the tile offset for this empty room area
+        Vector2Int tileOffset = new Vector2Int(
+            gridPosition.x * roomLength,
+            gridPosition.y * roomLength
+        );
+
+        // Create a layout that's entirely water (all false values)
+        bool[,] waterLayout = new bool[roomLength, roomLength];
+        // No need to set values since bool arrays initialize to false (water)
+
+        // Apply the water tiles to the tilemap using auto-tiling
+        RoomTileHelper.SetTilemapToLayoutWithAutoTiling(
+            waterLayout,
+            roomsTilemap,
+            zoneAutoTileSet,
+            tileOffset.x,
+            tileOffset.y
+        );
     }
 
 
@@ -234,6 +345,7 @@ public class ZoneGenerator : MonoBehaviour
         );
 
         Vector3 doorLandingWorldPos = Vector3.zero;
+        Vector3 otherRoomLaunchWorldPos = Vector3.zero;
         if (IsValidRoomPosition(adjacentRoomGridPos) && roomGraph[adjacentRoomGridPos.x, adjacentRoomGridPos.y] != null)
         {
             RoomData adjacentRoom = roomGraph[adjacentRoomGridPos.x, adjacentRoomGridPos.y];
@@ -242,11 +354,21 @@ public class ZoneGenerator : MonoBehaviour
                 adjacentRoom.roomCoordinate.y * adjacentRoom.roomLength + doorLandingPos.y + 0.5f,
                 -0.1f
             );
+
+            // Calculate the other room's launch position (where the door in the adjacent room launches from)
+            Door.DoorDirection oppositeDirection = GetOppositeDirection(direction);
+            Vector2Int otherRoomDoorLaunchPos = RoomTileHelper.GetDoorLocation(adjacentRoom.tileLayout, oppositeDirection, true);
+            otherRoomLaunchWorldPos = new Vector3(
+                adjacentRoom.roomCoordinate.x * adjacentRoom.roomLength + otherRoomDoorLaunchPos.x + 0.5f,
+                adjacentRoom.roomCoordinate.y * adjacentRoom.roomLength + otherRoomDoorLaunchPos.y + 0.5f,
+                -0.1f
+            );
         }
 
         // Set door launch and landing positions in door data
         doorData.launchPosition = doorLaunchWorldPos;
         doorData.landingPosition = doorLandingWorldPos;
+        doorData.otherRoomLaunchPosition = otherRoomLaunchWorldPos;
 
         // Spawn the door prefab at the launch position
         Door doorInstance = Instantiate(doorPrefab, doorLaunchWorldPos, Quaternion.identity);
@@ -315,6 +437,91 @@ public class ZoneGenerator : MonoBehaviour
         if (roomGraph == null) return false;
         return position.x >= 0 && position.x < roomGraph.GetLength(0) &&
                position.y >= 0 && position.y < roomGraph.GetLength(1);
+    }
+
+    // Combines all individual room tile layouts into a single 2D bool array representing the entire zone
+    private bool[,] CombineRoomTileLayouts()
+    {
+        if (roomGraph == null)
+        {
+            Debug.LogError("Room graph is null - cannot combine tile layouts");
+            return null;
+        }
+
+        int roomGraphWidth = roomGraph.GetLength(0);
+        int roomGraphHeight = roomGraph.GetLength(1);
+
+        // Find a room to get the room length (assuming all rooms are the same size)
+        int roomLength = 32; // Default fallback
+        for (int x = 0; x < roomGraphWidth && roomLength == 32; x++)
+        {
+            for (int y = 0; y < roomGraphHeight && roomLength == 32; y++)
+            {
+                RoomData room = roomGraph[x, y];
+                if (room != null && room.tileLayout != null)
+                {
+                    roomLength = room.roomLength;
+                    break;
+                }
+            }
+        }
+
+        // Calculate the total size of the combined tile layout
+        int totalWidth = roomGraphWidth * roomLength;
+        int totalHeight = roomGraphHeight * roomLength;
+
+        // Create the combined tile layout (false = water by default)
+        bool[,] combinedLayout = new bool[totalWidth, totalHeight];
+
+        // Copy each room's tile layout into the appropriate position in the combined layout
+        for (int roomX = 0; roomX < roomGraphWidth; roomX++)
+        {
+            for (int roomY = 0; roomY < roomGraphHeight; roomY++)
+            {
+                RoomData room = roomGraph[roomX, roomY];
+                if (room != null && room.tileLayout != null)
+                {
+                    // Calculate the offset for this room in the combined layout
+                    int offsetX = roomX * roomLength;
+                    int offsetY = roomY * roomLength;
+
+                    // Copy this room's tile layout to the combined layout
+                    for (int tileX = 0; tileX < roomLength; tileX++)
+                    {
+                        for (int tileY = 0; tileY < roomLength; tileY++)
+                        {
+                            if (tileX < room.tileLayout.GetLength(0) && tileY < room.tileLayout.GetLength(1))
+                            {
+                                combinedLayout[offsetX + tileX, offsetY + tileY] = room.tileLayout[tileX, tileY];
+                            }
+                        }
+                    }
+                }
+                // If room is null, that area remains water (false) by default
+            }
+        }
+
+        Debug.Log($"Combined tile layouts into {totalWidth}x{totalHeight} array");
+        return combinedLayout;
+    }
+    
+
+    // Forces the Cinemachine camera to immediately update to the current player position
+    private void ForceCameraUpdate()
+    {
+        // Find and update all active CinemachineCamera components
+        CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
+        foreach (CinemachineCamera cam in cameras)
+        {
+            if (cam.isActiveAndEnabled)
+            {
+                // Force the camera to update its position immediately
+                cam.ForceCameraPosition(PlayerMovement.Instance.transform.position, Quaternion.identity);
+                
+                // Manually update the camera's internal state
+                cam.UpdateCameraState(Vector3.up, Time.deltaTime);
+            }
+        }
     }
 
 
