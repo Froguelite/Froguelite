@@ -279,7 +279,7 @@ public class ProfileCardData
     {
         profileNumber = number;
         sceneToLoad = "TestScene-Load-AA"; //TO DO: Replace with actual default scene name
-        name = "Profile Name";
+        name = null;
     }
 }
 

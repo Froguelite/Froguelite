@@ -14,7 +14,10 @@ public class ProfileCard : MonoBehaviour
 
     private ProfileCardData profileData;
 
-    [SerializeField] private TextMeshProUGUI profileNameText;
+    //[SerializeField] private TextMeshProUGUI profileNameText;
+
+    [SerializeField] private GameObject profileNameInputField;
+    [SerializeField] private GameObject profileNameTMP;
 
     #endregion
 
@@ -30,9 +33,14 @@ public class ProfileCard : MonoBehaviour
     {
         profileData = data;
 
-        if(profileNameText != null)
+        //Check if existing or new profile
+        if (profileData.name != null)
         {
-            profileNameText.text = profileData.name;
+            profileNameTMP.GetComponent<TextMeshProUGUI>().text = profileData.name;
+            ShowNameTMP();
+        } else
+        {
+            ShowNameInputField();
         }
     }
 
@@ -61,6 +69,35 @@ public class ProfileCard : MonoBehaviour
     public void OnDeleteProfile()
     {
         ProfileUIManager.Instance.DeleteProfile(profileData);
+    }
+
+    public void UpdateProfileName(string name)
+    {
+        //Update name in profile data and display it
+        profileData.name = name;
+        profileNameTMP.GetComponent<TextMeshProUGUI>().text = name;
+
+        //Unsubscribe from event and hide input field
+        profileNameInputField.GetComponent<InputFieldGrabber>().OnInputGrabbed -= UpdateProfileName;
+        ShowNameTMP();
+    }
+
+    #endregion
+
+    #region HELPER FUNCTIONS
+    private void ShowNameInputField()
+    {
+        //Show input field and subscribe to event
+        profileNameInputField.SetActive(true);
+        profileNameInputField.GetComponent<InputFieldGrabber>().OnInputGrabbed += UpdateProfileName;
+        profileNameTMP.SetActive(false);
+    }
+
+    private void ShowNameTMP()
+    {
+        //Hide input fild and show TMP
+        profileNameInputField.SetActive(false);
+        profileNameTMP.SetActive(true);
     }
 
     #endregion

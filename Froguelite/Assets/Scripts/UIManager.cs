@@ -10,6 +10,8 @@ public class UIManager : MonoBehaviour
 
     private UIPanels currentPanel;
 
+    private UIPanels previousPanel;
+
     #endregion
 
     #region SETUP
@@ -31,6 +33,7 @@ public class UIManager : MonoBehaviour
         int gameStartIndex = (int) UIPanels.GameStart;
         uiPanels[gameStartIndex].panelObject.SetActive(true);
         currentPanel = UIPanels.GameStart;
+        previousPanel = UIPanels.None;
 
         //Check array index equals UIPanels enum count
         int panelCount = System.Enum.GetNames(typeof(UIPanels)).Length;
@@ -64,9 +67,16 @@ public class UIManager : MonoBehaviour
         OnProfilesClick();
     }
 
-    public void OnOptionsClick()
+    public void OnMainMenuClick()
     {
+        //Temporary: Switch to Profile Menu
+        OnProfilesClick();
+    }
 
+    public void OnBackClick()
+    {
+        //Switch to previous panel
+        PanelSwitch(currentPanel, previousPanel);
     }
 
     public void OnProfilesClick()
@@ -108,13 +118,18 @@ public class UIManager : MonoBehaviour
     {
         //Set current panel to inactive
         int currentIndex = (int)current;
-        uiPanels[currentIndex].panelObject.SetActive(false);
+        uiPanels[currentIndex].panelObject?.SetActive(false);
 
         //Set next panel to active
         int nextIndex = (int)next;
-        uiPanels[nextIndex].panelObject.SetActive(true);
+        uiPanels[nextIndex].panelObject?.SetActive(true);
 
-        //Update current panel reference
+        //Update previous and current panel reference
+        if(current != UIPanels.LoadingScreen)
+        {
+            //Only update previous panel if current panel is not Loading Screen
+            previousPanel = current;
+        }
         currentPanel = next;
     }
 
@@ -123,7 +138,7 @@ public class UIManager : MonoBehaviour
 
 public enum UIPanels
 {
-    //NULL,
+    None,
     GameStart,
     MainMenu,
     //OptionsMenu,
