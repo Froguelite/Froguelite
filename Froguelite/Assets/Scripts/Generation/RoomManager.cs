@@ -317,10 +317,9 @@ public class RoomManager : MonoBehaviour
     private void SpawnCollectibleItem(Vector3 position)
     {
         // Base chances (excluding nothing)
-        float baseLotusChance = 0.30f;      // 30%
-        float baseWoodpeckerChance = 0.15f; // 15%
+        float baseLotusChance = 0.60f;      // 60%
+        float baseWoodpeckerChance = 0.25f; // 25%
         float baseHeartChance = 0.15f;      // 15%
-        float nothingChance = 0.40f;        // 40% (not affected by luck)
 
         // Get luck multiplier from player stats
         float luckMultiplier = 1f;
@@ -336,13 +335,11 @@ public class RoomManager : MonoBehaviour
 
         // Calculate total probability for normalization
         float totalItemChance = scaledLotusChance + scaledWoodpeckerChance + scaledHeartChance;
-        float totalChance = totalItemChance + nothingChance;
 
         // Normalize all chances to sum to 1.0
-        scaledLotusChance /= totalChance;
-        scaledWoodpeckerChance /= totalChance;
-        scaledHeartChance /= totalChance;
-        nothingChance /= totalChance;
+        scaledLotusChance /= totalItemChance;
+        scaledWoodpeckerChance /= totalItemChance;
+        scaledHeartChance /= totalItemChance;
 
         // Generate random value and determine what to spawn
         float randomValue = Random.Range(0f, 1f);
