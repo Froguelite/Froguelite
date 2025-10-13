@@ -8,7 +8,7 @@ public class TongueHitbox : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Player hit with tongue");
+            Debug.Log($"Player hit with tongue, and did {damage} damage.");
             //other.GetComponent<PlayerHealth>()?.TakeDamage(damage);
         }
     }

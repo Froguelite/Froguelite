@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(Animator))]
 public class BossController : MonoBehaviour
 {
     #region Variables
@@ -15,12 +14,22 @@ public class BossController : MonoBehaviour
     [SerializeField] private GameObject landingAoePrefab;     // AOE prefab (CircleCollider2D trigger + script)
     [SerializeField] private GameObject tonguePrefab;         // prefab used in Attack2 (long tongue)
     [SerializeField] private GameObject stompAoePrefab;       // Optional visual effect
-    [SerializeField] private Animator animator;
+    [SerializeField] private FlipbookAnimator frogFlipbook; // Frog Animator
     [SerializeField] private BossEntity bossEntity;
     [SerializeField] private Collider2D frogHitbox;         // assign the collider that blocks/contacts the player
+    [SerializeField] private GameObject aoeCirclePrefab;
+
+    [Header("Animations")]
+    [SerializeField] private Sprite[] idleSprites; // Idle animation
+    [SerializeField] private Sprite[] jumpSprites; // Jump Animation
+    [SerializeField] private Sprite[] landSprites; // land Animation
+    [SerializeField] private Sprite[] WaterSprites; //Swimming Animation
+    [SerializeField] private Sprite[] tongueAttackSprites; // Tongue Attack Animation
+    [SerializeField] private Sprite[] stompSprites; // Stomp animation
+    [SerializeField] private Sprite[] deathSprites; // Death Animation
 
     [Header("Timings")]
-    [SerializeField] private float idleDelay = 1.0f;
+    [SerializeField] private float idleDelay = 1.0f; // start delay
 
     [Header("Phase 1 (Jump) ATTACK")]
     [SerializeField] private float shadowTelegraph = 1.0f;    // fallback telegraph if overrideDropWait <= 0
@@ -34,12 +43,22 @@ public class BossController : MonoBehaviour
     [SerializeField] private float landingRecovery = 0.25f;
     [SerializeField] private float reenableDelay = 0f;      // optional delay after landing before re-enabling
     [SerializeField] private int maxAttackPhase1Repeats = 5;
+    [SerializeField] private int jumpDamage = 10;
+    [SerializeField] private float jumpElevation = 0.5f;      // local visual elevation during "in-air"
 
     [Header("Phase 2 (Tongue) ATTACK")]
     [SerializeField] private float preAttack2Delay = 1.5f;    // longer delay before attack2 starts
-    [SerializeField] private float offIslandMoveTime = 3.0f;
+    [SerializeField] private float attackPhase2Duration = 6f;
     [SerializeField] private float tongueHoldTime = 1.0f;
-    [SerializeField] private int maxAttackPhase2Repeats = 6;
+    [SerializeField] private float tongueMaxLength = 4f;
+    [SerializeField] private float tongueSpawnOffsetX = -0.5f;
+    [SerializeField] private float yMin = -10f;
+    [SerializeField] private float yMax = 8f;
+    [SerializeField] private float verticalPaceSpeed = 0.4f;
+    [SerializeField] private float strikeTimeMin = 0.8f;
+    [SerializeField] private float strikeTimeMax = 1.5f;
+    [SerializeField] private float extendTime = 0.25f;
+    [SerializeField] private float retractTime = 0.25f;
 
     [Header("Phase 3 (Stomp) DEFENSE")]
     [SerializeField] private int stompsPerDefense = 10;        // # of stomps
@@ -48,12 +67,8 @@ public class BossController : MonoBehaviour
     [SerializeField] private float stompRadius = 3f;          // damage radius
     [SerializeField] private float stompRecoveryTime = 2f;
     [SerializeField] private int stompDamage = 10;            // Damage dealt on stomp
-
-    [Header("Movement / Visual")]
-    [SerializeField] private float jumpElevation = 0.5f;      // local visual elevation during "in-air"
-    [SerializeField] private float offIslandAmplitude = 2f;   // vertical oscillation amount while off-island
-    [SerializeField] private float offIslandSpeed = 2f;       // pacing speed off-island
-    [SerializeField] private bool hideVisualOffscreen = true; // hide visualRoot when offscreen
+    [SerializeField] private float aoeFadeTime = 0.3f;
+    [SerializeField] private float aoeHoldTime = 0.2f;
 
     private State state = State.Idle;
     private Coroutine stateLoopCoroutine;
@@ -63,12 +78,12 @@ public class BossController : MonoBehaviour
     #region Initialization
     private void Reset()
     {
-        animator = GetComponent<Animator>();
+        //animator = GetComponent<Animator>();
     }
 
     private void Start()
     {
-        if (animator == null) animator = GetComponent<Animator>();
+        //if (animator == null) animator = GetComponent<Animator>();
         if (visualRoot == null) visualRoot = transform;
         stateLoopCoroutine = StartCoroutine(StateLoop());
     }
@@ -78,6 +93,8 @@ public class BossController : MonoBehaviour
     private IEnumerator StateLoop()
     //--------------------------------------------//
     {
+        frogFlipbook.SetSprites(idleSprites, 0.5f, FlipbookLoopMethod.PingPong);
+        frogFlipbook.Play();
         yield return new WaitForSeconds(idleDelay);
         state = State.AttackPhase;
 
@@ -96,7 +113,10 @@ public class BossController : MonoBehaviour
                 yield return new WaitForSeconds(preAttack2Delay);
                 yield return StartCoroutine(PerformAttack2()); // off-island pacing + tongue
                 yield return StartCoroutine(LandOnIsland());
-                state = State.DefensePhase;
+                frogFlipbook.ResetAnimation();
+                frogFlipbook.SetSprites(idleSprites, 0.5f, FlipbookLoopMethod.PingPong);
+                frogFlipbook.Play();
+                    state = State.DefensePhase;
                 }
             }
             else if (state == State.DefensePhase)
@@ -119,8 +139,10 @@ public class BossController : MonoBehaviour
     private IEnumerator PerformAttack1()
     //--------------------------------------------//
     {
-        animator.SetTrigger("LeapOff");
-
+        frogFlipbook.ResetAnimation();
+        frogFlipbook.SetSprites(jumpSprites, 0.1f, FlipbookLoopMethod.Once);
+        frogFlipbook.Play();
+        yield return new WaitForSeconds(0.5f);
         Vector3 visualStart = visualRoot.position;
 
         GameObject shadow = null;
@@ -194,81 +216,83 @@ public class BossController : MonoBehaviour
                 yield return null;
             }
             visualRoot.position = fallTarget;
+            frogFlipbook.ResetAnimation();
+            frogFlipbook.SetSprites(landSprites, 0.1f, FlipbookLoopMethod.Once);
+            frogFlipbook.Play();
 
-            if (landingAoePrefab != null)
-                Instantiate(landingAoePrefab, fallTarget, Quaternion.identity, islandRoot);
+            ApplyJumpDamage(fallTarget);
 
             ReenableHitboxAfterDelay(reenableDelay);
             Destroy(shadow);
         }
-
+        frogFlipbook.ResetAnimation();
+        frogFlipbook.SetSprites(idleSprites, 0.5f, FlipbookLoopMethod.PingPong);
+        frogFlipbook.Play();
         yield return new WaitForSeconds(landingRecovery);
     }
 
     // Tongue side swipe attack
     //--------------------------------------------//
-    // Attack Phase 2 (with tongue logic inline)
     private IEnumerator PerformAttack2()
     {
-        animator.SetTrigger("JumpOffIsland");
-
         Vector3 start = visualRoot.position;
         Vector3 offPivotPos = offIslandPivot != null ? offIslandPivot.position : visualRoot.position + Vector3.up * 3f;
 
         DisableFrogHitboxForAttack();
 
         // Jump out
+        frogFlipbook.ResetAnimation();
+        frogFlipbook.SetSprites(jumpSprites, 0.1f, FlipbookLoopMethod.Once);
+        frogFlipbook.Play();
         float arcOutTime = 0.4f;
         yield return StartCoroutine(ParabolicMove(visualRoot, start, offPivotPos, arcOutTime, jumpElevation * 1.8f));
 
         SetVisualVisible(true);
-        while (attackPhaseCount < maxAttackPhase2Repeats)
+        shadowPrefab.GetComponent<SpriteRenderer>().enabled = false;
+
+        frogFlipbook.ResetAnimation();
+        frogFlipbook.SetSprites(WaterSprites, 2f, FlipbookLoopMethod.Once);
+        frogFlipbook.Play();
+
+        float elapsed = 0f;
+        float nextStrikeTime = Random.Range(strikeTimeMin, strikeTimeMax);
+
+        while (elapsed < attackPhase2Duration)
         {
-            // Pace vertically
-            float elapsed = 0f;
-            while (elapsed < offIslandMoveTime)
+            elapsed += Time.deltaTime;
+
+            // Ping-pong vertical movement between yMin and yMax
+            float t = Mathf.PingPong(elapsed * verticalPaceSpeed, 1f);
+            float targetY = Mathf.Lerp(yMin, yMax, t);
+            Vector3 target = new Vector3(offPivotPos.x, targetY, 0f);
+            visualRoot.position = Vector3.Lerp(visualRoot.position, target, Time.deltaTime * 6f);
+
+            // Trigger tongue attack at random time
+            if (elapsed >= nextStrikeTime)
             {
-                elapsed += Time.deltaTime;
-                Vector3 playerPos = PlayerMovement.Instance.transform.position;
-                float offset = Mathf.Sin(elapsed * offIslandSpeed) * offIslandAmplitude;
-                Vector3 target = new Vector3(offPivotPos.x, playerPos.y + offset, 0f);
-                visualRoot.position = Vector3.Lerp(visualRoot.position, target, Time.deltaTime * 6f);
-                yield return null;
+                nextStrikeTime = elapsed + Random.Range(strikeTimeMin, strikeTimeMax);
+                StartCoroutine(TriggerTongueAttack());
             }
 
-            ReenableHitboxAfterDelay(reenableDelay);
-            yield return new WaitForSeconds(0.15f);
-
-            // Tongue attack
-            animator.SetTrigger("PrepareTongue");
-
-            if (tonguePrefab != null)
-            {
-                // Spawn tongue sprite as child
-                GameObject tongue = Instantiate(tonguePrefab, visualRoot.position, Quaternion.identity, visualRoot);
-
-                // Stretch, hold, retract
-                yield return StartCoroutine(StretchTongue(tongue.transform, true, tongueHoldTime));
-
-                Destroy(tongue);
-            }
-
-            attackPhaseCount++;
+            yield return null;
         }
-        attackPhaseCount = 0;
-        yield return new WaitForSeconds(0.3f);
+
+        yield return new WaitForSeconds(1f);
 
         // Return to island
+        shadowPrefab.GetComponent<SpriteRenderer>().enabled = true;
+        frogFlipbook.SetSprites(idleSprites, 0.16f, FlipbookLoopMethod.Once);
+        frogFlipbook.Play();
+
         Vector3 landing = islandRoot.position;
         float arcReturnTime = 0.45f;
         yield return StartCoroutine(ParabolicMove(visualRoot, visualRoot.position, landing, arcReturnTime, jumpElevation * 1.2f));
     }
 
-    private IEnumerator StretchTongue(Transform tongue, bool horizontal, float holdTime)
+    private IEnumerator StretchTongue(Transform tongue, float holdTime)
     {
-        float maxLength = 6f;
-        float extendTime = 0.25f;
-        float retractTime = 0.25f;
+        Vector3 baseScale = tongue.localScale;
+        float maxLength = tongueMaxLength;
 
         // Extend
         float t = 0f;
@@ -276,7 +300,7 @@ public class BossController : MonoBehaviour
         {
             t += Time.deltaTime;
             float progress = Mathf.Clamp01(t / extendTime);
-            UpdateTongue(tongue, progress * maxLength, horizontal);
+            UpdateTongue(tongue, progress * maxLength, baseScale);
             yield return null;
         }
 
@@ -289,36 +313,41 @@ public class BossController : MonoBehaviour
         {
             t += Time.deltaTime;
             float progress = 1f - Mathf.Clamp01(t / retractTime);
-            UpdateTongue(tongue, progress * maxLength, horizontal);
+            UpdateTongue(tongue, progress * maxLength, baseScale);
             yield return null;
         }
     }
 
-    private void UpdateTongue(Transform tongue, float length, bool horizontal)
+    private void UpdateTongue(Transform tongue, float length, Vector3 baseScale)
     {
         var col = tongue.GetComponent<BoxCollider2D>();
 
-        if (horizontal)
-        {
-            tongue.localScale = new Vector3(length, 1f, 1f);
-            tongue.localPosition = new Vector3(-length / 2f, 0f, 0f); // anchored on right edge
+        // Scale outward from right pivot
+        Vector3 originalPos = tongue.localPosition;
+        tongue.localScale = new Vector3(length * baseScale.x, baseScale.y, baseScale.z);
+        tongue.localPosition = new Vector3(originalPos.x, originalPos.y, originalPos.z);
 
-            if (col != null)
-            {
-                col.size = new Vector2(length, col.size.y);
-                col.offset = new Vector2(-length / 2f, 0f);
-            }
+        if (col != null)
+        {
+            col.size = new Vector2(length * baseScale.x, col.size.y);
+            col.offset = new Vector2(-length * baseScale.x / 2f, 0f); // collider still needs offset
         }
-        else
-        {
-            tongue.localScale = new Vector3(1f, length, 1f);
-            tongue.localPosition = new Vector3(0f, length / 2f, 0f);
+    }
 
-            if (col != null)
-            {
-                col.size = new Vector2(col.size.x, length);
-                col.offset = new Vector2(0f, length / 2f);
-            }
+    private IEnumerator TriggerTongueAttack()
+    {
+        ReenableHitboxAfterDelay(reenableDelay);
+
+        frogFlipbook.SetSprites(tongueAttackSprites, 0.16f, FlipbookLoopMethod.Once);
+        frogFlipbook.Play();
+        yield return new WaitForSeconds(0.5f);
+
+        if (tonguePrefab != null)
+        {
+            GameObject tongue = Instantiate(tonguePrefab, visualRoot.position, Quaternion.identity, visualRoot);
+            tongue.transform.localPosition += new Vector3(tongueSpawnOffsetX, 0f, 0f);
+            yield return StartCoroutine(StretchTongue(tongue.transform, tongueHoldTime));
+            Destroy(tongue);
         }
     }
 
@@ -330,18 +359,22 @@ public class BossController : MonoBehaviour
     private IEnumerator DefenseRoutine()
     //--------------------------------------------//
     {
-        animator.SetTrigger("DefenseIdle");
+        //animator.SetTrigger("DefenseIdle");
 
         for (int i = 0; i < stompsPerDefense; i++)
         {
             yield return new WaitForSeconds(stompInterval);
-
-            animator.SetTrigger("StompCharge"); // Animation trigger
+            ShowAOECircle(visualRoot.position);
+            yield return new WaitForSeconds(aoeFadeTime + aoeHoldTime);
+            frogFlipbook.ResetAnimation();
+            frogFlipbook.SetSprites(stompSprites, 0.05f, FlipbookLoopMethod.Once);
+            frogFlipbook.Play();
             yield return new WaitForSeconds(stompTelegraphTime);
 
-            animator.SetTrigger("Stomp");
             StompAoe();
-
+            frogFlipbook.ResetAnimation();
+            frogFlipbook.SetSprites(idleSprites, 0.5f, FlipbookLoopMethod.PingPong);
+            frogFlipbook.Play();
             yield return new WaitForSeconds(stompRecoveryTime);
 
         }
@@ -356,6 +389,7 @@ public class BossController : MonoBehaviour
     private void StompAoe()
     //--------------------------------------------//
     {
+        int damage = stompDamage;
         if (stompAoePrefab != null)
         {
             Instantiate(stompAoePrefab, transform.position, Quaternion.identity, islandRoot);
@@ -366,10 +400,30 @@ public class BossController : MonoBehaviour
         {
             if (hit.CompareTag("Player"))
             {
-                Debug.Log("Player hit on stomp");
-                // hit.GetComponent<PlayerHealth>()?.TakeDamage(stompDamage);
+                Debug.Log($"Player hit by stomp, took {damage} damage.");
             }
         }
+    }
+
+    private void ApplyJumpDamage(Vector3 center)
+    {
+        float radius = 1.5f; // or match your AOE prefab scale
+        int damage = jumpDamage;
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(center, radius);
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("Player"))
+            {
+                Debug.Log($"Player hit by jump at {center}, took {damage} damage.");
+            }
+        }
+    }
+
+    private void ShowAOECircle(Vector3 position)
+    {
+        GameObject aoe = Instantiate(aoeCirclePrefab, position, Quaternion.identity);
+        aoe.GetComponent<AOECircleFade>().Initialize(aoeFadeTime, aoeHoldTime);
     }
 
     private void SetVisualVisible(bool visible)
@@ -377,8 +431,8 @@ public class BossController : MonoBehaviour
         if (visualRoot == null) return;
         var srs = visualRoot.GetComponentsInChildren<SpriteRenderer>(true);
         foreach (var sr in srs) sr.enabled = visible;
-        var anim = visualRoot.GetComponent<Animator>();
-        if (anim != null) anim.enabled = visible;
+        //var anim = visualRoot.GetComponent<Animator>();
+        //if (anim != null) anim.enabled = visible;
     }
 
     // Moves the transform along a 2D parabolic arc from 'from' to 'to' over duration seconds.
@@ -442,12 +496,6 @@ public class BossController : MonoBehaviour
         }
         visualRoot.position = landing;
 
-        if (hideVisualOffscreen)
-        {
-            SetVisualVisible(true);
-            animator.SetTrigger("Reappear");
-        }
-
         yield return null;
     }
 
@@ -480,6 +528,23 @@ public class BossController : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         if (frogHitbox != null) frogHitbox.enabled = true;
+    }
+
+    public void Death()
+    {
+        frogFlipbook.ResetAnimation();
+        frogFlipbook.SetSprites(deathSprites, 0.2f, FlipbookLoopMethod.Once);
+        frogFlipbook.Play();
+        //-------------------//
+
+
+
+        //ADD DEATH LOGIC HERE
+
+
+
+
+        //-------------------//
     }
 
     public void ForceEnterDefense() => state = State.DefensePhase;

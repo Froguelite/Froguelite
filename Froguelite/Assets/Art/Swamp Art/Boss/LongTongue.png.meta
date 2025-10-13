@@ -1,19 +1,10 @@
 fileFormatVersion: 2
-guid: 801eb56aa845b7749855f65062319e08
+guid: 72a3458bc36185c4d821737df3984b24
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6247321214399210737
-    second: FrogBoss-Sheet_0
-  - first:
-      213: 65093295564145908
-    second: FrogBoss-Sheet_1
-  - first:
-      213: -4108151583225950438
-    second: FrogBoss-Sheet_2
-  - first:
-      213: 7054014498812244430
-    second: FrogBoss-Sheet_3
+      213: 1647898047702929036
+    second: LongTongue_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -84,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -109,89 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: FrogBoss-Sheet_0
+      name: LongTongue_0
       rect:
         serializedVersion: 2
-        x: 167
-        y: 231
-        width: 338
-        height: 186
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 0
+        width: 390
+        height: 20
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1f4e6067b81f2b650800000000000000
-      internalID: 6247321214399210737
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: FrogBoss-Sheet_1
-      rect:
-        serializedVersion: 2
-        x: 803
-        y: 231
-        width: 338
-        height: 186
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4f44c57e10247e000800000000000000
-      internalID: 65093295564145908
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: FrogBoss-Sheet_2
-      rect:
-        serializedVersion: 2
-        x: 1435
-        y: 231
-        width: 342
-        height: 194
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a1fcb56a6e9ecf6c0800000000000000
-      internalID: -4108151583225950438
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: FrogBoss-Sheet_3
-      rect:
-        serializedVersion: 2
-        x: 2071
-        y: 231
-        width: 342
-        height: 210
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: ec1b82a10d4e4e160800000000000000
-      internalID: 7054014498812244430
+      spriteID: c8e846f1b828ed610800000000000000
+      internalID: 1647898047702929036
       vertices: []
       indices: 
       edges: []
@@ -200,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 2ecab5802f959b04c8c68c8d099e9962
     internalID: 0
     vertices: []
     indices: 
@@ -210,10 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      FrogBoss-Sheet_0: 6247321214399210737
-      FrogBoss-Sheet_1: 65093295564145908
-      FrogBoss-Sheet_2: -4108151583225950438
-      FrogBoss-Sheet_3: 7054014498812244430
+      LongTongue_0: 1647898047702929036
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
