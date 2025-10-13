@@ -1,0 +1,413 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7228942031114963939
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7948365080829618393}
+  - component: {fileID: 3868817830965573783}
+  m_Layer: 0
+  m_Name: ShopAlternate
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7948365080829618393
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7228942031114963939}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 11.65, y: 9.89, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8082066926392990525}
+  - {fileID: 1779958140792607502}
+  - {fileID: 8047126212713108887}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3868817830965573783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7228942031114963939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5f803f2dfb1dfc4b92fb988b42a2665, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopAlternate
+  woodpeckerItemDef: {fileID: 11400000, guid: ad282f15a3c4641769dfa491e34f13c4, type: 2}
+  heartItemDef: {fileID: 11400000, guid: e173562a83cfec54491ff0fc91aded94, type: 2}
+  setupOnStart: 1
+--- !u!1001 &2029909288005966396
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7948365080829618393}
+    m_Modifications:
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3183098992553131926, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_Name
+      value: ShopPedestal (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4769289005162832040, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: onPlayerOverlap.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2620836762853835290}
+    - target: {fileID: 4769289005162832040, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: onPlayerOverlap.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTongueHit
+      objectReference: {fileID: 0}
+    - target: {fileID: 4769289005162832040, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: onPlayerOverlap.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ShopPedestalAlternate, Assembly-CSharp
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3183098992553131926, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2620836762853835290}
+  m_SourcePrefab: {fileID: 100100000, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+--- !u!4 &1779958140792607502 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+  m_PrefabInstance: {fileID: 2029909288005966396}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &3460748124431377834 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3183098992553131926, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+  m_PrefabInstance: {fileID: 2029909288005966396}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2620836762853835290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3460748124431377834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28b05346970c4844dad41dda13878cab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopPedestalAlternate
+  spriteRenderer: {fileID: 6958602369431619025}
+  displayImg: {fileID: 0}
+  rotationAmount: 10
+  rotationFrequency: 0.75
+  bobbingAmount: 0.1
+  bobbingFrequency: 1
+  doHeartbeat: 0
+  itemImage: {fileID: 6958602369431619025}
+  costText: {fileID: 5210045462333638353}
+--- !u!114 &5210045462333638353 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6081657200136477933, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+  m_PrefabInstance: {fileID: 2029909288005966396}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!212 &6958602369431619025 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 8987571059028221933, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+  m_PrefabInstance: {fileID: 2029909288005966396}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7725119657482476709
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7948365080829618393}
+    m_Modifications:
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3183098992553131926, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_Name
+      value: ShopPedestal (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4769289005162832040, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: onPlayerOverlap.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3195488388629389685}
+    - target: {fileID: 4769289005162832040, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: onPlayerOverlap.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTongueHit
+      objectReference: {fileID: 0}
+    - target: {fileID: 4769289005162832040, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: onPlayerOverlap.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ShopPedestalAlternate, Assembly-CSharp
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3183098992553131926, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3195488388629389685}
+  m_SourcePrefab: {fileID: 100100000, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+--- !u!212 &1697688991699305288 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 8987571059028221933, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+  m_PrefabInstance: {fileID: 7725119657482476709}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4563061655435837512 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6081657200136477933, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+  m_PrefabInstance: {fileID: 7725119657482476709}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &5123267670806438707 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3183098992553131926, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+  m_PrefabInstance: {fileID: 7725119657482476709}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3195488388629389685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5123267670806438707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28b05346970c4844dad41dda13878cab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopPedestalAlternate
+  spriteRenderer: {fileID: 1697688991699305288}
+  displayImg: {fileID: 0}
+  rotationAmount: 10
+  rotationFrequency: 0.75
+  bobbingAmount: 0.1
+  bobbingFrequency: 1
+  doHeartbeat: 0
+  itemImage: {fileID: 1697688991699305288}
+  costText: {fileID: 4563061655435837512}
+--- !u!4 &8047126212713108887 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+  m_PrefabInstance: {fileID: 7725119657482476709}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8408577626708955663
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7948365080829618393}
+    m_Modifications:
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3183098992553131926, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_Name
+      value: ShopPedestal
+      objectReference: {fileID: 0}
+    - target: {fileID: 4769289005162832040, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4769289005162832040, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: onPlayerOverlap.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 8636191628200602822}
+    - target: {fileID: 4769289005162832040, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: onPlayerOverlap.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTongueHit
+      objectReference: {fileID: 0}
+    - target: {fileID: 4769289005162832040, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      propertyPath: onPlayerOverlap.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ShopPedestalAlternate, Assembly-CSharp
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3183098992553131926, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8636191628200602822}
+  m_SourcePrefab: {fileID: 100100000, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+--- !u!212 &579557593454579170 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 8987571059028221933, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+  m_PrefabInstance: {fileID: 8408577626708955663}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2366403892400099042 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6081657200136477933, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+  m_PrefabInstance: {fileID: 8408577626708955663}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &6385514273199664537 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3183098992553131926, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+  m_PrefabInstance: {fileID: 8408577626708955663}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8636191628200602822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6385514273199664537}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28b05346970c4844dad41dda13878cab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopPedestalAlternate
+  spriteRenderer: {fileID: 579557593454579170}
+  displayImg: {fileID: 0}
+  rotationAmount: 10
+  rotationFrequency: 0.75
+  bobbingAmount: 0.1
+  bobbingFrequency: 1
+  doHeartbeat: 0
+  itemImage: {fileID: 579557593454579170}
+  costText: {fileID: 2366403892400099042}
+--- !u!4 &8082066926392990525 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 331016503415441714, guid: 3d74b4c9a33644d4390d46d058162184, type: 3}
+  m_PrefabInstance: {fileID: 8408577626708955663}
+  m_PrefabAsset: {fileID: 0}

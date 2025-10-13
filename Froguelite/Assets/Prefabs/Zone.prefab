@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 780f12070df6a4c429d9654667e86dbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomFactory
+  shopAlternatePrefab: {fileID: 3868817830965573783, guid: 69cd4188c67e8a34b8b4d695e0550fc2, type: 3}
 --- !u!114 &8433390846284386573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -729,3 +730,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 780f12070df6a4c429d9654667e86dbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomManager
+  shopAlternatePrefab: {fileID: 0}

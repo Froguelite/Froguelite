@@ -108,4 +108,5 @@ MonoBehaviour:
   rotationFrequency: 0.75
   bobbingAmount: 0.1
   bobbingFrequency: 1
+  doHeartbeat: 1
   displayImage: {fileID: 2006458858967781278}

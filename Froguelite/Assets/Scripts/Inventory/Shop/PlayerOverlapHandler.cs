@@ -27,7 +27,7 @@ public class OverlapEventHandler : MonoBehaviour
     {
         if (onlyOnce && alreadyTriggered) return;
 
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag("Player") || collision.CompareTag("Tongue"))
         {
             alreadyTriggered = true;
             onPlayerOverlap?.Invoke();
