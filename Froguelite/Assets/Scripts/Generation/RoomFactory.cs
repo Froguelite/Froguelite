@@ -7,6 +7,15 @@ public class RoomFactory : MonoBehaviour
     // RoomFactory handles the creation of room instances
 
 
+    #region VARIABLES
+
+
+    [SerializeField] private ShopAlternate shopAlternatePrefab;
+
+
+    #endregion
+
+
     #region ROOM SPAWNING
 
 
@@ -32,7 +41,7 @@ public class RoomFactory : MonoBehaviour
                 landScale = 1.95f;
                 break;
             case Room.RoomType.Shop:
-                landScale = 0.5f;
+                landScale = 0.8f;
                 break;
             case Room.RoomType.Fly:
                 landScale = 0.5f;
@@ -96,6 +105,12 @@ public class RoomFactory : MonoBehaviour
 
         // Generate enemies for the room
         roomComponent.GenerateEnemies();
+
+        // If this is a shop, generate shop items
+        if (roomData.roomType == Room.RoomType.Shop)
+        {
+            roomComponent.GenerateShop(shopAlternatePrefab);
+        }
 
         return roomComponent;
     }

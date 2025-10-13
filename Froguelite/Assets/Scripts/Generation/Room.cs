@@ -92,6 +92,19 @@ public class Room : MonoBehaviour
     }
 
 
+    // Generates shop for this room
+    public void GenerateShop(ShopAlternate shop)
+    {
+        if (roomData.roomType != RoomType.Shop)
+            return; // Only generate shop in shop rooms
+            
+        // Create a new shop instance
+        ShopAlternate newShop = Instantiate(shop, roomData.GetRoomCenterWorldPosition(), Quaternion.identity);
+        newShop.transform.SetParent(transform);
+        newShop.SetupShop();
+    }
+
+
     // Returns a random valid spawn position on land within this room
     private Vector2 GetRandomEnemySpawnPosition()
     {
