@@ -11,6 +11,8 @@ public class BossEntity : MonoBehaviour
     //reference to HealthBar script
     [SerializeField] private HealthBar healthBar;
 
+    [SerializeField] private BossController bossController;
+
     //Tracks current boss health
     private int currentHealth;
     #endregion
@@ -24,6 +26,10 @@ public class BossEntity : MonoBehaviour
 
         InitializeBoss();
 
+        if (bossController == null)
+        {
+            bossController = GetComponent<BossController>();
+        }
         //Sets health bar with max health
         if (healthBar != null)
         {
@@ -83,7 +89,10 @@ public class BossEntity : MonoBehaviour
         {
             healthBar.HideHealthBar();
         }
-
+        if (bossController != null)
+        {
+            bossController.Death();
+        }
         //Implement animations, loot drops, or cutscene transitions here
 
     } // END Die
