@@ -18,7 +18,8 @@ public class GameManager : MonoBehaviour
         Exploring,
         InCombat,
         InBubble,
-        InMenu
+        InMenu,
+        Dead
     }
 
     public PlayerState currentPlayerState { get; private set; } = PlayerState.Exploring;
@@ -40,8 +41,6 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
-
-        Random.InitState(seed);
     }
 
 
@@ -55,6 +54,12 @@ public class GameManager : MonoBehaviour
     public void SetPlayerState(PlayerState newState)
     {
         currentPlayerState = newState;
+    }
+
+    public void OnDeath()
+    {
+        SetPlayerState(PlayerState.Dead);
+        UIManager.Instance.ShowDeathScreen();
     }
 
 

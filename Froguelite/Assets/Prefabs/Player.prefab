@@ -397,8 +397,17 @@ MonoBehaviour:
   - {fileID: 1238996803826858621, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
   - {fileID: -5487534286729226916, guid: e7f83f8464e24cc4ba873beb74fe8720, type: 3}
   movingFrameDuration: 0.15
-  attackingSprites: []
-  attackingFrameDuration: 0.08
+  attackingSprites:
+  - {fileID: -1434855787490310881, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+  - {fileID: -8355704333563391931, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+  - {fileID: 3291127978802301477, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+  - {fileID: -8667011191098777123, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+  - {fileID: -6541682701421941442, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+  - {fileID: -3289099029017889582, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+  - {fileID: 6868891886332664550, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+  - {fileID: -8238694808984575434, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+  - {fileID: -749034433948679102, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
+  attackingFrameDuration: 0.06
   movementThreshold: 0.1
 --- !u!1 &2751189623172936127
 GameObject:

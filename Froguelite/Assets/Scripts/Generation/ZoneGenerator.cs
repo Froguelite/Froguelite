@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using NavMeshPlus.Components;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -11,6 +12,9 @@ public class ZoneGenerator : MonoBehaviour
 
     #region VARIABLES
 
+
+    public static ZoneGenerator Instance;
+    public bool zoneGenerated { get; private set; } = false;
 
     [SerializeField] private bool generateZoneOnStart = true;
     [SerializeField] private bool teleportPlayerToStarterRoom = true;
@@ -34,6 +38,17 @@ public class ZoneGenerator : MonoBehaviour
 
     #region MONOBEHAVIOUR AND SETUP
 
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+            return;
+        }
+        
+        Instance = this;
+    }
+
 
     void Start()
     {
@@ -51,6 +66,9 @@ public class ZoneGenerator : MonoBehaviour
     // Generates the zone by creating a room graph and spawning rooms and doors
     public void GenerateZone()
     {
+        // TODO: Temporary, chooses a random seed every time
+        UnityEngine.Random.InitState(UnityEngine.Random.Range(int.MinValue, int.MaxValue));
+
         roomGraph = RoomGraphGenerator.GetRoomGraph(8);
         combinedTileLayout = SpawnRoomsFromGraph();
         MinimapManager.Instance.InitializeMinimap(combinedTileLayout);
@@ -72,6 +90,8 @@ public class ZoneGenerator : MonoBehaviour
 
         // Regenerate the NavMesh for the new layout
         navigationSurface.BuildNavMesh();
+
+        zoneGenerated = true;
     }
 
 
@@ -110,8 +130,9 @@ public class ZoneGenerator : MonoBehaviour
 
         // Set the player position
         PlayerMovement.Instance.transform.position = starterRoomCenter;
-
-        Debug.Log($"Set player position to starter room center: {starterRoomCenter}");
+        
+        // Force the camera to update immediately to the new player position
+        ForceCameraUpdate();
     }
 
 
@@ -429,7 +450,7 @@ public class ZoneGenerator : MonoBehaviour
 
         int roomGraphWidth = roomGraph.GetLength(0);
         int roomGraphHeight = roomGraph.GetLength(1);
-        
+
         // Find a room to get the room length (assuming all rooms are the same size)
         int roomLength = 32; // Default fallback
         for (int x = 0; x < roomGraphWidth && roomLength == 32; x++)
@@ -448,7 +469,7 @@ public class ZoneGenerator : MonoBehaviour
         // Calculate the total size of the combined tile layout
         int totalWidth = roomGraphWidth * roomLength;
         int totalHeight = roomGraphHeight * roomLength;
-        
+
         // Create the combined tile layout (false = water by default)
         bool[,] combinedLayout = new bool[totalWidth, totalHeight];
 
@@ -463,7 +484,7 @@ public class ZoneGenerator : MonoBehaviour
                     // Calculate the offset for this room in the combined layout
                     int offsetX = roomX * roomLength;
                     int offsetY = roomY * roomLength;
-                    
+
                     // Copy this room's tile layout to the combined layout
                     for (int tileX = 0; tileX < roomLength; tileX++)
                     {
@@ -482,6 +503,25 @@ public class ZoneGenerator : MonoBehaviour
 
         Debug.Log($"Combined tile layouts into {totalWidth}x{totalHeight} array");
         return combinedLayout;
+    }
+    
+
+    // Forces the Cinemachine camera to immediately update to the current player position
+    private void ForceCameraUpdate()
+    {
+        // Find and update all active CinemachineCamera components
+        CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
+        foreach (CinemachineCamera cam in cameras)
+        {
+            if (cam.isActiveAndEnabled)
+            {
+                // Force the camera to update its position immediately
+                cam.ForceCameraPosition(PlayerMovement.Instance.transform.position, Quaternion.identity);
+                
+                // Manually update the camera's internal state
+                cam.UpdateCameraState(Vector3.up, Time.deltaTime);
+            }
+        }
     }
 
 

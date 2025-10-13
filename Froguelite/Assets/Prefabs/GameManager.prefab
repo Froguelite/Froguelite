@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58508d57e955e4d98b501f66fd23e8b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  seed: 1
 --- !u!114 &5673963059578216789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58,12 +59,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5a31381bc698406eab6f2e91f206eff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatsManager
-  damage: 0
-  weaponRange: 0
-  knockbackForce: 0
-  knockbackTime: 0
-  stunTime: 0
-  speed: 0
   playerHealth: {fileID: 0}
 --- !u!114 &4966045886001203952
 MonoBehaviour:
@@ -77,3 +72,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8c7614a86bb31b49845ecd88b7164f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
+  collectedPowerFlies: []
+  lotusDef: {fileID: 11400000, guid: 747fb209e19f44ada891d0d4b79d0db2, type: 2}
+  woodpeckerDef: {fileID: 11400000, guid: ad282f15a3c4641769dfa491e34f13c4, type: 2}
+  powerFlyDef: {fileID: 11400000, guid: deaaecc2686564a5d8bf493505e69db5, type: 2}

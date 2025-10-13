@@ -386,6 +386,19 @@ public static class RoomTileHelper
                     if (!bottomLeft && !bottomRight)
                         return AutoTileSet.AutoTileType.HalfWaterBottom;
                 }
+
+                // Special case: If all cardinals are filled but only one corner is land, treat as 1/4 land on that corner
+                if (waterCornerCount == 3)
+                {
+                    if (topLeft && !topRight && !bottomLeft && !bottomRight)
+                        return AutoTileSet.AutoTileType.ThreeQuarterWaterBottomRight;
+                    if (!topLeft && topRight && !bottomLeft && !bottomRight)
+                        return AutoTileSet.AutoTileType.ThreeQuarterWaterBottomLeft;
+                    if (!topLeft && !topRight && bottomLeft && !bottomRight)
+                        return AutoTileSet.AutoTileType.ThreeQuarterWaterTopRight;
+                    if (!topLeft && !topRight && !bottomLeft && bottomRight)
+                        return AutoTileSet.AutoTileType.ThreeQuarterWaterTopLeft;
+                }
             }
 
             // If we made it this far, at least one of the four direct adjacencies are empty

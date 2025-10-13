@@ -143,8 +143,12 @@ public class PlayerHealth : MonoBehaviour
     // Kills the player and initializes death sequence
     public void KillPlayer()
     {
+        if (GameManager.Instance.currentPlayerState == GameManager.PlayerState.Dead)
+            return;
+            
         currentHealth = 0;
         Debug.Log("Player Died :(");
+        GameManager.Instance.OnDeath();
     }
 
 
