@@ -19,7 +19,7 @@ public class ProfileUIManager : MonoBehaviour
 
     private GameObject[] profileCards;
 
-    //private string testSceneName = "TestScene-Load-AA"; //TO DO: Replace with actual scene name from saved data
+    private string defaultSceneName = "TestScene-Load-AA"; //TO DO: Replace with actual default scene name
 
     private const int maxProfiles = 3;
 
@@ -134,7 +134,7 @@ public class ProfileUIManager : MonoBehaviour
         }
 
         //Create a new ProfileCardData in the List
-        ProfileCardData newCardData = new ProfileCardData(profileNumber);
+        ProfileCardData newCardData = new ProfileCardData(profileNumber, defaultSceneName);
 
         //Create profileCardDataList if null
         if (profileCardDataList == null)
@@ -275,10 +275,10 @@ public class ProfileCardData
         this.name = name;
     }
 
-    public ProfileCardData(int number)
+    public ProfileCardData(int number, string scene)
     {
         profileNumber = number;
-        sceneToLoad = "TestScene-Load-AA"; //TO DO: Replace with actual default scene name
+        sceneToLoad = scene;
         name = null;
     }
 }
