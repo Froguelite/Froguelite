@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6713814225887944773
 RectTransform:
   m_ObjectHideFlags: 0
@@ -203,5 +203,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16a4e50f8b07294bb1942e0f8f04e74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CursorTrack
+  cursorTex: {fileID: 2800000, guid: c55015e56934faa4d9afdcf2f065f8ae, type: 3}
   cursorImage: {fileID: 8366057224779522998}
   parentCanvas: {fileID: 3288566632982454446}
