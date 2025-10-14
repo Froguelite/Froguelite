@@ -310,6 +310,7 @@ public class Door : MonoBehaviour
                 {
                     // Unparent the player, and move them to the landing position
                     PlayerMovement.Instance.transform.SetParent(null);
+                    DontDestroyOnLoad(PlayerMovement.Instance.gameObject);
                     StartCoroutine(LaunchPlayerToLanding());
 
                     invertSpriteDirection = false;

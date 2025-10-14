@@ -4,7 +4,7 @@ using UnityEngine;
 public class BossController : MonoBehaviour
 {
     #region Variables
-    public enum State { Idle, AttackPhase, DefensePhase }
+    public enum State { Idle, AttackPhase, DefensePhase, Death }
 
     [Header("References")]
     [SerializeField] private Transform visualRoot;            // child used for visual movement (jumping)
@@ -43,7 +43,7 @@ public class BossController : MonoBehaviour
     [SerializeField] private float landingRecovery = 0.25f;
     [SerializeField] private float reenableDelay = 0f;      // optional delay after landing before re-enabling
     [SerializeField] private int maxAttackPhase1Repeats = 5;
-    [SerializeField] private int jumpDamage = 10;
+    [SerializeField] private int jumpDamage = 1;
     [SerializeField] private float jumpElevation = 0.5f;      // local visual elevation during "in-air"
 
     [Header("Phase 2 (Tongue) ATTACK")]
@@ -66,7 +66,7 @@ public class BossController : MonoBehaviour
     [SerializeField] private float stompTelegraphTime = 1f;   // Wind-up before stomp
     [SerializeField] private float stompRadius = 3f;          // damage radius
     [SerializeField] private float stompRecoveryTime = 2f;
-    [SerializeField] private int stompDamage = 10;            // Damage dealt on stomp
+    [SerializeField] private int stompDamage = 1;            // Damage dealt on stomp
     [SerializeField] private float aoeFadeTime = 0.3f;
     [SerializeField] private float aoeHoldTime = 0.2f;
 
@@ -74,7 +74,7 @@ public class BossController : MonoBehaviour
     private Coroutine stateLoopCoroutine;
     private int attackPhaseCount = 0;
     #endregion
-
+    
     #region Initialization
     private void Reset()
     {
@@ -93,6 +93,8 @@ public class BossController : MonoBehaviour
     private IEnumerator StateLoop()
     //--------------------------------------------//
     {
+        if (state == State.Death) yield break;
+        
         frogFlipbook.SetSprites(idleSprites, 0.5f, FlipbookLoopMethod.PingPong);
         frogFlipbook.Play();
         yield return new WaitForSeconds(idleDelay);
@@ -100,6 +102,8 @@ public class BossController : MonoBehaviour
 
         while (true)
         {
+            if (state == State.Death) yield break;
+
             if (state == State.AttackPhase)
             {
                 if (attackPhaseCount < maxAttackPhase1Repeats)
@@ -139,6 +143,7 @@ public class BossController : MonoBehaviour
     private IEnumerator PerformAttack1()
     //--------------------------------------------//
     {
+        if (state == State.Death) yield break;
         frogFlipbook.ResetAnimation();
         frogFlipbook.SetSprites(jumpSprites, 0.1f, FlipbookLoopMethod.Once);
         frogFlipbook.Play();
@@ -155,9 +160,8 @@ public class BossController : MonoBehaviour
             StartCoroutine(ShadowRoutine(shadow));
         }
 
-        DisableFrogHitboxForAttack();
-
         // Launch upward
+        frogHitbox.enabled = false;
         Vector3 launchApex = visualStart + new Vector3(0f, jumpElevation * 3f, 0f);
         float t = 0f;
         while (t < launchTime)
@@ -175,6 +179,7 @@ public class BossController : MonoBehaviour
                 shadowTransform.localScale = new Vector3(scale, scale, 1f);
             }
 
+            if (state == State.Death) yield break;
             yield return null;
         }
 
@@ -189,6 +194,7 @@ public class BossController : MonoBehaviour
                 // keep shadow small during wait
                 shadowTransform.localScale = new Vector3(shadowMinScale, shadowMinScale, 1f);
             }
+            if (state == State.Death) yield break;
             yield return null;
         }
 
@@ -213,6 +219,7 @@ public class BossController : MonoBehaviour
                 float scale = Mathf.Lerp(shadowMinScale, shadowMaxScale, scaleProgress);
                 shadowTransform.localScale = new Vector3(scale, scale, 1f);
 
+                if (state == State.Death) yield break;
                 yield return null;
             }
             visualRoot.position = fallTarget;
@@ -220,14 +227,15 @@ public class BossController : MonoBehaviour
             frogFlipbook.SetSprites(landSprites, 0.1f, FlipbookLoopMethod.Once);
             frogFlipbook.Play();
 
+            frogHitbox.enabled = true;
             ApplyJumpDamage(fallTarget);
 
-            ReenableHitboxAfterDelay(reenableDelay);
             Destroy(shadow);
         }
         frogFlipbook.ResetAnimation();
         frogFlipbook.SetSprites(idleSprites, 0.5f, FlipbookLoopMethod.PingPong);
         frogFlipbook.Play();
+        if (state == State.Death) yield break;
         yield return new WaitForSeconds(landingRecovery);
     }
 
@@ -238,13 +246,13 @@ public class BossController : MonoBehaviour
         Vector3 start = visualRoot.position;
         Vector3 offPivotPos = offIslandPivot != null ? offIslandPivot.position : visualRoot.position + Vector3.up * 3f;
 
-        DisableFrogHitboxForAttack();
-
         // Jump out
+        frogHitbox.enabled = false;
         frogFlipbook.ResetAnimation();
         frogFlipbook.SetSprites(jumpSprites, 0.1f, FlipbookLoopMethod.Once);
         frogFlipbook.Play();
         float arcOutTime = 0.4f;
+        if (state == State.Death) yield break;
         yield return StartCoroutine(ParabolicMove(visualRoot, start, offPivotPos, arcOutTime, jumpElevation * 1.8f));
 
         SetVisualVisible(true);
@@ -274,18 +282,22 @@ public class BossController : MonoBehaviour
                 StartCoroutine(TriggerTongueAttack());
             }
 
+            if (state == State.Death) yield break;
             yield return null;
         }
 
+        if (state == State.Death) yield break;
         yield return new WaitForSeconds(1f);
 
         // Return to island
+        frogHitbox.enabled = true;
         shadowPrefab.GetComponent<SpriteRenderer>().enabled = true;
         frogFlipbook.SetSprites(idleSprites, 0.16f, FlipbookLoopMethod.Once);
         frogFlipbook.Play();
 
         Vector3 landing = islandRoot.position;
         float arcReturnTime = 0.45f;
+        if (state == State.Death) yield break;
         yield return StartCoroutine(ParabolicMove(visualRoot, visualRoot.position, landing, arcReturnTime, jumpElevation * 1.2f));
     }
 
@@ -301,6 +313,7 @@ public class BossController : MonoBehaviour
             t += Time.deltaTime;
             float progress = Mathf.Clamp01(t / extendTime);
             UpdateTongue(tongue, progress * maxLength, baseScale);
+            if (state == State.Death) yield break;
             yield return null;
         }
 
@@ -314,6 +327,7 @@ public class BossController : MonoBehaviour
             t += Time.deltaTime;
             float progress = 1f - Mathf.Clamp01(t / retractTime);
             UpdateTongue(tongue, progress * maxLength, baseScale);
+            if (state == State.Death) yield break;
             yield return null;
         }
     }
@@ -336,16 +350,16 @@ public class BossController : MonoBehaviour
 
     private IEnumerator TriggerTongueAttack()
     {
-        ReenableHitboxAfterDelay(reenableDelay);
-
         frogFlipbook.SetSprites(tongueAttackSprites, 0.16f, FlipbookLoopMethod.Once);
         frogFlipbook.Play();
+        if (state == State.Death) yield break;
         yield return new WaitForSeconds(0.5f);
 
         if (tonguePrefab != null)
         {
             GameObject tongue = Instantiate(tonguePrefab, visualRoot.position, Quaternion.identity, visualRoot);
             tongue.transform.localPosition += new Vector3(tongueSpawnOffsetX, 0f, 0f);
+            if (state == State.Death) yield break;
             yield return StartCoroutine(StretchTongue(tongue.transform, tongueHoldTime));
             Destroy(tongue);
         }
@@ -363,6 +377,7 @@ public class BossController : MonoBehaviour
 
         for (int i = 0; i < stompsPerDefense; i++)
         {
+            if (state == State.Death) yield break;
             yield return new WaitForSeconds(stompInterval);
             ShowAOECircle(visualRoot.position);
             yield return new WaitForSeconds(aoeFadeTime + aoeHoldTime);
@@ -379,11 +394,13 @@ public class BossController : MonoBehaviour
 
         }
 
+        if (state == State.Death) yield break;
         yield return new WaitForSeconds(0.2f);
     }
     #endregion
 
     #region HelperFunctions
+    
     // TO BE IMPLEMENTED
     //--------------------------------------------//
     private void StompAoe()
@@ -401,6 +418,7 @@ public class BossController : MonoBehaviour
             if (hit.CompareTag("Player"))
             {
                 Debug.Log($"Player hit by stomp, took {damage} damage.");
+                StatsManager.Instance.playerHealth.DamagePlayer(stompDamage);
             }
         }
     }
@@ -416,6 +434,7 @@ public class BossController : MonoBehaviour
             if (hit.CompareTag("Player"))
             {
                 Debug.Log($"Player hit by jump at {center}, took {damage} damage.");
+                StatsManager.Instance.playerHealth.DamagePlayer(damage);
             }
         }
     }
@@ -441,6 +460,7 @@ public class BossController : MonoBehaviour
     private IEnumerator ParabolicMove(Transform target, Vector3 from, Vector3 to, float duration, float height)
     //--------------------------------------------//
     {
+        if (state == State.Death) yield break;
         float t = 0f;
         while (t < duration)
         {
@@ -457,6 +477,7 @@ public class BossController : MonoBehaviour
             // apply zOffset as visual elevation (keep underlying X/Y on map)
             target.position = new Vector3(pos.x, pos.y, 0f);
 
+            if (state == State.Death) yield break;
             yield return null;
         }
         target.position = new Vector3(to.x, to.y, 0f);
@@ -466,6 +487,7 @@ public class BossController : MonoBehaviour
     private IEnumerator ShadowRoutine(GameObject shadow)
     //--------------------------------------------//
     {
+        if (state == State.Death) yield break;
         while (shadow != null)
         {
             Vector2 playerPos = PlayerMovement.Instance.transform.position;
@@ -475,7 +497,7 @@ public class BossController : MonoBehaviour
             Vector2 next = Vector2.MoveTowards(current, playerPos, shadowFollowSpeed * Time.deltaTime);
             shadow.transform.position = next;
 
-
+            if (state == State.Death) yield break;
             yield return null;
         }
     }
@@ -484,6 +506,7 @@ public class BossController : MonoBehaviour
     private IEnumerator LandOnIsland()
     //--------------------------------------------//
     {
+        if (state == State.Death) yield break;
         Vector3 landing = islandRoot.position;
         Vector3 start = visualRoot.position;
         float travel = 0.25f;
@@ -492,6 +515,7 @@ public class BossController : MonoBehaviour
         {
             t += Time.deltaTime;
             visualRoot.position = Vector3.Lerp(start, landing, t / travel);
+            if (state == State.Death) yield break;
             yield return null;
         }
         visualRoot.position = landing;
@@ -499,42 +523,16 @@ public class BossController : MonoBehaviour
         yield return null;
     }
 
-    // TO BE IMPLEMENTED
-    //--------------------------------------------//
-    private void DisableFrogHitboxForAttack()
-    //--------------------------------------------//
-    {
-        if (frogHitbox != null) frogHitbox.enabled = false;
-    }
-
-    // TO BE IMPLEMENTED
-    //--------------------------------------------//
-    private void ReenableFrogHitboxOnLand()
-    //--------------------------------------------//
-    {
-        if (frogHitbox == null) return;
-        if (reenableDelay <= 0f)
-        {
-            frogHitbox.enabled = true;
-            return;
-        }
-        StartCoroutine(ReenableHitboxAfterDelay(reenableDelay));
-    }
-
-    // TO BE IMPLEMENTED
-    //--------------------------------------------//
-    private IEnumerator ReenableHitboxAfterDelay(float delay)
-    //--------------------------------------------//
-    {
-        yield return new WaitForSeconds(delay);
-        if (frogHitbox != null) frogHitbox.enabled = true;
-    }
-
     public void Death()
     {
         frogFlipbook.ResetAnimation();
         frogFlipbook.SetSprites(deathSprites, 0.2f, FlipbookLoopMethod.Once);
         frogFlipbook.Play();
+
+        state = State.Death;
+        StopAllCoroutines();
+
+        GameManager.Instance.OnWin();
         //-------------------//
 
 

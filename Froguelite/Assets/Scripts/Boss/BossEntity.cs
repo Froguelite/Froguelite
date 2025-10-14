@@ -12,6 +12,10 @@ public class BossEntity : MonoBehaviour
     [SerializeField] private HealthBar healthBar;
 
     [SerializeField] private BossController bossController;
+    [SerializeField] private SpriteRenderer bossRenderer;
+    [SerializeField] private Color flashColor = Color.red; // Color to flash when hit
+    private Color originalColor; // Store the original sprite color
+    [SerializeField] private float flashDuration = 0.2f; // How long
 
     //Tracks current boss health
     private int currentHealth;
@@ -31,10 +35,10 @@ public class BossEntity : MonoBehaviour
             bossController = GetComponent<BossController>();
         }
         //Sets health bar with max health
-        if (healthBar != null)
-        {
-            healthBar.SetMaxHealth(stats.maxHealth);
-        }
+        healthBar.SetMaxHealth(stats.maxHealth);
+        originalColor = bossRenderer.color;
+
+        StatsManager.Instance.playerHealth.onPlayerDie.AddListener(OnPlayerDie);
 
     } // END Start
 
@@ -56,20 +60,24 @@ public class BossEntity : MonoBehaviour
     public void TakeDamage(int damage)
     //-----------------------------------//
     {
+        if (currentHealth <= 0)
+        {
+            // Boss is already dead, ignore further damage
+            return;
+        }
+
         //I included this function incase we want to implement damage reduction
         int effectiveDamage = damage; // int effectiveDamage = Mathf.Max(damage - stats.damageReduction, 0)
 
         //Depletes current health
         currentHealth -= effectiveDamage;
         currentHealth = Mathf.Max(currentHealth, 0);
+        FlashSprite();
 
         Debug.Log($"{stats.bossName} took {effectiveDamage} damage. Remaining HP = {currentHealth}");
 
         //Updates Health bar
-        if (healthBar != null)
-        {
-            healthBar.SetHealth(currentHealth);
-        }
+        healthBar.SetHealth(currentHealth);
 
         //If boss health reaches zero, trigger death logic
         if (currentHealth <= 0)
@@ -78,6 +86,17 @@ public class BossEntity : MonoBehaviour
         }
     } // END TakeDamage
 
+    // Flash the sprite red when taking damage
+    private void FlashSprite()
+    {
+        LeanTween.cancel(bossRenderer.gameObject);
+        bossRenderer.color = flashColor;
+        LeanTween.value(bossRenderer.gameObject, flashColor, originalColor, flashDuration).setOnUpdate((Color newColor) =>
+        {
+            bossRenderer.color = newColor;
+        });
+    }
+
     //Die logic
     //-----------------------------------//
     private void Die()
@@ -85,10 +104,8 @@ public class BossEntity : MonoBehaviour
     {
         Debug.Log($"{stats.bossName} has been defeated.");
 
-        if (healthBar != null )
-        {
-            healthBar.HideHealthBar();
-        }
+        healthBar.HideHealthBar();
+
         if (bossController != null)
         {
             bossController.Death();
@@ -96,5 +113,10 @@ public class BossEntity : MonoBehaviour
         //Implement animations, loot drops, or cutscene transitions here
 
     } // END Die
+
+    public void OnPlayerDie()
+    {
+        healthBar.HideHealthBar();
+    }
     #endregion
 }

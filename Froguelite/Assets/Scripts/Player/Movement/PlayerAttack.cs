@@ -24,7 +24,8 @@ public class PlayerAttack : MonoBehaviour
     private Vector3 tongueStartOffset;
 
     [Header("Tongue Visual Settings")]
-    [SerializeField] private SpriteRenderer tongueVisual;
+    [SerializeField] private GameObject tongueVisual;
+    [SerializeField] private SpriteRenderer tongueSprite;
     [SerializeField] private Transform playerMouth;
     [SerializeField] private float tongueWidth = 0.2f;
 
@@ -56,9 +57,10 @@ public class PlayerAttack : MonoBehaviour
         // Initialize tongue visual as hidden
         if (tongueVisual != null)
         {
-            tongueVisual.enabled = false;
+            tongueSprite.enabled = false;
             // Also enable the GameObject if it was disabled in editor
             tongueVisual.gameObject.SetActive(true);
+            tongueSprite.gameObject.SetActive(true);
         }
     }
 
@@ -202,7 +204,7 @@ public class PlayerAttack : MonoBehaviour
 
         // Show visual only when extending or retracting
         bool shouldShow = isExtending || isRetracting;
-        tongueVisual.enabled = shouldShow;
+        tongueSprite.enabled = shouldShow;
 
         if (!shouldShow) return;
 

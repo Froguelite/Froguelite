@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: BossStats
   m_EditorClassIdentifier: Assembly-CSharp::BossStats
   bossName: Frog
-  maxHealth: 100
+  maxHealth: 200
   attackDamage: 10
   moveSpeed: 10

@@ -22,6 +22,7 @@ public class MinimapManager : MonoBehaviour
     [SerializeField] private CanvasGroup fullMapCanvasGroup;
     [SerializeField] private float fullMapFadeDuration = 0.2f; // Duration for fade in/out
     [SerializeField] private Transform fullMapTransform;
+    [SerializeField] private CanvasGroup minimapParentCanvGroup;
     private Texture2D minimapTexture;
 
     private float mapHidY = -1000f;
@@ -30,9 +31,11 @@ public class MinimapManager : MonoBehaviour
     private bool[,] landTileArray; // True = land, False = water
     private bool[,] waterTileArray; // True = water, False = land
     private bool[,] exploredTileArray; // True = explored, False = unexplored
-    
+
     [SerializeField] private float mapExplorationUpdateInterval = 0.1f; // Interval to update explored area
     [SerializeField] private float mapViewRadius = 20f; // Radius around player to mark as explored
+
+    private bool canToggleFullMap = true;
 
 
     #endregion
@@ -76,24 +79,24 @@ public class MinimapManager : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(mapExplorationUpdateInterval);
-            
+
             // Skip if arrays aren't initialized or player doesn't exist
             if (exploredTileArray == null || landTileArray == null || PlayerMovement.Instance == null)
                 continue;
-            
+
             // Get player position
             Vector3 playerPosition = PlayerMovement.Instance.transform.position;
             Vector2Int playerTilePos = new Vector2Int(Mathf.RoundToInt(playerPosition.x), Mathf.RoundToInt(playerPosition.y));
-            
+
             // Get array dimensions
             int width = exploredTileArray.GetLength(0);
             int height = exploredTileArray.GetLength(1);
-            
+
             bool anyNewExploration = false;
-            
+
             // Update all tiles within mapViewRadius to explored
             int radiusInt = Mathf.RoundToInt(mapViewRadius);
-            
+
             for (int x = playerTilePos.x - radiusInt; x <= playerTilePos.x + radiusInt; x++)
             {
                 for (int y = playerTilePos.y - radiusInt; y <= playerTilePos.y + radiusInt; y++)
@@ -103,7 +106,7 @@ public class MinimapManager : MonoBehaviour
                     {
                         // Check if tile is within circular radius
                         float distance = Vector2.Distance(new Vector2(x, y), new Vector2(playerTilePos.x, playerTilePos.y));
-                        
+
                         if (distance <= mapViewRadius && !exploredTileArray[x, y])
                         {
                             exploredTileArray[x, y] = true;
@@ -112,7 +115,7 @@ public class MinimapManager : MonoBehaviour
                     }
                 }
             }
-            
+
             // Only update minimap if there were new areas explored
             if (anyNewExploration)
             {
@@ -135,7 +138,7 @@ public class MinimapManager : MonoBehaviour
         // Get dimensions of the land tile array
         int width = landTileArray.GetLength(0);
         int height = landTileArray.GetLength(1);
-        
+
         // Initialize explored area array - all tiles start as unexplored
         exploredTileArray = new bool[width, height];
 
@@ -211,14 +214,14 @@ public class MinimapManager : MonoBehaviour
             {
                 // Check if this pixel is within the circular radius
                 float distance = Vector2.Distance(new Vector2(x, y), new Vector2(center.x, center.y));
-                
+
                 if (distance <= radius)
                 {
                     // Calculate the pixel index (Unity textures are bottom-up)
                     int pixelIndex = (height - 1 - y) * width + x;
-                    
+
                     Color newColor;
-                    
+
                     // Show unexplored color for unexplored areas, otherwise show terrain color
                     if (!exploredTileArray[x, y])
                     {
@@ -228,7 +231,7 @@ public class MinimapManager : MonoBehaviour
                     {
                         newColor = landTileArray[x, y] ? landColor : waterColor;
                     }
-                    
+
                     // Set the pixel color
                     minimapTexture.SetPixel(x, height - 1 - y, newColor);
                 }
@@ -244,7 +247,7 @@ public class MinimapManager : MonoBehaviour
 
 
     #region PANNING
-    
+
 
     // Pans the minimap to be centered around the player's current position
     private void PanToPlayerPosition()
@@ -304,6 +307,8 @@ public class MinimapManager : MonoBehaviour
 
     public void ToggleFullMap(bool showMap)
     {
+        if (!canToggleFullMap) return;
+        
         LeanTween.cancel(fullMapTransform.gameObject);
         LeanTween.cancel(fullMapCanvasGroup.gameObject);
 
@@ -316,6 +321,26 @@ public class MinimapManager : MonoBehaviour
         {
             fullMapTransform.LeanMoveLocalY(mapHidY, fullMapFadeDuration).setEaseOutQuad();
             fullMapCanvasGroup.LeanAlpha(0, fullMapFadeDuration);
+        }
+    }
+
+
+    #endregion
+
+
+    #region HIDE MINIMAP
+
+
+    public void HideMinimap()
+    {
+        if (minimapParentCanvGroup != null)
+        {
+            minimapParentCanvGroup.alpha = 0;
+            minimapParentCanvGroup.interactable = false;
+            minimapParentCanvGroup.blocksRaycasts = false;
+
+            ToggleFullMap(false);
+            canToggleFullMap = false;
         }
     }
 

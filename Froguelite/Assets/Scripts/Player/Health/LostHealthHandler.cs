@@ -56,7 +56,7 @@ public class LostHealthHandler : MonoBehaviour
                 resourceImg.transform.LeanRotateZ(-zRotateAmount, flingDuration).setEaseInQuad();
                 LeanTween.value(resourceImg.gameObject, 1f, 0f, flingDuration).setOnUpdate((float val) =>
                 {
-                    resourceImg.color = resourceImg.color.WithAlpha(val);
+                    resourceImg.color = new Color(resourceImg.color.r, resourceImg.color.g, resourceImg.color.b, val);
                 }).setEaseInQuad();
 
                 break;
@@ -66,7 +66,7 @@ public class LostHealthHandler : MonoBehaviour
                 resourceImg.transform.LeanRotateZ(-zRotateAmount, flingDuration).setEaseInQuad();
                 LeanTween.value(resourceImg.gameObject, 1f, 0f, flingDuration).setOnUpdate((float val) =>
                 {
-                    resourceImg.color = resourceImg.color.WithAlpha(val);
+                    resourceImg.color = new Color(resourceImg.color.r, resourceImg.color.g, resourceImg.color.b, val);
                 }).setEaseInQuad();
                 break;
             case LostResourceType.RightHalf:
@@ -75,7 +75,7 @@ public class LostHealthHandler : MonoBehaviour
                 resourceImg.transform.LeanRotateZ(zRotateAmount, flingDuration).setEaseInQuad();
                 LeanTween.value(resourceImg.gameObject, 1f, 0f, flingDuration).setOnUpdate((float val) =>
                 {
-                    resourceImg.color = resourceImg.color.WithAlpha(val);
+                    resourceImg.color = new Color(resourceImg.color.r, resourceImg.color.g, resourceImg.color.b, val);
                 }).setEaseInQuad();
                 break;
         }

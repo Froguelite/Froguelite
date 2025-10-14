@@ -33,11 +33,12 @@ public class InputManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(this);
+            Destroy(this.gameObject);
             return;
         }
 
         Instance = this;
+        DontDestroyOnLoad(this.gameObject);
 
         SetupActions();
     }

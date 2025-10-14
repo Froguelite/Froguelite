@@ -305,7 +305,7 @@ public class RoomManager : MonoBehaviour
         {
             FloatingText clearText = Instantiate(roomClearTextPrefab, position, Quaternion.identity);
             clearText.transform.position = new Vector3(clearText.transform.position.x, clearText.transform.position.y + 0.5f, -1f); // Ensure text is above other elements
-            clearText.SetText("ROOM CLEAR!");
+            clearText.SetText("ISLAND CLEAR!");
             clearText.StartAnimation();
         }
 
