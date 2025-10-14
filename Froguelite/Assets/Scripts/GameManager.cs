@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -36,11 +37,12 @@ public class GameManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(this);
+            Destroy(this.gameObject);
             return;
         }
 
         Instance = this;
+        DontDestroyOnLoad(this.gameObject);
     }
 
 
@@ -61,9 +63,15 @@ public class GameManager : MonoBehaviour
         SetPlayerState(PlayerState.Dead);
         UIManager.Instance.ShowDeathScreen();
     }
-    
+
     public void OnWin()
     {
+        StartCoroutine(WinRoutine());
+    }
+    
+    private IEnumerator WinRoutine()
+    {
+        yield return new WaitForSeconds(4f);
         UIManager.Instance.ShowWinScreen();
     }
 

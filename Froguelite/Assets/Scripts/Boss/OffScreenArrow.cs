@@ -18,6 +18,7 @@ public class OffscreenArrow2D : MonoBehaviour
         if (!onScreen)
         {
             // Convert frog world position to screen position
+            if (cam == null) cam = Camera.main;
             Vector3 screenPos = cam.WorldToScreenPoint(frog.position);
             Vector3 screenCenter = new Vector3(Screen.width / 2f, Screen.height / 2f, 0f);
 
@@ -42,6 +43,7 @@ public class OffscreenArrow2D : MonoBehaviour
 
     private bool IsTargetOnScreen(Vector3 worldPos)
     {
+        if (cam == null) cam = Camera.main;
         Vector3 screenPos = cam.WorldToScreenPoint(worldPos);
         return screenPos.z > 0 &&
                screenPos.x >= 0 && screenPos.x <= Screen.width &&

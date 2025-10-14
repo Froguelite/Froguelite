@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Unity.Cinemachine;
 
 public class LevelManager : MonoBehaviour
 {
@@ -65,9 +66,31 @@ public class LevelManager : MonoBehaviour
             await GenerateZoneAndSetup();
             UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
         }
-        else
+        else if (sceneName == "MenuScene")
         {
+            GameObject.Destroy(InputManager.Instance.gameObject);
+            GameObject.Destroy(MainCanvas.Instance.gameObject);
+            GameObject.Destroy(FrogueliteCam.Instance.gameObject);
+            GameObject.Destroy(GameManager.Instance.gameObject);
             UIManager.Instance.OnSceneLoadReturn(UIPanels.GameStart);
+        }
+        else if (sceneName == "BossScene")
+        {
+            PlayerMovement.Instance.transform.position = new Vector3(0.46f, -7.16f, 0);
+
+            // Find and update all active CinemachineCamera components
+            CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
+            foreach (CinemachineCamera cam in cameras)
+            {
+                if (cam.isActiveAndEnabled)
+                {
+                    // Force the camera to update its position immediately
+                    cam.ForceCameraPosition(PlayerMovement.Instance.transform.position, Quaternion.identity);
+                    
+                    // Manually update the camera's internal state
+                    cam.UpdateCameraState(Vector3.up, Time.deltaTime);
+                }
+            }
         }
     }
 

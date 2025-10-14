@@ -8,8 +8,8 @@ public class TongueHitbox : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log($"Player hit with tongue, and did {damage} damage.");
-            StatsManager.Instance.playerHealth.DamagePlayer(damage);
+            Debug.Log($"Player hit with tongue, and did {1} damage.");
+            StatsManager.Instance.playerHealth.DamagePlayer(1);
         }
     }
 }

@@ -50,7 +50,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomFactory
   shopAlternatePrefab: {fileID: 3868817830965573783, guid: 69cd4188c67e8a34b8b4d695e0550fc2, type: 3}
-  bossTempPrefab: {fileID: 6171626646396682201, guid: ad4200558d1f7534d8125994135bb6a7, type: 3}
+  bossPortalPrefab: {fileID: 6171626646396682201, guid: ad4200558d1f7534d8125994135bb6a7, type: 3}
 --- !u!114 &8433390846284386573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -732,4 +732,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomManager
   shopAlternatePrefab: {fileID: 0}
-  bossTempPrefab: {fileID: 0}
+  bossPortalPrefab: {fileID: 0}

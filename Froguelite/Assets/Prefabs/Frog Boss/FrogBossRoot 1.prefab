@@ -187,6 +187,7 @@ Transform:
   m_Children:
   - {fileID: 7873909638088582266}
   - {fileID: 2089317129601071214}
+  - {fileID: 8815746764661447171}
   m_Father: {fileID: 7434643146783838612}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1580712868150624173
@@ -477,7 +478,6 @@ Transform:
   m_Children:
   - {fileID: 7470065223585344522}
   - {fileID: 1920665960491241761}
-  - {fileID: 8815746764661447171}
   - {fileID: 4641142081720045848}
   - {fileID: 6213689393964593935}
   m_Father: {fileID: 0}
@@ -496,6 +496,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossEntity
   stats: {fileID: 11400000, guid: 901362a26f298b243903445da1bb1878, type: 2}
   healthBar: {fileID: 0}
+  bossController: {fileID: 0}
 --- !u!95 &3470002286978835923
 Animator:
   serializedVersion: 7
@@ -536,19 +537,52 @@ MonoBehaviour:
   shadowPrefab: {fileID: 7532748341834833307, guid: c6075d74afac3254da3e34fcbd3bca05, type: 3}
   landingAoePrefab: {fileID: 220092334092362076, guid: 54d354ce9bb568445802a689bacda54b, type: 3}
   tonguePrefab: {fileID: 362880712117942906}
-  animator: {fileID: 3470002286978835923}
+  stompAoePrefab: {fileID: 0}
+  frogFlipbook: {fileID: 0}
   bossEntity: {fileID: 5534361125006285923}
+  frogHitbox: {fileID: 0}
+  aoeCirclePrefab: {fileID: 0}
+  idleSprites: []
+  jumpSprites: []
+  landSprites: []
+  WaterSprites: []
+  tongueAttackSprites: []
+  stompSprites: []
+  deathSprites: []
   idleDelay: 1
   shadowTelegraph: 1
+  overrideDropWait: 5
   dropTravelTime: 0.35
-  offIslandMoveTime: 3
-  tongueHoldTime: 1
+  shadowMinScale: 0.3
+  shadowMaxScale: 1
+  shadowScaleSpeed: 1
+  shadowFollowSpeed: 2
+  launchTime: 0.18
   landingRecovery: 0.25
+  reenableDelay: 0
+  maxAttackPhase1Repeats: 5
+  jumpDamage: 1
+  jumpElevation: 0.5
+  preAttack2Delay: 1.5
+  attackPhase2Duration: 6
+  tongueHoldTime: 1
+  tongueMaxLength: 4
+  tongueSpawnOffsetX: -0.5
+  yMin: -10
+  yMax: 8
+  verticalPaceSpeed: 0.4
+  strikeTimeMin: 0.8
+  strikeTimeMax: 1.5
+  extendTime: 0.25
+  retractTime: 0.25
   stompsPerDefense: 3
   stompInterval: 1.2
-  jumpElevation: 0.5
-  offIslandAmplitude: 2
-  offIslandSpeed: 2
+  stompTelegraphTime: 1
+  stompRadius: 3
+  stompRecoveryTime: 2
+  stompDamage: 1
+  aoeFadeTime: 0.3
+  aoeHoldTime: 0.2
 --- !u!1 &2517298519071536455
 GameObject:
   m_ObjectHideFlags: 0
@@ -664,12 +698,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6341227083246920627}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7434643146783838612}
+  m_Father: {fileID: 1920665960491241761}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &6714481846564538567
 BoxCollider2D:

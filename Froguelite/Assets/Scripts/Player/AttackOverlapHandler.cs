@@ -41,13 +41,13 @@ public class AttackOverlapHandler : MonoBehaviour
         // Check if the collider belongs to a boss
         if (collision.CompareTag("Boss"))
         {
-            BossController boss = collision.GetComponent<BossController>();
+            BossEntity boss = collision.GetComponent<BossEntity>();
             if (boss == null)
-                boss = collision.GetComponentInParent<BossController>();
+                boss = collision.GetComponentInParent<BossEntity>();
 
             if (boss != null)
             {
-                //boss.DamageEnemy(StatsManager.Instance.playerDamage.GetValue(), StatsManager.Instance.playerKnockback.GetValue());
+                boss.TakeDamage(Mathf.FloorToInt(StatsManager.Instance.playerDamage.GetValue()));
                 PlayerAttack.Instance.StopTongueExtension(false);
             }
         }

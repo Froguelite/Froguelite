@@ -12,6 +12,10 @@ public class BossEntity : MonoBehaviour
     [SerializeField] private HealthBar healthBar;
 
     [SerializeField] private BossController bossController;
+    [SerializeField] private SpriteRenderer bossRenderer;
+    [SerializeField] private Color flashColor = Color.red; // Color to flash when hit
+    private Color originalColor; // Store the original sprite color
+    [SerializeField] private float flashDuration = 0.2f; // How long
 
     //Tracks current boss health
     private int currentHealth;
@@ -35,6 +39,7 @@ public class BossEntity : MonoBehaviour
         {
             healthBar.SetMaxHealth(stats.maxHealth);
         }
+        originalColor = bossRenderer.color;
 
     } // END Start
 
@@ -62,6 +67,7 @@ public class BossEntity : MonoBehaviour
         //Depletes current health
         currentHealth -= effectiveDamage;
         currentHealth = Mathf.Max(currentHealth, 0);
+        FlashSprite();
 
         Debug.Log($"{stats.bossName} took {effectiveDamage} damage. Remaining HP = {currentHealth}");
 
@@ -77,6 +83,17 @@ public class BossEntity : MonoBehaviour
             Die();
         }
     } // END TakeDamage
+
+    // Flash the sprite red when taking damage
+    private void FlashSprite()
+    {
+        LeanTween.cancel(bossRenderer.gameObject);
+        bossRenderer.color = flashColor;
+        LeanTween.value(bossRenderer.gameObject, flashColor, originalColor, flashDuration).setOnUpdate((Color newColor) =>
+        {
+            bossRenderer.color = newColor;
+        });
+    }
 
     //Die logic
     //-----------------------------------//
