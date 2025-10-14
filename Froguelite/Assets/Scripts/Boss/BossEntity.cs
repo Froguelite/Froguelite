@@ -35,11 +35,10 @@ public class BossEntity : MonoBehaviour
             bossController = GetComponent<BossController>();
         }
         //Sets health bar with max health
-        if (healthBar != null)
-        {
-            healthBar.SetMaxHealth(stats.maxHealth);
-        }
+        healthBar.SetMaxHealth(stats.maxHealth);
         originalColor = bossRenderer.color;
+
+        StatsManager.Instance.playerHealth.onPlayerDie.AddListener(OnPlayerDie);
 
     } // END Start
 
@@ -61,6 +60,12 @@ public class BossEntity : MonoBehaviour
     public void TakeDamage(int damage)
     //-----------------------------------//
     {
+        if (currentHealth <= 0)
+        {
+            // Boss is already dead, ignore further damage
+            return;
+        }
+
         //I included this function incase we want to implement damage reduction
         int effectiveDamage = damage; // int effectiveDamage = Mathf.Max(damage - stats.damageReduction, 0)
 
@@ -72,10 +77,7 @@ public class BossEntity : MonoBehaviour
         Debug.Log($"{stats.bossName} took {effectiveDamage} damage. Remaining HP = {currentHealth}");
 
         //Updates Health bar
-        if (healthBar != null)
-        {
-            healthBar.SetHealth(currentHealth);
-        }
+        healthBar.SetHealth(currentHealth);
 
         //If boss health reaches zero, trigger death logic
         if (currentHealth <= 0)
@@ -102,10 +104,8 @@ public class BossEntity : MonoBehaviour
     {
         Debug.Log($"{stats.bossName} has been defeated.");
 
-        if (healthBar != null )
-        {
-            healthBar.HideHealthBar();
-        }
+        healthBar.HideHealthBar();
+
         if (bossController != null)
         {
             bossController.Death();
@@ -113,5 +113,10 @@ public class BossEntity : MonoBehaviour
         //Implement animations, loot drops, or cutscene transitions here
 
     } // END Die
+
+    public void OnPlayerDie()
+    {
+        healthBar.HideHealthBar();
+    }
     #endregion
 }

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: de650d849985756488db7a71042bfedc
+guid: f80834f42ce95e14abeb390c18d6e2b0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5816642994671486895
-    second: portal_0
+      213: -6667170261817661172
+    second: tongue_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: portal_0
+      name: tongue_0
       rect:
         serializedVersion: 2
-        x: 3
-        y: 3
-        width: 218
-        height: 266
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 0
+        y: 4
+        width: 520
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1587755a302274fa0800000000000000
-      internalID: -5816642994671486895
+      spriteID: c096f4798f37973a0800000000000000
+      internalID: -6667170261817661172
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: fccb7fae0f3aeb04490dbd55b65e7771
+    spriteID: 5fe310b1fee39354eb89062dd7549937
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      portal_0: -5816642994671486895
+      tongue_0: -6667170261817661172
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

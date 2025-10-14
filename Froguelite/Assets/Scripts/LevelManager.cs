@@ -77,6 +77,7 @@ public class LevelManager : MonoBehaviour
         else if (sceneName == "BossScene")
         {
             PlayerMovement.Instance.transform.position = new Vector3(0.46f, -7.16f, 0);
+            MinimapManager.Instance.HideMinimap();
 
             // Find and update all active CinemachineCamera components
             CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);

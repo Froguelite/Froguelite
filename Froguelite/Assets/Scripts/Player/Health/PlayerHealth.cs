@@ -19,6 +19,7 @@ public class PlayerHealth : MonoBehaviour
     public UnityEvent onHealthChanged; // Event triggered when health changes (damage or heal)
     public UnityEvent onHealthDamaged; // Event triggered when the player takes damage
     public UnityEvent onHealthHealed;  // Event triggered when the player is healed
+    public UnityEvent onPlayerDie; // Event triggered when the player dies
 
     private float timeSinceLastDamage = 0f;
     private const float damageCooldown = 0.3f; // Minimum time between damage instances
@@ -148,6 +149,7 @@ public class PlayerHealth : MonoBehaviour
             
         currentHealth = 0;
         Debug.Log("Player Died :(");
+        onPlayerDie?.Invoke();
         GameManager.Instance.OnDeath();
     }
 

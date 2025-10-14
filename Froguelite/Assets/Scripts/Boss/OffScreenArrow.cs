@@ -8,6 +8,14 @@ public class OffscreenArrow2D : MonoBehaviour
     [SerializeField] private RectTransform arrow;     // UI arrow image
     [SerializeField] private float screenEdgeBuffer = 50f; // padding from edge
 
+    void Start()
+    {
+        StatsManager.Instance.playerHealth.onPlayerDie.AddListener(() =>
+        {
+            gameObject.SetActive(false);
+        });
+    }
+
     void Update()
     {
         bool onScreen = IsTargetOnScreen(frog.position);

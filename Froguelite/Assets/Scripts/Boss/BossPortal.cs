@@ -10,11 +10,11 @@ public class BossPortal : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        if (triggered) return;
-        triggered = true;
-        
         if (collider.CompareTag("Player") || collider.CompareTag("Tongue"))
         {
+            if (triggered) return;
+            triggered = true;
+            
             LevelManager.Instance.LoadScene("BossScene");
             
         }

@@ -161,6 +161,7 @@ public class BossController : MonoBehaviour
         }
 
         // Launch upward
+        frogHitbox.enabled = false;
         Vector3 launchApex = visualStart + new Vector3(0f, jumpElevation * 3f, 0f);
         float t = 0f;
         while (t < launchTime)
@@ -226,6 +227,7 @@ public class BossController : MonoBehaviour
             frogFlipbook.SetSprites(landSprites, 0.1f, FlipbookLoopMethod.Once);
             frogFlipbook.Play();
 
+            frogHitbox.enabled = true;
             ApplyJumpDamage(fallTarget);
 
             Destroy(shadow);
@@ -245,6 +247,7 @@ public class BossController : MonoBehaviour
         Vector3 offPivotPos = offIslandPivot != null ? offIslandPivot.position : visualRoot.position + Vector3.up * 3f;
 
         // Jump out
+        frogHitbox.enabled = false;
         frogFlipbook.ResetAnimation();
         frogFlipbook.SetSprites(jumpSprites, 0.1f, FlipbookLoopMethod.Once);
         frogFlipbook.Play();
@@ -287,6 +290,7 @@ public class BossController : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         // Return to island
+        frogHitbox.enabled = true;
         shadowPrefab.GetComponent<SpriteRenderer>().enabled = true;
         frogFlipbook.SetSprites(idleSprites, 0.16f, FlipbookLoopMethod.Once);
         frogFlipbook.Play();
@@ -396,6 +400,7 @@ public class BossController : MonoBehaviour
     #endregion
 
     #region HelperFunctions
+    
     // TO BE IMPLEMENTED
     //--------------------------------------------//
     private void StompAoe()
