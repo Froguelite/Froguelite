@@ -59,7 +59,7 @@ public class Enemy_SwarmAndSpit : EnemyBase
     {
         spriteRenderer.sprite = spittingSprite;
 
-        Vector2 spitDirection = (PlayerMovement.Instance.transform.position - spitSpawnTransform.position).normalized;
+        Vector2 spitDirection = (PlayerMovement.Instance.GetPlayerCenter() - spitSpawnTransform.position).normalized;
 
         Projectile newProjectile = Instantiate(projectilePrefab, spitSpawnTransform.position, Quaternion.identity);
         newProjectile.InitializeProjectile(spitProjectileData, spitDirection);

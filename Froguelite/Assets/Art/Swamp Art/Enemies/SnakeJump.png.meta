@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: eab4ecada6fecc24ca98b0f78caaa2d1
+guid: 699579e69e7c6fa4a92bbd08aafc3d0a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1543542638915529037
-    second: SnakeFinal_0
+      213: 6860656654683158042
+    second: SnakeJump_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SnakeFinal_0
+      name: SnakeJump_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 108
-        height: 96
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        height: 89
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d49aa302ad3cb6510800000000000000
-      internalID: 1543542638915529037
+      spriteID: a163f4cc0e2f53f50800000000000000
+      internalID: 6860656654683158042
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 8fa267e67fa781040807f4c56a9e280c
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      SnakeFinal_0: 1543542638915529037
+      SnakeJump_0: 6860656654683158042
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

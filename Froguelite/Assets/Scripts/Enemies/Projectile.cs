@@ -66,7 +66,7 @@ public class Projectile : MonoBehaviour
             StatsManager.Instance.playerHealth.DamagePlayer(1);
             DestroyProjectile();
         }
-        else if (!collision.CompareTag("Enemy"))
+        else if (!collision.CompareTag("Enemy") && !collision.CompareTag("Projectile") && !collision.isTrigger)
         {
             DestroyProjectile();
         }
@@ -77,7 +77,7 @@ public class Projectile : MonoBehaviour
     {
         if (destroyed)
             return;
-            
+
         destroyed = true;
 
         rb.linearVelocity = Vector2.zero;
