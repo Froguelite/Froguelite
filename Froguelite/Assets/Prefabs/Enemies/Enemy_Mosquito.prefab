@@ -64,6 +64,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy_Mosquito
       objectReference: {fileID: 0}
+    - target: {fileID: 7807336152895815857, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: associatedEnemy
+      value: 
+      objectReference: {fileID: 1002974770924024167}
     m_RemovedComponents:
     - {fileID: 1483300078910096697, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
     m_RemovedGameObjects: []
@@ -118,6 +122,8 @@ MonoBehaviour:
   spriteRenderer: {fileID: 144799453320457506}
   defeatSmokeAnimator: {fileID: 8957389480216010702}
   swarmBehavior: {fileID: 6459276806488802660}
+  chargeupSprite: {fileID: -7758905640523202750, guid: 6b52ddda2e39df045932babe1cfff1ae, type: 3}
+  defaultSprite: {fileID: 7939039619528793279, guid: 3b14ea5430cbe5041a6579908592235f, type: 3}
 --- !u!114 &6459276806488802660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143,6 +149,10 @@ MonoBehaviour:
     centerMoveSpeed: 2
     circleUponReachingPlayer: 1
     circleSpeed: 1.5
+    minTimeBetweenSwarmActions: 4
+    actionIntervalScalePerEnemy: 0.85
+    actionTriggersOnAll: 0
+  triggeringAction: 0
 --- !u!114 &8957389480216010702 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6599428521549949721, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}

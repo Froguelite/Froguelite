@@ -24,13 +24,13 @@ public class EnemyBase : MonoBehaviour, IEnemy
     public string GetEnemyId() { return enemyId; }
     [SerializeField] private float maxHealth = 20f;
     private float currentHealth;
-    [SerializeField] private NavMeshAgent navAgent;
+    [SerializeField] protected NavMeshAgent navAgent;
     [SerializeField] private EnemyMovementType movementType;
 
     [Header("Effects")]
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private float knockbackDuration = 0.1f; // How long knockback lasts
-    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] protected SpriteRenderer spriteRenderer;
     [SerializeField] private FlipbookAnimator defeatSmokeAnimator;
     private float flashDuration = 0.2f; // How long the red flash lasts
     private Color flashColor = Color.red; // Color to flash when hit
@@ -123,7 +123,7 @@ public class EnemyBase : MonoBehaviour, IEnemy
 
 
     // Kills this enemy
-    public void Die()
+    public virtual void Die()
     {
         if (parentRoom != null)
             parentRoom.OnEnemyDefeated(this);

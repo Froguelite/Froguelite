@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 public class SwarmManager : MonoBehaviour
 {
@@ -22,6 +23,10 @@ public class SwarmManager : MonoBehaviour
 
             public bool circleUponReachingPlayer = false; // If true, the swarm will circle around the player when within target distance
             public float circleSpeed = 1f; // Speed of circling movement (radians per second)
+
+            public float minTimeBetweenSwarmActions = 3.5f; // Minimum time between swarm actions (such as attacks)
+            public float actionIntervalScalePerEnemy = 0.7f; // Scaling factor for time between swarm actions per enemy in swarm
+            public bool actionTriggersOnAll = false; // If true, all enemies in the swarm will trigger actions simultaneously
         }
 
         public SwarmInfo swarmInfo { get; private set; }
@@ -32,7 +37,7 @@ public class SwarmManager : MonoBehaviour
         private float currentCircleAngle = 0f; // Current angle in the circle
         private bool isCircling = false; // Whether the swarm is currently circling
 
-        public int countInSwarm = 0; // How many enemies are currently in this swarm
+        public List<EnemyBehavior_Swarm> swarmEnemies = new List<EnemyBehavior_Swarm>();
         public float timeSinceLastSwarmAction = 0f; // Time since last swarm action (such as attack) occurred
 
         public void SetSwarmInfo(SwarmInfo info)
@@ -40,20 +45,10 @@ public class SwarmManager : MonoBehaviour
             swarmInfo = info;
         }
 
-        public void ResetSwarmActionTimer()
-        {
-            timeSinceLastSwarmAction = 0f;
-        }
-
-        public void UpdateSwarmActionTimer(float deltaTime)
-        {
-            timeSinceLastSwarmAction += deltaTime;
-        }
-
         public void UpdateSwarmBehavior(float deltaTime)
         {
-            UpdateSwarmActionTimer(deltaTime);
             UpdateSwarmNavTarget();
+            CheckForSwarmAction(deltaTime);
         }
 
         public void UpdateSwarmNavTarget()
@@ -103,14 +98,72 @@ public class SwarmManager : MonoBehaviour
             }
         }
 
-        public void AddEnemyToSwarm()
+        public void AddEnemyToSwarm(EnemyBehavior_Swarm enemy)
         {
-            countInSwarm++;
+            if (!swarmEnemies.Contains(enemy))
+            {
+                swarmEnemies.Add(enemy);
+            }
         }
 
-        public void RemoveEnemyFromSwarm()
+        public void RemoveEnemyFromSwarm(EnemyBehavior_Swarm enemy)
         {
-            countInSwarm = Mathf.Max(0, countInSwarm - 1);
+            if (swarmEnemies.Contains(enemy))
+            {
+                swarmEnemies.Remove(enemy);
+            }
+        }
+
+        private void CheckForSwarmAction(float deltaTime)
+        {
+            timeSinceLastSwarmAction += deltaTime;
+
+            // Calculate adjusted time between actions based on number of enemies in swarm
+            float adjustedTimeBetweenActions = swarmInfo.minTimeBetweenSwarmActions;
+            adjustedTimeBetweenActions *= Mathf.Pow(swarmInfo.actionIntervalScalePerEnemy, swarmEnemies.Count - 1);
+
+            if (timeSinceLastSwarmAction >= adjustedTimeBetweenActions)
+            {
+                // Trigger swarm action
+                if (swarmInfo.actionTriggersOnAll)
+                {
+                    foreach (EnemyBehavior_Swarm enemy in swarmEnemies)
+                    {
+                        if (!enemy.ReadyToTriggerSwarmAction())
+                            continue;
+
+                        enemy.TriggerSwarmAction();
+                    }
+
+                    timeSinceLastSwarmAction = 0f;
+                    return;
+                }
+                else if (swarmEnemies.Count > 0)
+                {
+                    // Trigger action on a random enemy in the swarm
+                    int randomIndex = Random.Range(0, swarmEnemies.Count);
+                    if (swarmEnemies[randomIndex].ReadyToTriggerSwarmAction())
+                    {
+                        swarmEnemies[randomIndex].TriggerSwarmAction();
+                        timeSinceLastSwarmAction = 0f;
+                        return;
+                    }
+                    else
+                    {
+                        // Find another enemy that is not currently triggering an action
+                        for (int i = 0; i < swarmEnemies.Count; i++)
+                        {
+                            int indexToCheck = (randomIndex + i) % swarmEnemies.Count;
+                            if (swarmEnemies[indexToCheck].ReadyToTriggerSwarmAction())
+                            {
+                                swarmEnemies[indexToCheck].TriggerSwarmAction();
+                                timeSinceLastSwarmAction = 0f;
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

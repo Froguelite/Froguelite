@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class EnemyBehavior_Swarm : EnemyBehavior_Chase
 {
@@ -11,7 +12,9 @@ public class EnemyBehavior_Swarm : EnemyBehavior_Chase
 
     [SerializeField] private SwarmManager.SwarmCenter.SwarmInfo swarmInfo = null; // The swarm info for this enemy's swarm
 
-    private SwarmManager.SwarmCenter swarmCenter = null; // The swarm info for this enemy's swarm
+    public SwarmManager.SwarmCenter swarmCenter { get; private set; } = null; // The swarm info for this enemy's swarm
+    public UnityEvent onTriggerSwarmAction { get; private set; } = new UnityEvent(); // Event triggered when the swarm action is performed
+    public bool triggeringAction = false;
 
 
     #endregion
@@ -39,7 +42,7 @@ public class EnemyBehavior_Swarm : EnemyBehavior_Chase
                 swarmCenter = SwarmManager.Instance.AddSwarmCentered(swarmInfo, id, enemyBase.parentRoom);
             }
 
-            swarmCenter.AddEnemyToSwarm();
+            swarmCenter.AddEnemyToSwarm(this);
             navTarget = swarmCenter.swarmTargetTransform;
             base.BeginChase(navTarget);
         }
@@ -47,6 +50,27 @@ public class EnemyBehavior_Swarm : EnemyBehavior_Chase
         {
             Debug.LogWarning("EnemyBehavior_Swarm: No SwarmManager instance found in scene.");
         }
+    }
+
+
+    #endregion
+
+
+    #region SWARM ACTION
+
+
+    public bool ReadyToTriggerSwarmAction()
+    {
+        // Ensure we are close to the swarm center
+        float distanceToCenter = Vector2.Distance(transform.position, swarmCenter.swarmTargetTransform.position);
+        return distanceToCenter <= 1.5f && !triggeringAction;
+    }
+
+
+    // Triggers this enemy to perform its swarm action
+    public void TriggerSwarmAction()
+    {
+        onTriggerSwarmAction.Invoke();
     }
 
 
