@@ -20,6 +20,8 @@ public class EnemyBase : MonoBehaviour, IEnemy
     [SerializeField] private bool chaseOnStart = false;
 
     [Header("Stats & Navigation")]
+    [SerializeField] private string enemyId = "EnemyBase";
+    public string GetEnemyId() { return enemyId; }
     [SerializeField] private float maxHealth = 20f;
     private float currentHealth;
     [SerializeField] private NavMeshAgent navAgent;
@@ -36,8 +38,9 @@ public class EnemyBase : MonoBehaviour, IEnemy
     public bool isKnockedBack { get; private set; } = false; // Tracks if enemy is currently being knocked back
     private Color originalColor; // Store the original sprite color
 
-    private Room parentRoom;
+    public Room parentRoom { get; private set; } = null; // The room this enemy belongs to
     public bool engagedWithPlayer { get; private set; } = false;
+    public bool isDead { get { return currentHealth <= 0f; } }
 
 
     #endregion

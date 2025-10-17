@@ -19,10 +19,12 @@ public class EnemyBehavior_Chase : MonoBehaviour
     }
 
     [SerializeField] public ChaseSettings chaseSettings = new ChaseSettings();
-    [SerializeField] private NavMeshAgent navAgent;
-    [SerializeField] private EnemyBase enemyBase;
-    private Transform navTarget;
-    public bool chasingPlayer { get; private set; } = false;
+    [SerializeField] protected NavMeshAgent navAgent;
+    [SerializeField] protected EnemyBase enemyBase;
+    protected Transform navTarget;
+    public bool isChasing { get; private set; } = false;
+
+    public bool stopChaseOverride = false; // If true, stops the chase regardless of other conditions
 
 
     #endregion
@@ -31,30 +33,31 @@ public class EnemyBehavior_Chase : MonoBehaviour
     #region MONOBEHAVIOUR AND SETUP
 
 
-    // Begins a chase with the given chase settings
-    public void BeginChase(Transform navTarget, ChaseSettings chaseSettings)
-    {
-        this.chaseSettings = chaseSettings;
-        BeginChase(navTarget);
-    }
-
-
     // Begins a chase with current chase settings
-    public void BeginChase(Transform navTarget)
+    public virtual void BeginChase(Transform navTarget)
     {
         this.navTarget = navTarget;
-        chasingPlayer = true;
+        isChasing = true;
         navAgent.speed = chaseSettings.chaseSpeed;
         navAgent.stoppingDistance = chaseSettings.stoppingDistance;
     }
 
 
     // Update, chase if active
-    void Update()
+    protected virtual void Update()
     {
-        if (chasingPlayer && !enemyBase.isKnockedBack && enemyBase.engagedWithPlayer)
+        if (!isChasing || navTarget == null || stopChaseOverride)
+            return;
+
+        if (enemyBase == null)
         {
-            NavFullChase();
+            ChaseTarget();
+            return;
+        }
+
+        if (!enemyBase.isKnockedBack && enemyBase.engagedWithPlayer)
+        {
+            ChaseTarget();
         }
     }
 
@@ -66,7 +69,7 @@ public class EnemyBehavior_Chase : MonoBehaviour
 
 
     // Continuously chases the player directly
-    public void NavFullChase()
+    public void ChaseTarget()
     {
         if (navTarget == null) return;
 

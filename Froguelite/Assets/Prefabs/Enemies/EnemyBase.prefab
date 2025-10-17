@@ -79,7 +79,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7939039619528793279, guid: 3b14ea5430cbe5041a6579908592235f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c9b69e676c27c7a4c8180f4ae24d40ef, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -186,6 +186,7 @@ GameObject:
   - component: {fileID: 1483300078910096697}
   - component: {fileID: 4370589815322013855}
   - component: {fileID: 6986542162239207742}
+  - component: {fileID: 730403540480228423}
   m_Layer: 0
   m_Name: EnemyBase
   m_TagString: Untagged
@@ -224,6 +225,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   chaseOnStart: 0
+  enemyId: EnemyBase
   maxHealth: 20
   navAgent: {fileID: 4370589815322013855}
   movementType: 1
@@ -280,6 +282,22 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &730403540480228423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5882462761335553892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a13ba0006edfc341bda8a0ac1e09172, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FaceTargetFlipper
+  spriteRenderer: {fileID: 2727076177215642101}
+  target: {fileID: 0}
+  startFacingFlipped: 1
+  usePlayerAsTarget: 1
 --- !u!1 &7893758066715808878
 GameObject:
   m_ObjectHideFlags: 0
