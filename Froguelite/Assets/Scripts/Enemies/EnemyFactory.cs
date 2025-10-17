@@ -11,7 +11,7 @@ public class EnemyFactory : MonoBehaviour
     
     public static EnemyFactory Instance { get; private set; }
 
-    [SerializeField] private MeleeEnemy meleeEnemyPrefab;
+    [SerializeField] private EnemyBase enemyBasePrefab;
 
 
     #endregion
@@ -42,7 +42,7 @@ public class EnemyFactory : MonoBehaviour
     // Spawns a random enemy at the specified position
     public IEnemy SpawnRandomEnemy(Room parentRoom, Vector2 position)
     {
-        MeleeEnemy newEnemy = Instantiate(meleeEnemyPrefab, position, Quaternion.identity, parentRoom.transform);
+        EnemyBase newEnemy = Instantiate(enemyBasePrefab, position, Quaternion.identity, parentRoom.transform);
         newEnemy.InitializeEnemy(parentRoom);
         return newEnemy;
     }

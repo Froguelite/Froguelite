@@ -163,7 +163,7 @@ public class Room : MonoBehaviour
 
 
     // Called when a particular enemy is defeated
-    public void OnEnemyDefeated(MeleeEnemy defeatedEnemy)
+    public void OnEnemyDefeated(EnemyBase defeatedEnemy)
     {
         if (enemies.Contains(defeatedEnemy))
         {
