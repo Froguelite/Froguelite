@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class UIManager : MonoBehaviour
 {
@@ -10,6 +11,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private UIPanelObject[] uiPanels; //Array to hold references to different UI panels
     [SerializeField] private CanvasGroup deathScreenMainCanvasGroup, deathScreenTextCanvasGroup;
     [SerializeField] private CanvasGroup winScreenMainCanvasGroup, winScreenTextCanvasGroup;
+
+    [SerializeField] private InputActionReference pause;
+    private bool isPaused;
 
     private UIPanels currentPanel;
 
@@ -27,6 +31,17 @@ public class UIManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject); // persist across scenes
+
+        //Subscribe to pause input action
+        pause.action.performed += OnPauseClick;
+        pause.action.Enable();
+    }
+
+    void OnDestroy()
+    {
+        //Unsubscribe from pause input action
+        pause.action.performed -= OnPauseClick;
+        pause.action.Disable();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -58,7 +73,7 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+       
     }
     #endregion
 
@@ -109,6 +124,25 @@ public class UIManager : MonoBehaviour
     {
         //Scene loaded, switch to corresponding panel
         PanelSwitch(panelToReturnTo);
+    }
+
+    private void OnPauseClick(InputAction.CallbackContext obj)
+    {
+        Time.timeScale = 0f;
+
+        //Temporary: Switch to Main Menu panel
+        PanelSwitch(UIPanels.MainMenu);
+
+        //TO DO: Save game state if needed
+    }
+
+    public void OnResumeClick()
+    {
+        Time.timeScale = 1f;
+        //Switch back to previous panel
+        PanelSwitch(previousPanel);
+
+        //Time.timeScale = 1f;
     }
 
     public void OnExitClick()
