@@ -82,13 +82,7 @@ public class Room : MonoBehaviour
         if (roomData.roomType != RoomType.Normal)
             return; // Only spawn enemies in normal rooms
 
-        int enemyCount = UnityEngine.Random.Range(2, 5); // Random number of enemies between 2 and 4
-
-        for (int i = 0; i < enemyCount; i++)
-        {
-            Vector2 spawnPosition = GetRandomEnemySpawnPosition();
-            enemies.Add(EnemyFactory.Instance.SpawnRandomEnemy(this, spawnPosition));
-        }
+        enemies = EnemyFactory.Instance.SpawnEnemiesForRoom(this);
     }
 
 
@@ -106,7 +100,7 @@ public class Room : MonoBehaviour
 
 
     // Returns a random valid spawn position on land within this room
-    private Vector2 GetRandomEnemySpawnPosition()
+    public Vector2 GetRandomEnemySpawnPosition()
     {
         List<Vector2Int> validTiles = new List<Vector2Int>();
 

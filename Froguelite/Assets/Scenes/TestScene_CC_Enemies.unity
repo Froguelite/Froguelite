@@ -805,6 +805,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Zone
       objectReference: {fileID: 0}
+    - target: {fileID: 9100879258194543538, guid: 1f22e60e09677994bb7ad739eb8171eb, type: 3}
+      propertyPath: generateZoneOnStart
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
