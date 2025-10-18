@@ -11,8 +11,10 @@ public class FaceTargetFlipper : MonoBehaviour
 
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Transform target;
-    [SerializeField] private bool startFacingFlipped = false;
+    [SerializeField] private bool reverseFlip = false;
     [SerializeField] private bool usePlayerAsTarget = true;
+
+    private bool facingTarget = true;
 
 
     #endregion
@@ -24,7 +26,7 @@ public class FaceTargetFlipper : MonoBehaviour
     // Start
     void Start()
     {
-        SetSpriteFlipped(startFacingFlipped);
+        SetSpriteFlipped(reverseFlip);
 
         if (usePlayerAsTarget && PlayerMovement.Instance != null)
         {
@@ -36,12 +38,33 @@ public class FaceTargetFlipper : MonoBehaviour
     // Update the sprite flip based on target position
     private void Update()
     {
-        if (spriteRenderer == null || target == null) return;
+        if (spriteRenderer == null || target == null || !facingTarget) return;
 
         // Determine if the sprite should be flipped based on target position
         bool shouldFlip = target.position.x < transform.position.x;
-        if (startFacingFlipped) shouldFlip = !shouldFlip;
+        if (reverseFlip) shouldFlip = !shouldFlip;
         SetSpriteFlipped(shouldFlip);
+    }
+
+
+    public void SetReverseFlip(bool reverse)
+    {
+        reverseFlip = reverse;
+        Update();
+    }
+
+
+    public void SwapReverseFlip()
+    {
+        reverseFlip = !reverseFlip;
+        Update();
+    }
+
+
+    public void SetFacingTarget(bool facingTarget)
+    {
+        this.facingTarget = facingTarget;
+        Update();
     }
 
 

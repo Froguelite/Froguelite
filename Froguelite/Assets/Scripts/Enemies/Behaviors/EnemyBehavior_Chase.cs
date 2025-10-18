@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 public class EnemyBehavior_Chase : MonoBehaviour
 {
@@ -25,6 +26,7 @@ public class EnemyBehavior_Chase : MonoBehaviour
     public bool isChasing { get; private set; } = false;
 
     public bool stopChaseOverride = false; // If true, stops the chase regardless of other conditions
+    public UnityEvent onDestinationReached { get; private set; } = new UnityEvent();
 
 
     #endregion
@@ -62,6 +64,12 @@ public class EnemyBehavior_Chase : MonoBehaviour
     }
 
 
+    public void SetNavTarget(Transform newTarget)
+    {
+        navTarget = newTarget;
+    }
+
+
     #endregion
 
 
@@ -75,6 +83,11 @@ public class EnemyBehavior_Chase : MonoBehaviour
 
         Vector3 targetPosition = navTarget.position;
         navAgent.SetDestination(targetPosition);
+
+        if (navAgent.remainingDistance <= navAgent.stoppingDistance)
+        {
+            onDestinationReached.Invoke();
+        }
     }
 
 

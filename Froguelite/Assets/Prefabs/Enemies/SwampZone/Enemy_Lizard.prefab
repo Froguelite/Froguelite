@@ -116,6 +116,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy_Lizard
       objectReference: {fileID: 0}
+    - target: {fileID: 7807336152895815857, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: associatedEnemy
+      value: 
+      objectReference: {fileID: 219424671850456708}
     m_RemovedComponents:
     - {fileID: 1397738806206786191, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
     - {fileID: 1483300078910096697, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
@@ -227,6 +231,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy_Chase
   chaseOnStart: 0
+  enemyId: EnemyBase
   maxHealth: 20
   navAgent: {fileID: 1662507303629960270}
   movementType: 0
@@ -253,3 +258,4 @@ MonoBehaviour:
     chaseUpdateInterval: 0.5
   navAgent: {fileID: 1662507303629960270}
   enemyBase: {fileID: 219424671850456708}
+  stopChaseOverride: 0

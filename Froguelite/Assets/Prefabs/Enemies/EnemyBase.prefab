@@ -172,7 +172,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyOverlapHandler
   damage: 1
-  associatedEnemy: {fileID: 5882462761335553892}
+  associatedEnemy: {fileID: 1483300078910096697}
   applyKnockbackOnDamage: 1
 --- !u!1 &5882462761335553892
 GameObject:
@@ -296,7 +296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FaceTargetFlipper
   spriteRenderer: {fileID: 2727076177215642101}
   target: {fileID: 0}
-  startFacingFlipped: 1
+  reverseFlip: 1
   usePlayerAsTarget: 1
 --- !u!1 &7893758066715808878
 GameObject:
