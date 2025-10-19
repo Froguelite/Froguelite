@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -36,6 +37,10 @@ public class MinimapManager : MonoBehaviour
     [SerializeField] private float mapViewRadius = 20f; // Radius around player to mark as explored
 
     private bool canToggleFullMap = true;
+
+    [SerializeField] private MinimapRoomConnection roomConnectionPrefab;
+    private Dictionary<Room, Dictionary<Door.DoorDirection, MinimapRoomConnection>> minimapRoomConnections = new Dictionary<Room, Dictionary<Door.DoorDirection, MinimapRoomConnection>>();
+    private Dictionary<Room, Dictionary<Door.DoorDirection, MinimapRoomConnection>> fullMapRoomConnections = new Dictionary<Room, Dictionary<Door.DoorDirection, MinimapRoomConnection>>();
 
 
     #endregion
@@ -308,7 +313,7 @@ public class MinimapManager : MonoBehaviour
     public void ToggleFullMap(bool showMap)
     {
         if (!canToggleFullMap) return;
-        
+
         LeanTween.cancel(fullMapTransform.gameObject);
         LeanTween.cancel(fullMapCanvasGroup.gameObject);
 
@@ -341,6 +346,166 @@ public class MinimapManager : MonoBehaviour
 
             ToggleFullMap(false);
             canToggleFullMap = false;
+        }
+    }
+
+
+    #endregion
+
+
+    #region COORDINATE CONVERSION
+
+
+    // Converts a world position to a local position on the minimap display image
+    public Vector2 WorldToMinimapPosition(Vector3 worldPosition)
+    {
+        if (minimapTexture == null || minimapDisplayImg == null)
+        {
+            Debug.LogWarning("MinimapManager: Cannot convert world position - minimap not initialized");
+            return Vector2.zero;
+        }
+
+        // Get texture dimensions
+        float textureWidth = minimapTexture.width;
+        float textureHeight = minimapTexture.height;
+
+        // Convert world position to texture coordinates (assuming 1:1 mapping)
+        Vector2 texturePos = new Vector2(worldPosition.x, worldPosition.y);
+
+        // Convert to normalized coordinates (0-1)
+        float normalizedX = texturePos.x / textureWidth;
+        float normalizedY = texturePos.y / textureHeight;
+
+        // Get the minimap display image rect transform and size
+        RectTransform imageRectTransform = minimapDisplayImg.rectTransform;
+        Vector2 imageSize = imageRectTransform.sizeDelta;
+
+        // Convert normalized coordinates to local position on the minimap image
+        // The minimap image origin is at its center, so we need to offset from center
+        float localX = (normalizedX - 0.5f) * imageSize.x;
+        float localY = (normalizedY - 0.5f) * imageSize.y;
+
+        return new Vector2(localX, localY);
+    }
+
+
+    // Converts a world position to a local position on the full map display image
+    public Vector2 WorldToFullMapPosition(Vector3 worldPosition)
+    {
+        if (minimapTexture == null || fullMapDisplayImg == null)
+        {
+            Debug.LogWarning("MinimapManager: Cannot convert world position - full map not initialized");
+            return Vector2.zero;
+        }
+
+        // Get texture dimensions
+        float textureWidth = minimapTexture.width;
+        float textureHeight = minimapTexture.height;
+
+        // Convert world position to texture coordinates (assuming 1:1 mapping)
+        Vector2 texturePos = new Vector2(worldPosition.x, worldPosition.y);
+
+        // Convert to normalized coordinates (0-1)
+        float normalizedX = texturePos.x / textureWidth;
+        float normalizedY = texturePos.y / textureHeight;
+
+        // Get the full map display image rect transform and size
+        RectTransform imageRectTransform = fullMapDisplayImg.rectTransform;
+        Vector2 imageSize = imageRectTransform.sizeDelta;
+
+        // Convert normalized coordinates to local position on the full map image
+        // The full map image origin is at its center, so we need to offset from center
+        float localX = (normalizedX - 0.5f) * imageSize.x;
+        float localY = (normalizedY - 0.5f) * imageSize.y;
+
+        return new Vector2(localX, localY);
+    }
+
+
+    #endregion
+
+
+    #region DOORS AND CONNECTIONS
+
+
+    // Called when clearing a room, update doors / connections
+    public void OnClearRoom(Room clearedRoom)
+    {
+        // Initialize dictionaries for this room if they don't exist
+        if (!minimapRoomConnections.ContainsKey(clearedRoom))
+        {
+            minimapRoomConnections[clearedRoom] = new Dictionary<Door.DoorDirection, MinimapRoomConnection>();
+        }
+        if (!fullMapRoomConnections.ContainsKey(clearedRoom))
+        {
+            fullMapRoomConnections[clearedRoom] = new Dictionary<Door.DoorDirection, MinimapRoomConnection>();
+        }
+
+        // Loop through each door in the cleared room
+        foreach (var entry in clearedRoom.roomData.doors)
+        {
+            // Get the door direction and corresponding connection
+            Door.DoorDirection doorDir = entry.Key;
+            DoorData doorData = entry.Value;
+
+            // If the door is a real door (not impassable), and is not connected to an explored room, create a new connection
+            if (!doorData.isImpassable && clearedRoom.GetAdjacentRoom(doorDir) != null &&
+                !clearedRoom.GetAdjacentRoom(doorDir).isExplored)
+            {
+                Vector3 connectionCenter = clearedRoom.GetRoomConnectionCenter(doorDir);
+
+                // Setup the connection based on door direction
+                MinimapRoomConnection.ConnectionOrientation orientation = (doorDir == Door.DoorDirection.Up || doorDir == Door.DoorDirection.Down) ?
+                    MinimapRoomConnection.ConnectionOrientation.Vertical : MinimapRoomConnection.ConnectionOrientation.Horizontal;
+
+                // Determine active connection point based on door direction
+                MinimapRoomConnection.ConnectionPoint activePoint = (doorDir == Door.DoorDirection.Up || doorDir == Door.DoorDirection.Right) ?
+                    MinimapRoomConnection.ConnectionPoint.PointA : MinimapRoomConnection.ConnectionPoint.PointB;
+
+                // Create connection on the minimap
+                MinimapRoomConnection minimapConnection = Instantiate(roomConnectionPrefab, minimapDisplayImg.transform);
+                Vector2 minimapPos = WorldToMinimapPosition(connectionCenter);
+                minimapPos.y = -minimapPos.y;
+                minimapConnection.transform.localPosition = minimapPos;
+                minimapConnection.SetupConnection(orientation, activePoint);
+
+                // Create connection on the full map
+                MinimapRoomConnection fullMapConnection = Instantiate(roomConnectionPrefab, fullMapDisplayImg.transform);
+                Vector2 fullMapPos = WorldToFullMapPosition(connectionCenter);
+                fullMapPos.y = -fullMapPos.y;
+                fullMapConnection.transform.localPosition = fullMapPos;
+                fullMapConnection.SetupConnection(orientation, activePoint);
+
+                // Add connections to dictionaries
+                minimapRoomConnections[clearedRoom][doorDir] = minimapConnection;
+                fullMapRoomConnections[clearedRoom][doorDir] = fullMapConnection;
+            }    
+        }
+    }
+
+
+    // Called when player travels through a door from one room to another
+    public void OnPlayerTravelThroughDoor(Room fromRoom, Door.DoorDirection doorDirection)
+    {
+        // Check if we have connections for this room and door direction
+        if (minimapRoomConnections.ContainsKey(fromRoom) && minimapRoomConnections[fromRoom].ContainsKey(doorDirection))
+        {
+            // Play transfer animation on the minimap connection
+            MinimapRoomConnection minimapConnection = minimapRoomConnections[fromRoom][doorDirection];
+            if (minimapConnection != null)
+            {
+                minimapConnection.PlayTransferAnimation();
+            }
+        }
+
+        if (fullMapRoomConnections.ContainsKey(fromRoom) && fullMapRoomConnections[fromRoom].ContainsKey(doorDirection))
+        {
+            // Play transfer animation on the full map connection
+            MinimapRoomConnection fullMapConnection = fullMapRoomConnections[fromRoom][doorDirection];
+            if (fullMapConnection != null)
+            {
+                fullMapConnection.PlayTransferAnimation();
+            }
         }
     }
 

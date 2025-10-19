@@ -83,10 +83,9 @@ public class ZoneGenerator : MonoBehaviour
             Debug.LogWarning("RoomManager Instance is null - rooms will not be managed properly");
         }
 
-        // TEMPORARY - Open all doors and set player position to starter room
-        OpenAllDoors();
+        // Set player to starter room and clear it
         if (teleportPlayerToStarterRoom)
-            SetPlayerToStarterRoom();
+            SetPlayerToStarterRoomAndClear();
 
         // Regenerate the NavMesh for the new layout
         navigationSurface.BuildNavMesh();
@@ -95,8 +94,8 @@ public class ZoneGenerator : MonoBehaviour
     }
 
 
-    // Sets the player position to the center of the starter room
-    private void SetPlayerToStarterRoom()
+    // Sets the player position to the center of the starter room, and clears the room
+    private void SetPlayerToStarterRoomAndClear()
     {
         // Find the starter room in the room graph
         RoomData starterRoom = null;
@@ -130,9 +129,12 @@ public class ZoneGenerator : MonoBehaviour
 
         // Set the player position
         PlayerMovement.Instance.transform.position = starterRoomCenter;
-        
+
         // Force the camera to update immediately to the new player position
         ForceCameraUpdate();
+
+        // Clear the starter room
+        RoomManager.Instance.GetRoomAtWorldPosition(starterRoomCenter)?.OnRoomCleared();
     }
 
 

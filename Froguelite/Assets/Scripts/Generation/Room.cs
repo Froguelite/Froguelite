@@ -26,6 +26,8 @@ public class Room : MonoBehaviour
 
     public List<IEnemy> enemies { get; private set; } = new List<IEnemy>();
 
+    public bool isExplored { get; private set; } = false;
+
 
     #endregion
 
@@ -91,7 +93,7 @@ public class Room : MonoBehaviour
     {
         if (roomData.roomType != RoomType.Shop)
             return; // Only generate shop in shop rooms
-            
+
         // Create a new shop instance
         ShopAlternate newShop = Instantiate(shop, roomData.GetRoomCenterWorldPosition(), Quaternion.identity);
         newShop.transform.SetParent(transform);
@@ -156,10 +158,10 @@ public class Room : MonoBehaviour
     // (i.e. lilypad frog is fully back to original island)
     public void OnDoorTransitionComplete()
     {
-        // If no enemies are present, we are safe to open all doors (room is clear)
+        // If no enemies are present, we are safe to clear the room
         if (enemies.Count == 0)
         {
-            DoorManager.Instance.OpenAllDoors(true);
+            OnRoomCleared();
             return;
         }
     }
@@ -183,13 +185,59 @@ public class Room : MonoBehaviour
 
 
     // Called when the room is cleared of all enemies
-    private void OnRoomCleared()
+    public void OnRoomCleared()
     {
         // Clear all swarm centers
         SwarmManager.Instance.ClearAllSwarms();
 
         // Open all doors when room is cleared
         DoorManager.Instance.OpenAllDoors(true);
+
+        isExplored = true;
+
+        // Ping the minimap notifying we have cleared the room
+        MinimapManager.Instance.OnClearRoom(this);
+    }
+
+
+    #endregion
+
+
+    #region HELPERS
+
+
+    // Gets a room adjacent to this one in the given direction, or null if none exists
+    public Room GetAdjacentRoom(Door.DoorDirection direction)
+    {
+        Vector2Int adjacentCoord = roomData.roomCoordinate;
+
+        switch (direction)
+        {
+            case Door.DoorDirection.Up:
+                adjacentCoord += new Vector2Int(0, 1);
+                break;
+            case Door.DoorDirection.Right:
+                adjacentCoord += new Vector2Int(1, 0);
+                break;
+            case Door.DoorDirection.Down:
+                adjacentCoord += new Vector2Int(0, -1);
+                break;
+            case Door.DoorDirection.Left:
+                adjacentCoord += new Vector2Int(-1, 0);
+                break;
+        }
+
+        return RoomManager.Instance.GetRoomAtGridPosition(adjacentCoord);
+    }
+
+
+    // Gets the world space position directly between this room and the adjacent room in the given direction
+    public Vector3 GetRoomConnectionCenter(Door.DoorDirection direction)
+    {
+        Vector3 roomCenter = roomData.GetRoomCenterWorldPosition();
+        Vector3 adjacentRoomCenter = GetAdjacentRoom(direction)?.roomData.GetRoomCenterWorldPosition() ?? roomCenter;
+
+        return (roomCenter + adjacentRoomCenter) / 2f;
     }
 
 

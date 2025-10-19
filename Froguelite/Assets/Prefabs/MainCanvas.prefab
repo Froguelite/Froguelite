@@ -1711,6 +1711,7 @@ MonoBehaviour:
   minimapParentCanvGroup: {fileID: 475563700845768076}
   mapExplorationUpdateInterval: 0.1
   mapViewRadius: 20
+  roomConnectionPrefab: {fileID: 6026359054276870038, guid: 73283961e29f55b47a231d23af0f9905, type: 3}
 --- !u!225 &475563700845768076
 CanvasGroup:
   m_ObjectHideFlags: 0
