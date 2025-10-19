@@ -20,9 +20,9 @@ public class Enemy_Chase : EnemyBase
 
 
     // On begin player chase, start the chase behavior
-    public override void BeginPlayerChase()
+    protected override void OnEngagePlayer()
     {
-        base.BeginPlayerChase();
+        base.OnEngagePlayer();
 
         if (chaseBehavior != null && PlayerMovement.Instance != null)
         {

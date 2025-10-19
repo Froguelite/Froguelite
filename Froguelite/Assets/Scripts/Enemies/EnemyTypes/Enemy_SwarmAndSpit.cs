@@ -25,9 +25,9 @@ public class Enemy_SwarmAndSpit : EnemyBase
 
 
     // Begin swarming behavior when starting player chase
-    public override void BeginPlayerChase()
+    protected override void OnEngagePlayer()
     {
-        base.BeginPlayerChase();
+        base.OnEngagePlayer();
         swarmBehavior.onTriggerSwarmAction.AddListener(StartSpitting);
         swarmBehavior.BeginChase(PlayerMovement.Instance.transform);
     }

@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private UIPanelObject[] uiPanels; //Array to hold references to different UI panels
     [SerializeField] private CanvasGroup deathScreenMainCanvasGroup, deathScreenTextCanvasGroup;
     [SerializeField] private CanvasGroup winScreenMainCanvasGroup, winScreenTextCanvasGroup;
+    [SerializeField] private bool displayOnStart = true;
 
     private UIPanels currentPanel;
 
@@ -32,11 +33,15 @@ public class UIManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        previousPanel = UIPanels.None;
+
+        if (!displayOnStart)
+            return;
+            
         // Initialize to the starting panel, e.g., GameStart
         int gameStartIndex = (int)UIPanels.GameStart;
         uiPanels[gameStartIndex].panelObject.SetActive(true);
         currentPanel = UIPanels.GameStart;
-        previousPanel = UIPanels.None;
 
         //Check array index equals UIPanels enum count
         int panelCount = System.Enum.GetNames(typeof(UIPanels)).Length;

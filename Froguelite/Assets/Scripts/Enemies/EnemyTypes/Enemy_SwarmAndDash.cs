@@ -19,6 +19,7 @@ public class Enemy_SwarmAndDash : EnemyBase
     [SerializeField] private EnemyBehavior_Swarm swarmBehavior;
     [SerializeField] private Sprite chargeupSprite;
     [SerializeField] private Sprite defaultSprite;
+    [SerializeField] private float maxDistForDash = 5f;
 
     private SwarmState currentSwarmState = SwarmState.Swarming;
 
@@ -30,9 +31,9 @@ public class Enemy_SwarmAndDash : EnemyBase
 
 
     // Begin swarming behavior when starting player chase
-    public override void BeginPlayerChase()
+    protected override void OnEngagePlayer()
     {
-        base.BeginPlayerChase();
+        base.OnEngagePlayer();
         swarmBehavior.onTriggerSwarmAction.AddListener(StartDashing);
         swarmBehavior.BeginChase(PlayerMovement.Instance.transform);
         currentSwarmState = SwarmState.Swarming;
@@ -57,6 +58,11 @@ public class Enemy_SwarmAndDash : EnemyBase
     {
         if (currentSwarmState == SwarmState.Swarming)
         {
+            // If we are not close enough to the player, do nothing
+            if (Vector2.Distance(transform.position, PlayerMovement.Instance.transform.position) > maxDistForDash)
+                return;
+
+            // Otherwise, trigger the dash
             swarmBehavior.triggeringAction = true;
             swarmBehavior.stopChaseOverride = true;
 

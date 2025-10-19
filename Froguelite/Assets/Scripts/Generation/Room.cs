@@ -141,17 +141,26 @@ public class Room : MonoBehaviour
     // Called when the player enters the room
     public void OnPlayerEnter()
     {
+        if (enemies.Count == 0)
+            return;
+
+        // Engage enemies with the player
+        foreach (IEnemy enemy in enemies)
+        {
+            enemy.BeginPlayerChase();
+        }
+    }
+
+
+    // Called when the player completes a door transition into this room
+    // (i.e. lilypad frog is fully back to original island)
+    public void OnDoorTransitionComplete()
+    {
         // If no enemies are present, we are safe to open all doors (room is clear)
         if (enemies.Count == 0)
         {
             DoorManager.Instance.OpenAllDoors(true);
             return;
-        }
-
-        // Otherwise, there are enemies. Engage them with the player.
-        foreach (IEnemy enemy in enemies)
-        {
-            enemy.BeginPlayerChase();
         }
     }
 
