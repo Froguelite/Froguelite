@@ -30,9 +30,9 @@ public class Enemy_JumpAndRecircle : EnemyBase
 
 
     // On begin player chase, start the chase behavior
-    public override void BeginPlayerChase()
+    protected override void OnEngagePlayer()
     {
-        base.BeginPlayerChase();
+        base.OnEngagePlayer();
         chaseBehavior.BeginChase(PlayerMovement.Instance.transform);
         StartCoroutine(ChaseAndRecircleCo());
     }

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -81,9 +82,26 @@ public class EnemyBase : MonoBehaviour, IEnemy
 
 
     // Called when the chase with the player begins (i.e. enter room or similar)
-    public virtual void BeginPlayerChase()
+    public void BeginPlayerChase()
     {
+        GetComponent<EnemyAlertAnimator>()?.TriggerAlert();
+
+        StartCoroutine(WaitThenEngagePlayer());
+    }
+
+
+    private IEnumerator WaitThenEngagePlayer()
+    {
+        yield return new WaitForSeconds(1f); // Wait for alert animation to finish
+
         engagedWithPlayer = true;
+        OnEngagePlayer();
+    }
+
+
+    protected virtual void OnEngagePlayer()
+    {
+        navAgent.enabled = true;
     }
 
 

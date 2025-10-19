@@ -13,6 +13,7 @@ public class FaceTargetFlipper : MonoBehaviour
     [SerializeField] private Transform target;
     [SerializeField] private bool reverseFlip = false;
     [SerializeField] private bool usePlayerAsTarget = true;
+    [SerializeField] private bool faceTargetOnStart = true;
 
     private bool facingTarget = true;
 
@@ -31,6 +32,15 @@ public class FaceTargetFlipper : MonoBehaviour
         if (usePlayerAsTarget && PlayerMovement.Instance != null)
         {
             target = PlayerMovement.Instance.transform;
+        }
+
+        if (faceTargetOnStart)
+        {
+            SetFacingTarget(true);
+        }
+        else
+        {
+            SetFacingTarget(false);
         }
     }
 

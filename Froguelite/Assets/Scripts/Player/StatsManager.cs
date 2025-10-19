@@ -77,11 +77,6 @@ public class StatsManager : MonoBehaviour
         }
 
         Instance = this;
-    }
-
-
-    void Start()
-    {
         SetStatsToDefault();
     }
 

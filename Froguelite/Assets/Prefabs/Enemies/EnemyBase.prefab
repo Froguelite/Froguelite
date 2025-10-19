@@ -187,6 +187,7 @@ GameObject:
   - component: {fileID: 4370589815322013855}
   - component: {fileID: 6986542162239207742}
   - component: {fileID: 730403540480228423}
+  - component: {fileID: 7724193631658490325}
   m_Layer: 0
   m_Name: EnemyBase
   m_TagString: Untagged
@@ -298,6 +299,24 @@ MonoBehaviour:
   target: {fileID: 0}
   reverseFlip: 1
   usePlayerAsTarget: 1
+  faceTargetOnStart: 0
+--- !u!114 &7724193631658490325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5882462761335553892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7168b5e125aa47408c0f4712b96cedc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAlerter
+  spriteRenderer: {fileID: 2727076177215642101}
+  faceTargetFlipper: {fileID: 730403540480228423}
+  alertExclamationPrefab: {fileID: 7357650162344969842, guid: a7279331fa2a1354195f3e2cf56f8698, type: 3}
+  alertMoveDistance: 0.5
+  alertMoveDuration: 0.4
 --- !u!1 &7893758066715808878
 GameObject:
   m_ObjectHideFlags: 0

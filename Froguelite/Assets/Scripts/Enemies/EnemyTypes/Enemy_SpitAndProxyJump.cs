@@ -36,9 +36,9 @@ public class Enemy_SpitAndProxyJump : EnemyBase
 
 
     // Begin swarming behavior when starting player chase
-    public override void BeginPlayerChase()
+    protected override void OnEngagePlayer()
     {
-        base.BeginPlayerChase();
+        base.OnEngagePlayer();
         spitCoroutine = SpitCo();
         jumpCoroutine = JumpCo();
 

@@ -371,6 +371,9 @@ public class Door : MonoBehaviour
         PlayerMovement.Instance.EnableCollision();
         PlayerMovement.Instance.SetCanMove(true);
         PlayerAttack.Instance.SetCanAttack(true);
+
+        // Notify that the launch phase is complete
+        DoorManager.Instance.OnTravelLaunchComplete();
     }
 
 
