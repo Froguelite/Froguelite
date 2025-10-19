@@ -110,7 +110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bcbb1ce50d87064385fbfaa5db67781, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy_JumpAndRecircle
-  chaseOnStart: 1
+  chaseOnStart: 0
   enemyId: Alligator
   maxHealth: 20
   navAgent: {fileID: 5446476225427088260}

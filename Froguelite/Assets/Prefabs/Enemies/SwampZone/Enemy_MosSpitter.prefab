@@ -99,6 +99,10 @@ PrefabInstance:
       propertyPath: swarmInfo.swarmName
       value: MosquitoSpitter
       objectReference: {fileID: 0}
+    - target: {fileID: 6459276806488802660, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: swarmInfo.minTimeBetweenSwarmActions
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8536678332011776947, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
       propertyPath: m_Name
       value: Enemy_MosSpitter

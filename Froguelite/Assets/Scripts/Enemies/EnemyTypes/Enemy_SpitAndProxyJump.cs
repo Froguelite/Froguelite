@@ -18,11 +18,12 @@ public class Enemy_SpitAndProxyJump : EnemyBase
     [SerializeField] private Transform spitSpawnTransform;
     [SerializeField] private float durationBetweenSpits = 1f;
     [SerializeField] private float durationBetweenJumps = 1f;
+    [SerializeField] private float jumpDistance = 3f;
+    [SerializeField] private float arcJumpDuration = 0.5f;
 
     private bool overlapped = false;
     private bool jumping = false;
     private Vector2 arcTarget; 
-    private float arcJumpDuration;
 
     private IEnumerator spitCoroutine;
     private IEnumerator jumpCoroutine;
@@ -40,14 +41,25 @@ public class Enemy_SpitAndProxyJump : EnemyBase
         base.BeginPlayerChase();
         spitCoroutine = SpitCo();
         jumpCoroutine = JumpCo();
-        StartCoroutine(spitCoroutine);
+
+        if (overlapped)
+        {
+            jumping = true;
+            StartCoroutine(jumpCoroutine);
+        }
+        else
+        {
+            StartCoroutine(spitCoroutine);
+        }
     }
 
 
     public override void Die()
     {
-        StopCoroutine(spitCoroutine);
-        StopCoroutine(jumpCoroutine);
+        if (spitCoroutine != null)
+            StopCoroutine(spitCoroutine);
+        if (jumpCoroutine != null)
+            StopCoroutine(jumpCoroutine);
         StopCoroutine(PerformArcJump());
         base.Die();
     }
@@ -95,7 +107,7 @@ public class Enemy_SpitAndProxyJump : EnemyBase
 
             // Calculate jump direction towards player
             Vector2 jumpDirection = ((Vector2)PlayerMovement.Instance.transform.position - (Vector2)transform.position).normalized;
-            Vector2 jumpTarget = (Vector2)transform.position + jumpDirection * 4f;
+            Vector2 jumpTarget = (Vector2)transform.position + jumpDirection * jumpDistance;
 
             // Perform the jump with arc
             arcTarget = jumpTarget;
@@ -153,6 +165,9 @@ public class Enemy_SpitAndProxyJump : EnemyBase
         if (collision.CompareTag("Player"))
         {
             overlapped = true;
+
+            if (!engagedWithPlayer) return;
+
             if (!jumping)
             {
                 jumping = true;

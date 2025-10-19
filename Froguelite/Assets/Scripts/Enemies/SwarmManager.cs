@@ -111,6 +111,15 @@ public class SwarmManager : MonoBehaviour
             if (swarmEnemies.Contains(enemy))
             {
                 swarmEnemies.Remove(enemy);
+                if (swarmEnemies.Count == 0)
+                {
+                    // No more enemies in swarm, destroy swarm center
+                    if (swarmNavAgent != null)
+                    {
+                        SwarmManager.Instance.activeSwarms.Remove(this);
+                        GameObject.Destroy(swarmNavAgent.gameObject);
+                    }
+                }
             }
         }
 
@@ -219,22 +228,14 @@ public class SwarmManager : MonoBehaviour
     {
         List<Vector3> positionsToUse = new List<Vector3>();
 
-        // TEMPORARY TODO: loop through ALL enemies
-        IEnemy[] allEnemies = FindObjectsByType<EnemyBase>(FindObjectsSortMode.None);
-        foreach (IEnemy enemy in allEnemies)
+        IEnemy[] roomEnemies = room.enemies.ToArray();
+        foreach (IEnemy enemy in roomEnemies)
         {
             if (enemy.GetEnemyId() == swarmId)
             {
                 positionsToUse.Add(((EnemyBase)enemy).transform.position);
             }
         }
-        /*foreach (IEnemy enemy in room.enemies)
-        {
-            if (enemy.GetEnemyId() == swarmId)
-            {
-                positionsToUse.Add(((EnemyBase)enemy).transform.position);
-            }
-        }*/
 
         if (positionsToUse.Count > 0)
         {
@@ -283,6 +284,21 @@ public class SwarmManager : MonoBehaviour
 
         activeSwarms.Add(newSwarm);
         return newSwarm;
+    }
+
+
+    // Clears all active swarm centers
+    public void ClearAllSwarms()
+    {
+        foreach (SwarmCenter swarm in activeSwarms)
+        {
+            if (swarm.swarmNavAgent != null)
+            {
+                Destroy(swarm.swarmNavAgent.gameObject);
+            }
+        }
+
+        activeSwarms.Clear();
     }
 
 

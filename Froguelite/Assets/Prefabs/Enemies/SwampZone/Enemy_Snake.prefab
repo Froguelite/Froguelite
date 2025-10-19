@@ -181,6 +181,8 @@ MonoBehaviour:
   spitSpawnTransform: {fileID: 3621121816063080183}
   durationBetweenSpits: 0.8
   durationBetweenJumps: 1
+  jumpDistance: 3
+  arcJumpDuration: 0
 --- !u!58 &5888404907910060035
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -216,4 +218,4 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 4.5
+  m_Radius: 4

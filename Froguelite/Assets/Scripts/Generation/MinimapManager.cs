@@ -28,8 +28,8 @@ public class MinimapManager : MonoBehaviour
     private float mapHidY = -1000f;
     private float mapShownY = 0f;
 
-    private bool[,] landTileArray; // True = land, False = water
-    private bool[,] waterTileArray; // True = water, False = land
+    private char[,] landTileArray; // True = land, False = water
+    private char[,] waterTileArray; // True = water, False = land
     private bool[,] exploredTileArray; // True = explored, False = unexplored
 
     [SerializeField] private float mapExplorationUpdateInterval = 0.1f; // Interval to update explored area
@@ -125,7 +125,7 @@ public class MinimapManager : MonoBehaviour
     }
 
 
-    public void InitializeMinimap(bool[,] landTileArray)
+    public void InitializeMinimap(char[,] landTileArray)
     {
         this.landTileArray = landTileArray;
 
@@ -163,7 +163,7 @@ public class MinimapManager : MonoBehaviour
                 }
                 else
                 {
-                    pixels[pixelIndex] = landTileArray[x, y] ? landColor : waterColor;
+                    pixels[pixelIndex] = (landTileArray[x, y] == 'l' || landTileArray[x, y] == 'j') ? landColor : waterColor;
                 }
             }
         }
@@ -229,7 +229,7 @@ public class MinimapManager : MonoBehaviour
                     }
                     else
                     {
-                        newColor = landTileArray[x, y] ? landColor : waterColor;
+                        newColor = (landTileArray[x, y] == 'l' || landTileArray[x, y] == 'j') ? landColor : waterColor;
                     }
 
                     // Set the pixel color
