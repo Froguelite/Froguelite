@@ -201,7 +201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d61132ba75a1c8248b4c607884fe7103, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFactory
-  meleeEnemyPrefab: {fileID: 4548811830428991976, guid: 2c156a7a689ef7a40b9dc21afefde668, type: 3}
+  enemyBasePrefab: {fileID: 0}
 --- !u!114 &6276265264647561921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -548,6 +548,7 @@ GameObject:
   - component: {fileID: 7099187090346991984}
   - component: {fileID: 1638085136770975292}
   - component: {fileID: 635124286767839783}
+  - component: {fileID: 8014519050580451187}
   m_Layer: 0
   m_Name: Navigation
   m_TagString: Untagged
@@ -617,6 +618,19 @@ MonoBehaviour:
   m_UseMeshPrefab: {fileID: 0}
   m_CompressBounds: 0
   m_OverrideVector: {x: 1, y: 1, z: 1}
+--- !u!114 &8014519050580451187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1820787995636504994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5776f575e61e2004698be7f1c060c6a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SwarmManager
+  swarmCenterNavPrefab: {fileID: 4911032485897009629, guid: 811261385bbf3c740800e8ddf67a6858, type: 3}
 --- !u!1 &3270492577662656267
 GameObject:
   m_ObjectHideFlags: 0

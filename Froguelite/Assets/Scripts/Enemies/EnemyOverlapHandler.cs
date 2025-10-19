@@ -10,7 +10,7 @@ public class EnemyOverlapHandler : MonoBehaviour
 
 
     [SerializeField] private int damage;
-    [SerializeField] private GameObject associatedEnemy;
+    [SerializeField] private EnemyBase associatedEnemy;
     [SerializeField] private bool applyKnockbackOnDamage = true;
     private IEnemy associatedEnemyScript;
 
@@ -37,6 +37,9 @@ public class EnemyOverlapHandler : MonoBehaviour
     // OnTriggerEnter2D
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (associatedEnemy.isDead)
+            return;
+
         if (collision.CompareTag("Player"))
         {
             StatsManager.Instance.playerHealth.DamagePlayer(damage);

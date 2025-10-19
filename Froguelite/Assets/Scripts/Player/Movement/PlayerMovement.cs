@@ -14,6 +14,7 @@ public class PlayerMovement : MonoBehaviour
     public static PlayerMovement Instance { get; private set; }
 
     [SerializeField] private Collider2D playerCollider;
+    [SerializeField] private Collider2D damageCollider;
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
@@ -166,6 +167,13 @@ public class PlayerMovement : MonoBehaviour
     public void DisableCollision()
     {
         playerCollider.enabled = false;
+    }
+
+
+    // Gets the center of the player
+    public Vector3 GetPlayerCenter()
+    {
+        return damageCollider.bounds.center;
     }
 
 

@@ -30,7 +30,7 @@ public class ZoneGenerator : MonoBehaviour
 
     private RoomData[,] roomGraph;
     private Dictionary<Vector2Int, Room> spawnedRooms = new Dictionary<Vector2Int, Room>();
-    private bool[,] combinedTileLayout; // Combined tile layout of the entire zone
+    private char[,] combinedTileLayout; // Combined tile layout of the entire zone
 
 
     #endregion
@@ -143,7 +143,7 @@ public class ZoneGenerator : MonoBehaviour
 
 
     // Spawns rooms and doors from the room graph
-    private bool[,] SpawnRoomsFromGraph()
+    private char[,] SpawnRoomsFromGraph()
     {
         if (roomGraph == null)
         {
@@ -198,7 +198,7 @@ public class ZoneGenerator : MonoBehaviour
         Debug.Log($"Successfully spawned doors for all rooms");
 
         // Third pass: Combine all room tile layouts into a single 2D bool array
-        bool[,] combinedTileLayout = CombineRoomTileLayouts();
+        char[,] combinedTileLayout = CombineRoomTileLayouts();
         
         return combinedTileLayout;
     }
@@ -255,8 +255,16 @@ public class ZoneGenerator : MonoBehaviour
         );
 
         // Create a layout that's entirely water (all false values)
-        bool[,] waterLayout = new bool[roomLength, roomLength];
-        // No need to set values since bool arrays initialize to false (water)
+        char[,] waterLayout = new char[roomLength, roomLength];
+        
+        // Initialize all positions with 'w' (water)
+        for (int x = 0; x < roomLength; x++)
+        {
+            for (int y = 0; y < roomLength; y++)
+            {
+                waterLayout[x, y] = 'w';
+            }
+        }
 
         // Apply the water tiles to the tilemap using auto-tiling
         RoomTileHelper.SetTilemapToLayoutWithAutoTiling(
@@ -439,8 +447,8 @@ public class ZoneGenerator : MonoBehaviour
                position.y >= 0 && position.y < roomGraph.GetLength(1);
     }
 
-    // Combines all individual room tile layouts into a single 2D bool array representing the entire zone
-    private bool[,] CombineRoomTileLayouts()
+    // Combines all individual room tile layouts into a single 2D char array representing the entire zone
+    private char[,] CombineRoomTileLayouts()
     {
         if (roomGraph == null)
         {
@@ -471,7 +479,7 @@ public class ZoneGenerator : MonoBehaviour
         int totalHeight = roomGraphHeight * roomLength;
 
         // Create the combined tile layout (false = water by default)
-        bool[,] combinedLayout = new bool[totalWidth, totalHeight];
+        char[,] combinedLayout = new char[totalWidth, totalHeight];
 
         // Copy each room's tile layout into the appropriate position in the combined layout
         for (int roomX = 0; roomX < roomGraphWidth; roomX++)
