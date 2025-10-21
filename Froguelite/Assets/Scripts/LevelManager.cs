@@ -59,7 +59,7 @@ public class LevelManager : MonoBehaviour
             progressBar.fillAmount = scene.progress;
         } while (scene.progress < 0.9f);
 
-        await Task.Delay(500); //For demo purposes
+        //await Task.Delay(500); //For demo purposes
 
         scene.allowSceneActivation = true;
 
