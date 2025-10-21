@@ -12,6 +12,7 @@ public class RoomFactory : MonoBehaviour
 
     [SerializeField] private ShopAlternate shopAlternatePrefab;
     [SerializeField] private GameObject bossPortalPrefab;
+    [SerializeField] private GameObject totemPrefab;
 
 
     #endregion
@@ -46,6 +47,9 @@ public class RoomFactory : MonoBehaviour
                 break;
             case Room.RoomType.Fly:
                 landScale = 0.5f;
+                break;
+            case Room.RoomType.Totem:
+                landScale = 0.7f;
                 break;
             case Room.RoomType.Normal:
                 landScale = 1.5f;
