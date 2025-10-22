@@ -134,6 +134,12 @@ public class UIManager : MonoBehaviour
 
     private void OnPauseClick(InputAction.CallbackContext obj)
     {
+        //Check if clicked during game
+        if(currentPanel != UIPanels.None)
+        {
+            return;
+        }
+        
         Time.timeScale = 0f;
 
         //Temporary: Switch to Main Menu panel
