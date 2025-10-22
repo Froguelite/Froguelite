@@ -113,6 +113,12 @@ public class UIManager : MonoBehaviour
         //ProfileUIManager.Instance.CreateExistingProfiles();
     }
 
+    public void OnSettingsClick()
+    {
+        //Switch to Settings Panel
+        PanelSwitch(UIPanels.SettingsScreen);
+    }
+
     public void OnProfileStartClick(string sceneToLoad)
     {
         //Switch to Loading Screen and call LevelManager to load scene
@@ -131,7 +137,7 @@ public class UIManager : MonoBehaviour
         Time.timeScale = 0f;
 
         //Temporary: Switch to Main Menu panel
-        PanelSwitch(UIPanels.MainMenu);
+        PanelSwitch(UIPanels.PauseMenu);
 
         //TO DO: Save game state if needed
     }
@@ -140,7 +146,7 @@ public class UIManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         //Switch back to previous panel
-        PanelSwitch(previousPanel);
+        PanelSwitch(UIPanels.None);
 
         //Time.timeScale = 1f;
     }
@@ -256,12 +262,13 @@ public enum UIPanels
 {
     None,
     GameStart,
-    MainMenu,
+    PauseMenu,
     //OptionsMenu,
     ProfileMenu,
     LoadingScreen,
     DeathScreen,
     WinScreen,
+    SettingsScreen
     //InGameHUD,
     //PauseMenu
 }

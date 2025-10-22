@@ -21,6 +21,7 @@ public class GameSettings : MonoBehaviour
     [SerializeField] private TMP_Dropdown resolutionDropdown;
     [SerializeField] private Toggle fullscreenToggle;
     [SerializeField] private Slider audioSlider; //TODO: Implement audio settings
+    [SerializeField] private TextMeshProUGUI volumeLevelText;
 
     Resolution[] AllResolutions;
     List<Resolution> uniqueResolutions = new List<Resolution>();
@@ -38,6 +39,7 @@ public class GameSettings : MonoBehaviour
         //Set default values
         isFullscreen = true;
         Resolution currentResoltion = Screen.currentResolution;
+        audioVolume = 100;
 
         //Get all resoltions and populate dropdown with unique resoltions
         AllResolutions = Screen.resolutions;
@@ -77,9 +79,11 @@ public class GameSettings : MonoBehaviour
                 resolutionDropdown.value = savedRes;
                 ChangeResolution();
             }
+            Debug.Log("Applied saved resolution value from Player Prefs");
         } else
         {
             PlayerPrefs.SetString(SettingType.Resolution.ToString(), selectedResolution.ToString());
+            Debug.Log("Added default resolution value to Player Prefs");
         }
 
         //Get Player Prefs for fullscreen
@@ -94,12 +98,36 @@ public class GameSettings : MonoBehaviour
                 fullscreenToggle.isOn = savedFullscreen;
                 ToggleFullscreen();
             }
+            Debug.Log("Applied saved fullscreen value from Player Prefs");
         }
         else
         {
             PlayerPrefs.SetString(SettingType.Fullscreen.ToString(), isFullscreen.ToString());
+            Debug.Log("Added default fullscreen value to Player Prefs");
         }
 
+        //Get Player Prefs for Audio
+        string savedAudioLevelString = PlayerPrefs.GetString(SettingType.Audio.ToString());
+        if(savedAudioLevelString != "")
+        {
+            int savedAudioLevel = int.Parse(savedAudioLevelString);
+            //Apply svaed audio level if different from current
+            if(savedAudioLevel != audioVolume)
+            {
+                audioVolume = savedAudioLevel;
+                audioSlider.value = savedAudioLevel;
+                ChangeVolume();
+            }
+            Debug.Log("Applied saved audio value from Player Prefs");
+        }
+        else
+        {
+            PlayerPrefs.SetString(SettingType.Audio.ToString(), audioVolume.ToString());
+            Debug.Log("Added default audio value to Player Prefs");
+        }
+
+        //Save to Player Prefs
+        PlayerPrefs.Save();
     }
 
     // Update is called once per frame
@@ -115,6 +143,10 @@ public class GameSettings : MonoBehaviour
         selectedResolution = resolutionDropdown.value;
         Resolution res = uniqueResolutions[selectedResolution];
         Screen.SetResolution(res.width, res.height, isFullscreen);
+
+        //Save the changes to player prefs
+        PlayerPrefs.SetString(SettingType.Resolution.ToString(), selectedResolution.ToString());
+        PlayerPrefs.Save();
     }
 
     public void ToggleFullscreen()
@@ -122,6 +154,22 @@ public class GameSettings : MonoBehaviour
         isFullscreen = fullscreenToggle.isOn;
         Resolution res = uniqueResolutions[selectedResolution];
         Screen.SetResolution(res.width, res.height, isFullscreen);
+
+        //Save changes to Player Prefs
+        PlayerPrefs.SetString(SettingType.Fullscreen.ToString(), isFullscreen.ToString());
+        PlayerPrefs.Save();
+    }
+
+    public void ChangeVolume()
+    {
+        audioVolume = (int) audioSlider.value;
+        volumeLevelText.text = audioVolume.ToString() + "%";
+
+        //TO DO: Call AudioManager to change the volume level
+
+        //Save changes to Player Prefs
+        PlayerPrefs.SetString(SettingType.Audio.ToString(), audioVolume.ToString());
+        PlayerPrefs.Save();
     }
     #endregion
 }
