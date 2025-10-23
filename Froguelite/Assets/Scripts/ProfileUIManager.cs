@@ -19,7 +19,7 @@ public class ProfileUIManager : MonoBehaviour
 
     private GameObject[] profileCards;
 
-    private string defaultSceneName = "MainScene"; //TO DO: Replace with actual default scene name
+    private string defaultSceneName = "TestMainScene-AA"; //TO DO: Replace with actual default scene name
 
     private const int maxProfiles = 3;
 
