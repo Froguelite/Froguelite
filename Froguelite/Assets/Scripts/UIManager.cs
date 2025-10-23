@@ -100,6 +100,14 @@ public class UIManager : MonoBehaviour
 
     public void OnBackClick()
     {
+        //Switch to start panel if current == profile and previous == pause
+        //  Will happen when game is quit, cannot go back to game then
+        if(currentPanel == UIPanels.ProfileMenu && previousPanel == UIPanels.PauseMenu)
+        {
+            PanelSwitch(UIPanels.GameStart);
+            return;
+        }
+
         //Switch to previous panel
         PanelSwitch(previousPanel);
     }
@@ -111,6 +119,12 @@ public class UIManager : MonoBehaviour
 
         ////Create profile cards for existing profiles
         //ProfileUIManager.Instance.CreateExistingProfiles();
+    }
+
+    public void OnQuitClick()
+    {
+        //Temporarily Quit to Profile Menu
+        OnProfilesClick();
     }
 
     public void OnSettingsClick()
