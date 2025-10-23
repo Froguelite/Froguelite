@@ -40,6 +40,7 @@ public class GameSettings : MonoBehaviour
         isFullscreen = true;
         Resolution currentResoltion = Screen.currentResolution;
         audioVolume = 100;
+        selectedResolution = -1;
 
         //Get all resoltions and populate dropdown with unique resoltions
         AllResolutions = Screen.resolutions;
@@ -63,6 +64,13 @@ public class GameSettings : MonoBehaviour
                 }
             }
         }
+
+        //If current screen resolution does not match any of the possible resolutions, set selected resolution to the highest
+        if(selectedResolution == -1)
+        {
+            selectedResolution = uniqueResolutions.Count - 1;
+        }
+
         resolutionDropdown.AddOptions(resolutionOptions);
 
         //Get Player Prefs for resolution
@@ -76,15 +84,12 @@ public class GameSettings : MonoBehaviour
             if (savedRes != selectedResolution)
             {
                 selectedResolution = savedRes;
-                resolutionDropdown.value = savedRes;
-                ChangeResolution();
             }
-            Debug.Log("Applied saved resolution value from Player Prefs");
-        } else
-        {
-            PlayerPrefs.SetString(SettingType.Resolution.ToString(), selectedResolution.ToString());
-            Debug.Log("Added default resolution value to Player Prefs");
+            //Debug.Log("Applied saved resolution value from Player Prefs");
         }
+
+        resolutionDropdown.value = selectedResolution;
+        ChangeResolution() ;
 
         //Get Player Prefs for fullscreen
         string savedFullscreenString = PlayerPrefs.GetString(SettingType.Fullscreen.ToString());
@@ -95,16 +100,12 @@ public class GameSettings : MonoBehaviour
             if (savedFullscreen != isFullscreen)
             {
                 isFullscreen = savedFullscreen;
-                fullscreenToggle.isOn = savedFullscreen;
-                ToggleFullscreen();
             }
-            Debug.Log("Applied saved fullscreen value from Player Prefs");
+            //Debug.Log("Applied saved fullscreen value from Player Prefs");
         }
-        else
-        {
-            PlayerPrefs.SetString(SettingType.Fullscreen.ToString(), isFullscreen.ToString());
-            Debug.Log("Added default fullscreen value to Player Prefs");
-        }
+
+        fullscreenToggle.isOn = isFullscreen;
+        ToggleFullscreen();
 
         //Get Player Prefs for Audio
         string savedAudioLevelString = PlayerPrefs.GetString(SettingType.Audio.ToString());
@@ -115,19 +116,12 @@ public class GameSettings : MonoBehaviour
             if(savedAudioLevel != audioVolume)
             {
                 audioVolume = savedAudioLevel;
-                audioSlider.value = savedAudioLevel;
-                ChangeVolume();
             }
-            Debug.Log("Applied saved audio value from Player Prefs");
-        }
-        else
-        {
-            PlayerPrefs.SetString(SettingType.Audio.ToString(), audioVolume.ToString());
-            Debug.Log("Added default audio value to Player Prefs");
+            //Debug.Log("Applied saved audio value from Player Prefs");
         }
 
-        //Save to Player Prefs
-        PlayerPrefs.Save();
+        audioSlider.value = audioVolume;
+        ChangeVolume();
     }
 
     // Update is called once per frame
