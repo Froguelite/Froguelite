@@ -27,6 +27,7 @@ public class MinimapRoomConnection : MonoBehaviour
     [SerializeField] private Color connectionExploredColor;
     [SerializeField] private Sprite connectionTypeActiveSprite;
     [SerializeField] private Sprite connectionTypeInactiveSprite;
+    [SerializeField] private Sprite connectionTypeLockedSprite;
     [SerializeField] private Image connectionTypeImgActive;
     [SerializeField] private Image connectionTypeImgInactive;
 
@@ -34,6 +35,7 @@ public class MinimapRoomConnection : MonoBehaviour
     [SerializeField] private float transferAnimationDuration = 2f;
 
     private bool isExplored = false;
+    private bool isLocked = false;
 
 
     #endregion
@@ -43,20 +45,37 @@ public class MinimapRoomConnection : MonoBehaviour
 
 
     // Sets up the connection appearance based on orientation
-    public void SetupConnection(ConnectionOrientation orientation)
+    public void SetupConnection(ConnectionOrientation orientation, bool isLocked)
     {
+        this.isLocked = isLocked;
+
         if (orientation == ConnectionOrientation.Horizontal)
         {
-            parentRectTransform.rotation = Quaternion.Euler(0f, 0f, 0f);
+            connectionImg.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
         }
         else
         {
-            parentRectTransform.rotation = Quaternion.Euler(0f, 0f, 90f);
+            connectionImg.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
         }
 
-        connectionTypeImgInactive.sprite = connectionTypeInactiveSprite;
+        if (isLocked)
+        {
+            connectionTypeImgInactive.sprite = connectionTypeLockedSprite;
+        }
+        else
+        {
+            connectionTypeImgInactive.sprite = connectionTypeInactiveSprite;
+        }
+
         connectionTypeImgActive.sprite = connectionTypeActiveSprite;
         connectionImg.color = connectionUnexploredColor;
+    }
+
+
+    public void UnlockConnection()
+    {
+        isLocked = false;
+        connectionTypeImgInactive.sprite = connectionTypeInactiveSprite;
     }
 
 

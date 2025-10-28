@@ -243,6 +243,16 @@ public class Door : MonoBehaviour
             if (!doorData.isImpassable)
             {
                 UpdateDoorVisuals();
+                
+                // Notify MinimapManager about the unlock
+                if (MinimapManager.Instance != null && RoomManager.Instance != null)
+                {
+                    Room room = RoomManager.Instance.GetRoomAtWorldPosition(doorData.launchPosition);
+                    if (room != null)
+                    {
+                        MinimapManager.Instance.OnDoorUnlocked(room, doorData.direction);
+                    }
+                }
             }
         }
     }

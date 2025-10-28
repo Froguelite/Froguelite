@@ -202,12 +202,11 @@ MonoBehaviour:
   parentRectTransform: {fileID: 1958921946686961112}
   connectionImg: {fileID: 918867502941392351}
   connectionTypeTransform: {fileID: 3822578586676511915}
-  connectionPointA: {fileID: 8911033579702571775}
-  connectionPointB: {fileID: 6817374923861526035}
   connectionUnexploredColor: {r: 0.291, g: 0.291, b: 0.291, a: 1}
   connectionExploredColor: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
   connectionTypeActiveSprite: {fileID: 7224781017051066338, guid: 074bf463e5f117f45a9018c230adeacb, type: 3}
   connectionTypeInactiveSprite: {fileID: 8623099952358286693, guid: 64a5004492e53d44293e72465123eb0b, type: 3}
+  connectionTypeLockedSprite: {fileID: -9053687546620643082, guid: 2263476b44cfeee49b13d2f621a669da, type: 3}
   connectionTypeImgActive: {fileID: 7407880941551548595}
   connectionTypeImgInactive: {fileID: 4646200728776010473}
   transferAnimationDuration: 2
