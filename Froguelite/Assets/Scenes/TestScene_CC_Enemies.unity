@@ -136,6 +136,10 @@ PrefabInstance:
       value: GameManager
       objectReference: {fileID: 0}
     - target: {fileID: 5673963059578216789, guid: 2211788457854674c985eaa25d336c6b, type: 3}
+      propertyPath: godmode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5673963059578216789, guid: 2211788457854674c985eaa25d336c6b, type: 3}
       propertyPath: playerHealth
       value: 
       objectReference: {fileID: 471385698}
@@ -957,7 +961,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7970708818849091610, guid: b4fef3bbfc2ca024f913532d0baeee97, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

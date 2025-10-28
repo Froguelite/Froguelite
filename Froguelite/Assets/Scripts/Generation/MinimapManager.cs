@@ -39,8 +39,13 @@ public class MinimapManager : MonoBehaviour
     private bool canToggleFullMap = true;
 
     [SerializeField] private MinimapRoomConnection roomConnectionPrefab;
-    private Dictionary<Room, Dictionary<Door.DoorDirection, MinimapRoomConnection>> minimapRoomConnections = new Dictionary<Room, Dictionary<Door.DoorDirection, MinimapRoomConnection>>();
-    private Dictionary<Room, Dictionary<Door.DoorDirection, MinimapRoomConnection>> fullMapRoomConnections = new Dictionary<Room, Dictionary<Door.DoorDirection, MinimapRoomConnection>>();
+    
+    // Room-based connection tracking - each connection is stored once per room pair
+    private Dictionary<(Room, Room), MinimapRoomConnection> minimapRoomConnections = new Dictionary<(Room, Room), MinimapRoomConnection>();
+    private Dictionary<(Room, Room), MinimapRoomConnection> fullMapRoomConnections = new Dictionary<(Room, Room), MinimapRoomConnection>();
+    
+    // Helper dictionary to quickly find all connections involving a specific room
+    private Dictionary<Room, List<(Room, Room)>> roomConnectionKeys = new Dictionary<Room, List<(Room, Room)>>();
 
 
     #endregion
@@ -428,58 +433,87 @@ public class MinimapManager : MonoBehaviour
     #region DOORS AND CONNECTIONS
 
 
+    // Helper method to create a room pair key (always ordered consistently)
+    private (Room, Room) CreateRoomPairKey(Room room1, Room room2)
+    {
+        // Use a consistent ordering to avoid duplicate keys for the same room pair
+        return room1.GetHashCode() < room2.GetHashCode() ? (room1, room2) : (room2, room1);
+    }
+
+
+    // Helper method to add a connection key to the lookup dictionary
+    private void AddConnectionKeyToLookup(Room room, (Room, Room) connectionKey)
+    {
+        if (!roomConnectionKeys.ContainsKey(room))
+        {
+            roomConnectionKeys[room] = new List<(Room, Room)>();
+        }
+        
+        if (!roomConnectionKeys[room].Contains(connectionKey))
+        {
+            roomConnectionKeys[room].Add(connectionKey);
+        }
+    }
+
+
+    // Helper method to determine connection orientation
+    private MinimapRoomConnection.ConnectionOrientation GetConnectionProperties(Room fromRoom, Room toRoom, Door.DoorDirection doorDirection)
+    {
+        return (doorDirection == Door.DoorDirection.Up || doorDirection == Door.DoorDirection.Down) ?
+            MinimapRoomConnection.ConnectionOrientation.Vertical : MinimapRoomConnection.ConnectionOrientation.Horizontal;
+    }
+
+
     // Called when clearing a room, update doors / connections
     public void OnClearRoom(Room clearedRoom)
     {
-        // Initialize dictionaries for this room if they don't exist
-        if (!minimapRoomConnections.ContainsKey(clearedRoom))
-        {
-            minimapRoomConnections[clearedRoom] = new Dictionary<Door.DoorDirection, MinimapRoomConnection>();
-        }
-        if (!fullMapRoomConnections.ContainsKey(clearedRoom))
-        {
-            fullMapRoomConnections[clearedRoom] = new Dictionary<Door.DoorDirection, MinimapRoomConnection>();
-        }
-
         // Loop through each door in the cleared room
         foreach (var entry in clearedRoom.roomData.doors)
         {
-            // Get the door direction and corresponding connection
             Door.DoorDirection doorDir = entry.Key;
             DoorData doorData = entry.Value;
 
-            // If the door is a real door (not impassable), and is not connected to an explored room, create a new connection
-            if (!doorData.isImpassable && clearedRoom.GetAdjacentRoom(doorDir) != null &&
-                !clearedRoom.GetAdjacentRoom(doorDir).isExplored)
+            // If the door is a real door (not impassable), and connects to an unexplored room
+            if (!doorData.isImpassable)
             {
-                Vector3 connectionCenter = clearedRoom.GetRoomConnectionCenter(doorDir);
+                Room adjacentRoom = clearedRoom.GetAdjacentRoom(doorDir);
+                if (adjacentRoom != null && !adjacentRoom.isExplored)
+                {
+                    // Create connection key for this room pair
+                    var connectionKey = CreateRoomPairKey(clearedRoom, adjacentRoom);
+                    
+                    // Skip if connection already exists
+                    if (minimapRoomConnections.ContainsKey(connectionKey))
+                        continue;
 
-                // Setup the connection based on door direction
-                MinimapRoomConnection.ConnectionOrientation orientation = (doorDir == Door.DoorDirection.Up || doorDir == Door.DoorDirection.Down) ?
-                    MinimapRoomConnection.ConnectionOrientation.Vertical : MinimapRoomConnection.ConnectionOrientation.Horizontal;
+                    Vector3 connectionCenter = clearedRoom.GetRoomConnectionCenter(doorDir);
 
-                // Determine active connection point based on door direction
-                MinimapRoomConnection.ConnectionPoint activePoint = (doorDir == Door.DoorDirection.Up || doorDir == Door.DoorDirection.Right) ?
-                    MinimapRoomConnection.ConnectionPoint.PointA : MinimapRoomConnection.ConnectionPoint.PointB;
+                    // Get connection orientation
+                    MinimapRoomConnection.ConnectionOrientation orientation = GetConnectionProperties(clearedRoom, adjacentRoom, doorDir);
 
-                // Create connection on the minimap
-                MinimapRoomConnection minimapConnection = Instantiate(roomConnectionPrefab, minimapDisplayImg.transform);
-                Vector2 minimapPos = WorldToMinimapPosition(connectionCenter);
-                minimapPos.y = -minimapPos.y;
-                minimapConnection.transform.localPosition = minimapPos;
-                minimapConnection.SetupConnection(orientation, activePoint);
+                    // Create connection on the minimap
+                    MinimapRoomConnection minimapConnection = Instantiate(roomConnectionPrefab, minimapDisplayImg.transform);
+                    Vector2 minimapPos = WorldToMinimapPosition(connectionCenter);
+                    minimapPos.y = -minimapPos.y;
+                    minimapConnection.transform.localPosition = minimapPos;
+                    minimapConnection.SetupConnection(orientation);
 
-                // Create connection on the full map
-                MinimapRoomConnection fullMapConnection = Instantiate(roomConnectionPrefab, fullMapDisplayImg.transform);
-                Vector2 fullMapPos = WorldToFullMapPosition(connectionCenter);
-                fullMapPos.y = -fullMapPos.y;
-                fullMapConnection.transform.localPosition = fullMapPos;
-                fullMapConnection.SetupConnection(orientation, activePoint);
+                    // Create connection on the full map
+                    MinimapRoomConnection fullMapConnection = Instantiate(roomConnectionPrefab, fullMapDisplayImg.transform);
+                    Vector2 fullMapPos = WorldToFullMapPosition(connectionCenter);
+                    fullMapPos.y = -fullMapPos.y;
+                    fullMapConnection.transform.localPosition = fullMapPos;
+                    fullMapConnection.SetupConnection(orientation);
 
-                // Add connections to dictionaries
-                minimapRoomConnections[clearedRoom][doorDir] = minimapConnection;
-                fullMapRoomConnections[clearedRoom][doorDir] = fullMapConnection;
-            }    
+                    // Store connections
+                    minimapRoomConnections[connectionKey] = minimapConnection;
+                    fullMapRoomConnections[connectionKey] = fullMapConnection;
+                    
+                    // Add to lookup dictionaries for both rooms
+                    AddConnectionKeyToLookup(clearedRoom, connectionKey);
+                    AddConnectionKeyToLookup(adjacentRoom, connectionKey);
+                }
+            }
         }
     }
 
@@ -487,25 +521,20 @@ public class MinimapManager : MonoBehaviour
     // Called when player travels through a door from one room to another
     public void OnPlayerTravelThroughDoor(Room fromRoom, Door.DoorDirection doorDirection)
     {
-        // Check if we have connections for this room and door direction
-        if (minimapRoomConnections.ContainsKey(fromRoom) && minimapRoomConnections[fromRoom].ContainsKey(doorDirection))
-        {
-            // Play transfer animation on the minimap connection
-            MinimapRoomConnection minimapConnection = minimapRoomConnections[fromRoom][doorDirection];
-            if (minimapConnection != null)
-            {
-                minimapConnection.PlayTransferAnimation();
-            }
-        }
+        Room toRoom = fromRoom.GetAdjacentRoom(doorDirection);
+        if (toRoom == null) return;
 
-        if (fullMapRoomConnections.ContainsKey(fromRoom) && fullMapRoomConnections[fromRoom].ContainsKey(doorDirection))
+        // Animate the specific connection between fromRoom and toRoom
+        var connectionKey = CreateRoomPairKey(fromRoom, toRoom);
+        
+        if (minimapRoomConnections.ContainsKey(connectionKey))
         {
-            // Play transfer animation on the full map connection
-            MinimapRoomConnection fullMapConnection = fullMapRoomConnections[fromRoom][doorDirection];
-            if (fullMapConnection != null)
-            {
-                fullMapConnection.PlayTransferAnimation();
-            }
+            minimapRoomConnections[connectionKey].PlayTransferAnimation();
+        }
+        
+        if (fullMapRoomConnections.ContainsKey(connectionKey))
+        {
+            fullMapRoomConnections[connectionKey].PlayTransferAnimation();
         }
     }
 

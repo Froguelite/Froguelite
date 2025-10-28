@@ -15,6 +15,7 @@ public class EnemyBehavior_Swarm : EnemyBehavior_Chase
     public SwarmManager.SwarmCenter swarmCenter { get; private set; } = null; // The swarm info for this enemy's swarm
     public UnityEvent onTriggerSwarmAction { get; private set; } = new UnityEvent(); // Event triggered when the swarm action is performed
     public bool triggeringAction = false;
+    private bool initialized = false;
 
 
     #endregion
@@ -31,8 +32,12 @@ public class EnemyBehavior_Swarm : EnemyBehavior_Chase
 
 
     // Initializes this enemy's swarm info in the SwarmManager
-    private void InitializeSwarmInfo()
+    public void InitializeSwarmInfo()
     {
+        if (initialized)
+            return;
+        initialized = true;
+
         if (SwarmManager.Instance != null)
         {
             string id = enemyBase.GetEnemyId();

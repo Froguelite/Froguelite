@@ -187,13 +187,13 @@ public class Room : MonoBehaviour
     // Called when the room is cleared of all enemies
     public void OnRoomCleared()
     {
+        isExplored = true;
+
         // Clear all swarm centers
         SwarmManager.Instance.ClearAllSwarms();
 
         // Open all doors when room is cleared
         DoorManager.Instance.OpenAllDoors(true);
-
-        isExplored = true;
 
         // Ping the minimap notifying we have cleared the room
         MinimapManager.Instance.OnClearRoom(this);

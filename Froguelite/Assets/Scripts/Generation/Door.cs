@@ -382,6 +382,30 @@ public class Door : MonoBehaviour
     #endregion
 
 
+    #region HELPERS
+
+
+    public static DoorDirection GetOppositeDirection(DoorDirection direction)
+    {
+        switch (direction)
+        {
+            case DoorDirection.Up:
+                return DoorDirection.Down;
+            case DoorDirection.Down:
+                return DoorDirection.Up;
+            case DoorDirection.Left:
+                return DoorDirection.Right;
+            case DoorDirection.Right:
+                return DoorDirection.Left;
+            default:
+                return direction;
+        }
+    }
+
+
+    #endregion
+
+
 }
 
 [System.Serializable]

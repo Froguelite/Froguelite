@@ -61,6 +61,8 @@ public class StatsManager : MonoBehaviour
     public Stat playerKnockback { get; private set; }
     public Stat playerLuck { get; private set; }
 
+    [SerializeField] private bool godmode = false;
+
 
     #endregion
 
@@ -77,7 +79,11 @@ public class StatsManager : MonoBehaviour
         }
 
         Instance = this;
-        SetStatsToDefault();
+
+        if (godmode)
+            SetStatsToGodmode();
+        else
+            SetStatsToDefault();
     }
 
 
@@ -93,6 +99,23 @@ public class StatsManager : MonoBehaviour
         playerSpeed = new Stat(5f, 1f);
         playerRange = new Stat(5f, 1f);
         playerRate = new Stat(5f, 1f);
+        playerKnockback = new Stat(5f, 1f);
+        playerLuck = new Stat(5f, 1f);
+    }
+
+
+    // Sets all stats to godmode values
+    public void SetStatsToGodmode()
+    {
+        playerLevel = 1;
+
+        playerHealth.SetMaxHealth(20, false);
+        playerHealth.SetCurrentHealth(20, false);
+
+        playerDamage = new Stat(100f, 1f);
+        playerSpeed = new Stat(10f, 1f);
+        playerRange = new Stat(8f, 1f);
+        playerRate = new Stat(15f, 1f);
         playerKnockback = new Stat(5f, 1f);
         playerLuck = new Stat(5f, 1f);
     }
