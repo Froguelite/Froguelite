@@ -14,6 +14,10 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private Image progressBar;
 
+    private const string mainSceneName = "TestMainScene-AA"; // Temporary, replace with actual main scene name
+    private const string menuSceneName = "TestMenuScene-AA"; // Temporary, replace with actual menu scene name
+    private const string bossSceneName = "TestBossScene-AA"; // Temporary, replace with actual boss scene name
+
     #endregion
 
     #region SETUP
@@ -55,18 +59,18 @@ public class LevelManager : MonoBehaviour
             progressBar.fillAmount = scene.progress;
         } while (scene.progress < 0.9f);
 
-        await Task.Delay(500); //For demo purposes
+        //await Task.Delay(500); //For demo purposes
 
         scene.allowSceneActivation = true;
 
         // Temporary, might need adjustment to be cleaner -
         // If we are loading the main scene, wait for ZoneGenerator to be ready then generate zone
-        if (sceneName == "MainScene")
+        if (sceneName == mainSceneName)
         {
             await GenerateZoneAndSetup();
             UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
         }
-        else if (sceneName == "MenuScene")
+        else if (sceneName == menuSceneName)
         {
             GameObject.Destroy(InputManager.Instance.gameObject);
             GameObject.Destroy(MainCanvas.Instance.gameObject);
@@ -74,7 +78,7 @@ public class LevelManager : MonoBehaviour
             GameObject.Destroy(GameManager.Instance.gameObject);
             UIManager.Instance.OnSceneLoadReturn(UIPanels.GameStart);
         }
-        else if (sceneName == "BossScene")
+        else if (sceneName == bossSceneName)
         {
             PlayerMovement.Instance.transform.position = new Vector3(0.46f, -7.16f, 0);
             MinimapManager.Instance.HideMinimap();
@@ -92,6 +96,7 @@ public class LevelManager : MonoBehaviour
                     cam.UpdateCameraState(Vector3.up, Time.deltaTime);
                 }
             }
+            UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
         }
     }
 
