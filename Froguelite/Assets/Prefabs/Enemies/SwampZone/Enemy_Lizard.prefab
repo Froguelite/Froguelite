@@ -17,6 +17,10 @@ PrefabInstance:
       value: -0.0158844
       objectReference: {fileID: 0}
     - target: {fileID: 1483300078910096697, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: chaseOnStart
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1483300078910096697, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
       propertyPath: possibleSprites.Array.size
       value: 4
       objectReference: {fileID: 0}
@@ -39,7 +43,7 @@ PrefabInstance:
     - target: {fileID: 2727076177215642101, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 398253203554383916, guid: a6e4a4e8612e5df4cacb75723ba9724a, type: 3}
+      objectReference: {fileID: -2876866442641250144, guid: 5f9492efb5faf9148ad83001d2a23db9, type: 3}
     - target: {fileID: 3462094319449922566, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
       propertyPath: m_LocalPosition.y
       value: -0.112
@@ -84,27 +88,69 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4370589815322013855, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_Height
+      value: 0.66
+      objectReference: {fileID: 0}
+    - target: {fileID: 4370589815322013855, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_Radius
+      value: 0.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 5384576645190955709, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.64999
+      objectReference: {fileID: 0}
     - target: {fileID: 5384576645190955709, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.2571
+      value: 1.9933835
+      objectReference: {fileID: 0}
+    - target: {fileID: 5384576645190955709, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.076
       objectReference: {fileID: 0}
     - target: {fileID: 5384576645190955709, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.281
+      value: 0.437
       objectReference: {fileID: 0}
     - target: {fileID: 5882462761335553892, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
       propertyPath: m_Name
-      value: GatorEnemy
+      value: Enemy_Lizard
       objectReference: {fileID: 0}
+    - target: {fileID: 7807336152895815857, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: associatedEnemy
+      value: 
+      objectReference: {fileID: 219424671850456708}
     m_RemovedComponents:
     - {fileID: 1397738806206786191, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+    - {fileID: 1483300078910096697, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5882462761335553892, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 219424671850456708}
+    - targetCorrespondingSourceObject: {fileID: 5882462761335553892, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3667030018611236273}
     - targetCorrespondingSourceObject: {fileID: 5519356621205672419, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6538916115462734944}
   m_SourcePrefab: {fileID: 100100000, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+--- !u!212 &1039654798576590116 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2727076177215642101, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+  m_PrefabInstance: {fileID: 3149456303478162641}
+  m_PrefabAsset: {fileID: 0}
+--- !u!195 &1662507303629960270 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 4370589815322013855, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+  m_PrefabInstance: {fileID: 3149456303478162641}
+  m_PrefabAsset: {fileID: 0}
+--- !u!50 &5422389780574961135 stripped
+Rigidbody2D:
+  m_CorrespondingSourceObject: {fileID: 6986542162239207742, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+  m_PrefabInstance: {fileID: 3149456303478162641}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7434787988984583474 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5519356621205672419, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
@@ -156,3 +202,60 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.178772, y: 0.4874878}
   m_EdgeRadius: 0
+--- !u!114 &8079735444759031752 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6599428521549949721, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+  m_PrefabInstance: {fileID: 3149456303478162641}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9067adbf4b1871a42833b06359e708a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlipbookAnimator
+--- !u!1 &8797686647034493877 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5882462761335553892, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+  m_PrefabInstance: {fileID: 3149456303478162641}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &219424671850456708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8797686647034493877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45f1d82f0cdb96f48a64ec5be36c859c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy_Chase
+  chaseOnStart: 0
+  enemyId: EnemyBase
+  maxHealth: 20
+  navAgent: {fileID: 1662507303629960270}
+  movementType: 0
+  rb: {fileID: 5422389780574961135}
+  knockbackDuration: 0.1
+  spriteRenderer: {fileID: 1039654798576590116}
+  defeatSmokeAnimator: {fileID: 8079735444759031752}
+  chaseBehavior: {fileID: 3667030018611236273}
+--- !u!114 &3667030018611236273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8797686647034493877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28444a6b9a11eb042aa7720293ebb1bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyBehavior_Chase
+  chaseSettings:
+    chaseSpeed: 3
+    stoppingDistance: 0.5
+    chaseUpdateInterval: 0.5
+  navAgent: {fileID: 1662507303629960270}
+  enemyBase: {fileID: 219424671850456708}
+  stopChaseOverride: 0

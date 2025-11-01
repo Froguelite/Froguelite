@@ -12,6 +12,7 @@ TagManager:
   - Collectable
   - Boss
   - Totem
+  - Projectile
   layers:
   - Default
   - TransparentFX

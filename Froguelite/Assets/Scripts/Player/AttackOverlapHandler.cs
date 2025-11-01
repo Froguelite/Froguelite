@@ -31,7 +31,7 @@ public class AttackOverlapHandler : MonoBehaviour
             if (enemy == null)
                 enemy = collision.GetComponentInParent<IEnemy>();
 
-            if (enemy != null)
+            if (enemy != null && !enemy.isDead)
             {
                 enemy.DamageEnemy(StatsManager.Instance.playerDamage.GetValue(), StatsManager.Instance.playerKnockback.GetValue());
                 PlayerAttack.Instance.StopTongueExtension(false);

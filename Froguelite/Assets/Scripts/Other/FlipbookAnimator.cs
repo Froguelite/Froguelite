@@ -281,10 +281,17 @@ public class FlipbookAnimator : MonoBehaviour
 
     // Plays the flipbook animation
     //-------------------------------------//
-    public void Play()
+    public void Play(bool setFirstImmediate = false)
     //-------------------------------------//
     {
         isPlaying = true;
+
+        if (setFirstImmediate)
+        {
+            // Set the first sprite immediately
+            currentSpriteIndex = 0;
+            SetCurrentSprite();
+        }
 
     } // END Play
 

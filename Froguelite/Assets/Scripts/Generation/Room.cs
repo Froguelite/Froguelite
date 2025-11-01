@@ -105,13 +105,7 @@ public class Room : MonoBehaviour
         if (roomData.roomType != RoomType.Normal)
             return; // Only spawn enemies in normal rooms
 
-        int enemyCount = UnityEngine.Random.Range(2, 5); // Random number of enemies between 2 and 4
-
-        for (int i = 0; i < enemyCount; i++)
-        {
-            Vector2 spawnPosition = GetRandomEnemySpawnPosition();
-            enemies.Add(EnemyFactory.Instance.SpawnRandomEnemy(this, spawnPosition));
-        }
+        enemies = EnemyFactory.Instance.SpawnEnemiesForRoom(this);
     }
 
 
@@ -129,7 +123,7 @@ public class Room : MonoBehaviour
 
 
     // Returns a random valid spawn position on land within this room
-    private Vector2 GetRandomEnemySpawnPosition()
+    public Vector2 GetRandomEnemySpawnPosition()
     {
         List<Vector2Int> validTiles = new List<Vector2Int>();
 
@@ -138,7 +132,7 @@ public class Room : MonoBehaviour
         {
             for (int y = 0; y < roomData.roomLength; y++)
             {
-                if (roomData.tileLayout[x, y]) // true = walkable/land
+                if (roomData.tileLayout[x, y] == 'l') // 'l' = land
                 {
                     validTiles.Add(new Vector2Int(x, y));
                 }
@@ -170,14 +164,10 @@ public class Room : MonoBehaviour
     // Called when the player enters the room
     public void OnPlayerEnter()
     {
-        // If no enemies are present, we are safe to open all doors (room is clear)
         if (enemies.Count == 0)
-        {
-            DoorManager.Instance.OpenAllDoors(true);
             return;
-        }
 
-        // Otherwise, there are enemies. Engage them with the player.
+        // Engage enemies with the player
         foreach (IEnemy enemy in enemies)
         {
             enemy.BeginPlayerChase();
@@ -185,8 +175,21 @@ public class Room : MonoBehaviour
     }
 
 
+    // Called when the player completes a door transition into this room
+    // (i.e. lilypad frog is fully back to original island)
+    public void OnDoorTransitionComplete()
+    {
+        // If no enemies are present, we are safe to open all doors (room is clear)
+        if (enemies.Count == 0)
+        {
+            DoorManager.Instance.OpenAllDoors(true);
+            return;
+        }
+    }
+
+
     // Called when a particular enemy is defeated
-    public void OnEnemyDefeated(MeleeEnemy defeatedEnemy)
+    public void OnEnemyDefeated(EnemyBase defeatedEnemy)
     {
         if (enemies.Contains(defeatedEnemy))
         {
@@ -215,6 +218,9 @@ public class Room : MonoBehaviour
     // Called when the room is cleared of all enemies
     private void OnRoomCleared()
     {
+        // Clear all swarm centers
+        SwarmManager.Instance.ClearAllSwarms();
+
         // Open all doors when room is cleared
         DoorManager.Instance.OpenAllDoors(true);
     }
@@ -255,7 +261,13 @@ public class RoomData
 
     public Room.RoomType roomType;
     public Vector2Int roomCoordinate;
-    public bool[,] tileLayout; // 2D array representing walkable (true) and non-walkable (false) tiles in the room
+
+    // 2D array representing the tiles in this room: 
+    // l = land, 
+    // w = water, 
+    // j = landing zone (land), 
+    // p = room path (water)
+    public char[,] tileLayout; 
     public int roomLength; // Length of one side of the square room in tiles
     public Dictionary<Door.DoorDirection, DoorData> doors;
 
@@ -337,7 +349,7 @@ public class RoomData
     // Returns whether the given tile coordinate is bordering a change in land/water on any cardinal direction
     public bool IsTileBorderingChange(Vector2Int tileCoord)
     {
-        bool currentTileIsLand = tileLayout[tileCoord.x, tileCoord.y];
+        bool currentTileIsLand = tileLayout[tileCoord.x, tileCoord.y] == 'l'; // 'l' = land
 
         // Check all four cardinal directions
         Vector2Int[] directions = new Vector2Int[]
@@ -355,7 +367,7 @@ public class RoomData
             // Ensure neighbor is within bounds
             if (neighborCoord.x >= 0 && neighborCoord.x < roomLength && neighborCoord.y >= 0 && neighborCoord.y < roomLength)
             {
-                if (tileLayout[neighborCoord.x, neighborCoord.y] != currentTileIsLand)
+                if ((tileLayout[neighborCoord.x, neighborCoord.y] == 'l') != currentTileIsLand)
                 {
                     return true; // Found a bordering change
                 }

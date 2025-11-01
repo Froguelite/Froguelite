@@ -24,21 +24,21 @@ public static class RoomTileHelper
 
 
     // Generates a room layout using Perlin noise (with octaves)
-    // Returns a 2d bool array of where land should be
-    public static bool[,] GenRoomTiles(
+    // Returns a 2d char array of where land should be
+    public static char[,] GenRoomTiles(
         int width,
         int height,
         int offsetX,
         int offsetY,
         PerlinNoiseSettings noiseSettings)
     {
-        bool[,] roomLayout = new bool[width, height];
+        char[,] roomLayout = new char[width, height];
 
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                roomLayout[x, y] = CoordinateMeetsTileGenThreshold(new Vector2(x + offsetX, y + offsetY), noiseSettings, width, height, offsetX, offsetY);
+                roomLayout[x, y] = CoordinateMeetsTileGenThreshold(new Vector2(x + offsetX, y + offsetY), noiseSettings, width, height, offsetX, offsetY) ? 'l' : 'w'; // 'l' = land, 'w' = water
             }
         }
 
@@ -109,14 +109,14 @@ public static class RoomTileHelper
 
 
     // Applies smoothing to given room layout
-    public static bool[,] SmoothRoomLayout(bool[,] roomLayout, int iterations = 1)
+    public static char[,] SmoothRoomLayout(char[,] roomLayout, int iterations = 1)
     {
         int width = roomLayout.GetLength(0);
         int height = roomLayout.GetLength(1);
 
         for (int iter = 0; iter < iterations; iter++)
         {
-            bool[,] smoothedLayout = new bool[width, height];
+            char[,] smoothedLayout = new char[width, height];
 
             for (int x = 0; x < width; x++)
             {
@@ -135,7 +135,7 @@ public static class RoomTileHelper
 
                             if (neighborX >= 0 && neighborX < width && neighborY >= 0 && neighborY < height)
                             {
-                                if (roomLayout[neighborX, neighborY])
+                                if (roomLayout[neighborX, neighborY] == 'l') // 'l' = land
                                     solidNeighbors++;
                                 totalNeighbors++;
                             }
@@ -149,7 +149,7 @@ public static class RoomTileHelper
                     }
 
                     // Apply smoothing rule: if more than half neighbors are solid, make this solid
-                    smoothedLayout[x, y] = solidNeighbors > totalNeighbors / 2;
+                    smoothedLayout[x, y] = solidNeighbors > totalNeighbors / 2 ? 'l' : 'w'; // 'l' = land, 'w' = water
                 }
             }
 
@@ -161,27 +161,36 @@ public static class RoomTileHelper
 
     // Ensures the room layout is a single connected component
     // Removes any isolated sections of land
-    public static bool[,] EnsureConnectivity(bool[,] roomLayout)
+    public static char[,] EnsureConnectivity(char[,] roomLayout)
     {
         int width = roomLayout.GetLength(0);
         int height = roomLayout.GetLength(1);
 
-        bool[,] visited = new bool[width, height];
-        bool[,] result = new bool[width, height];
+        char[,] visited = new char[width, height];
+        char[,] result = new char[width, height];
+
+        // Initialize result array with water tiles by default
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                result[x, y] = 'w'; // Set all tiles to water by default
+            }
+        }
 
         // Find center point that is solid to start flood fill
         int centerX = width / 2;
         int centerY = height / 2;
 
         // Search for nearest solid tile to center if center is not solid
-        if (!roomLayout[centerX, centerY])
+        if (roomLayout[centerX, centerY] != 'l')
         {
             float minDistance = float.MaxValue;
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    if (roomLayout[x, y])
+                    if (roomLayout[x, y] == 'l')
                     {
                         float distance = Vector2.Distance(new Vector2(x, y), new Vector2(centerX, centerY));
                         if (distance < minDistance)
@@ -196,7 +205,7 @@ public static class RoomTileHelper
         }
 
         // Flood fill from center to find main connected component
-        if (roomLayout[centerX, centerY])
+        if (roomLayout[centerX, centerY] == 'l')
         {
             FloodFill(roomLayout, visited, result, centerX, centerY, width, height);
         }
@@ -204,19 +213,147 @@ public static class RoomTileHelper
         return result;
     }
 
-    private static void FloodFill(bool[,] original, bool[,] visited, bool[,] result, int x, int y, int width, int height)
+    private static void FloodFill(char[,] original, char[,] visited, char[,] result, int x, int y, int width, int height)
     {
-        if (x < 0 || x >= width || y < 0 || y >= height || visited[x, y] || !original[x, y])
+        if (x < 0 || x >= width || y < 0 || y >= height || visited[x, y] == 'l' || original[x, y] != 'l')
             return;
 
-        visited[x, y] = true;
-        result[x, y] = true;
+        visited[x, y] = 'l';
+        result[x, y] = 'l';
 
         // Recursively fill adjacent tiles (4-directional)
         FloodFill(original, visited, result, x + 1, y, width, height);
         FloodFill(original, visited, result, x - 1, y, width, height);
         FloodFill(original, visited, result, x, y + 1, width, height);
         FloodFill(original, visited, result, x, y - 1, width, height);
+    }
+
+
+    // Adds arrival ('j') and path ('p') tiles to the room layout based on room data
+    public static char[,] AddArrivalAndPathTiles(char[,] roomLayout, RoomData roomData)
+    {
+        int width = roomLayout.GetLength(0);
+        int height = roomLayout.GetLength(1);
+
+        // Create a copy of the layout to modify
+        char[,] modifiedLayout = (char[,])roomLayout.Clone();
+
+        // Process each door in the room data
+        foreach (var doorEntry in roomData.doors)
+        {
+            DoorData doorData = doorEntry.Value;
+            Door.DoorDirection direction = doorEntry.Key;
+
+            // Only process doors that are not impassable (actual doors)
+            if (!doorData.isImpassable)
+            {
+                // Get the landing position for this door direction
+                Vector2Int landingPosition = GetDoorLocation(modifiedLayout, direction, false);
+
+                // Mark the landing position and surrounding tiles as 'j' if they are land
+                modifiedLayout = SetArrivalTilesAroundPosition(modifiedLayout, landingPosition, width, height);
+
+                // Create path tiles from landing position to the edge of the room in the door's direction
+                modifiedLayout = SetPathTilesToEdge(modifiedLayout, landingPosition, direction, width, height);
+            }
+        }
+
+        return modifiedLayout;
+    }
+
+    // Helper method to set arrival tiles ('j') around a given position
+    private static char[,] SetArrivalTilesAroundPosition(char[,] layout, Vector2Int centerPos, int width, int height)
+    {
+        // Check all tiles in a 3x3 area around the center position (1-tile surrounding)
+        for (int offsetX = -1; offsetX <= 1; offsetX++)
+        {
+            for (int offsetY = -1; offsetY <= 1; offsetY++)
+            {
+                int tileX = centerPos.x + offsetX;
+                int tileY = centerPos.y + offsetY;
+
+                // Check if the tile is within bounds
+                if (tileX >= 0 && tileX < width && tileY >= 0 && tileY < height)
+                {
+                    layout[tileX, tileY] = 'j';
+                }
+            }
+        }
+
+        return layout;
+    }
+
+    // Helper method to set path tiles ('p') from landing position to the edge of the room in the door's direction
+    private static char[,] SetPathTilesToEdge(char[,] layout, Vector2Int landingPosition, Door.DoorDirection direction, int width, int height)
+    {
+        Vector2Int currentPos = landingPosition;
+        Vector2Int directionVector = GetDirectionVector(direction);
+        Vector2Int perpendicularVector = GetPerpendicularVector(direction);
+
+        // Move from landing position towards the edge of the room in the door's direction
+        while (true)
+        {
+            // Move one step in the direction
+            currentPos += directionVector;
+
+            // Check if we've reached the edge of the room
+            if (currentPos.x < 0 || currentPos.x >= width || currentPos.y < 0 || currentPos.y >= height)
+            {
+                break;
+            }
+
+            // Set path tiles in a 3-wide pattern: center, left, and right
+            for (int offset = -1; offset <= 1; offset++)
+            {
+                Vector2Int tilePos = currentPos + (perpendicularVector * offset);
+
+                // Check if the tile position is within bounds
+                if (tilePos.x >= 0 && tilePos.x < width && tilePos.y >= 0 && tilePos.y < height)
+                {
+                    // Only convert water tiles ('w') to path tiles ('p')
+                    if (layout[tilePos.x, tilePos.y] == 'w')
+                    {
+                        layout[tilePos.x, tilePos.y] = 'p';
+                    }
+                }
+            }
+        }
+
+        return layout;
+    }
+
+    // Helper method to get the direction vector for a door direction
+    private static Vector2Int GetDirectionVector(Door.DoorDirection direction)
+    {
+        switch (direction)
+        {
+            case Door.DoorDirection.Up:
+                return new Vector2Int(0, 1);
+            case Door.DoorDirection.Down:
+                return new Vector2Int(0, -1);
+            case Door.DoorDirection.Left:
+                return new Vector2Int(-1, 0);
+            case Door.DoorDirection.Right:
+                return new Vector2Int(1, 0);
+            default:
+                return Vector2Int.zero;
+        }
+    }
+
+    // Helper method to get the perpendicular vector for a door direction (for creating 3-wide paths)
+    private static Vector2Int GetPerpendicularVector(Door.DoorDirection direction)
+    {
+        switch (direction)
+        {
+            case Door.DoorDirection.Up:
+            case Door.DoorDirection.Down:
+                return new Vector2Int(1, 0); // Horizontal perpendicular for vertical movement
+            case Door.DoorDirection.Left:
+            case Door.DoorDirection.Right:
+                return new Vector2Int(0, 1); // Vertical perpendicular for horizontal movement
+            default:
+                return Vector2Int.zero;
+        }
     }
 
 
@@ -229,7 +366,7 @@ public static class RoomTileHelper
     // Sets given tilemap to match the room layout
     // Does NOT use auto-tiling, just places land and water tiles directly (i.e. land OR water, no in-between)
     public static void SetTilemapToLayout(
-        bool[,] roomLayout,
+        char[,] roomLayout,
         Tilemap tilemap,
         TileBase landTile,
         TileBase waterTile,
@@ -266,7 +403,7 @@ public static class RoomTileHelper
                 positions[tileIndex] = position;
 
                 // Determine which tile to place based on layout
-                if (roomLayout[x, y])
+                if (roomLayout[x, y] == 'l')
                 {
                     // Land tile
                     tilesToPlace[tileIndex] = landTile;
@@ -289,7 +426,7 @@ public static class RoomTileHelper
     // Sets given tilemap to match the room layout
     // Uses auto-tiling (i.e. different tile variants based on neighbors)
     public static void SetTilemapToLayoutWithAutoTiling(
-        bool[,] roomLayout,
+        char[,] roomLayout,
         Tilemap tilemap,
         AutoTileSet tileSet,
         int xOffset,
@@ -331,18 +468,28 @@ public static class RoomTileHelper
 
 
     // Determines the appropriate auto-tile type based on the 3x3 neighborhood around a tile
-    private static AutoTileSet.AutoTileType DetermineAutoTileType(bool[,] roomLayout, int x, int y, int width, int height)
+    private static AutoTileSet.AutoTileType DetermineAutoTileType(char[,] roomLayout, int x, int y, int width, int height)
     {
         // Get the 3x3 neighborhood (true = land, false = water)
-        bool center = GetTileAt(roomLayout, x, y, width, height);
-        bool top = GetTileAt(roomLayout, x, y + 1, width, height);
-        bool bottom = GetTileAt(roomLayout, x, y - 1, width, height);
-        bool left = GetTileAt(roomLayout, x - 1, y, width, height);
-        bool right = GetTileAt(roomLayout, x + 1, y, width, height);
-        bool topLeft = GetTileAt(roomLayout, x - 1, y + 1, width, height);
-        bool topRight = GetTileAt(roomLayout, x + 1, y + 1, width, height);
-        bool bottomLeft = GetTileAt(roomLayout, x - 1, y - 1, width, height);
-        bool bottomRight = GetTileAt(roomLayout, x + 1, y - 1, width, height);
+        char centerChar = GetTileAt(roomLayout, x, y, width, height);
+        char topChar = GetTileAt(roomLayout, x, y + 1, width, height);
+        char bottomChar = GetTileAt(roomLayout, x, y - 1, width, height);
+        char leftChar = GetTileAt(roomLayout, x - 1, y, width, height);
+        char rightChar = GetTileAt(roomLayout, x + 1, y, width, height);
+        char topLeftChar = GetTileAt(roomLayout, x - 1, y + 1, width, height);
+        char topRightChar = GetTileAt(roomLayout, x + 1, y + 1, width, height);
+        char bottomLeftChar = GetTileAt(roomLayout, x - 1, y - 1, width, height);
+        char bottomRightChar = GetTileAt(roomLayout, x + 1, y - 1, width, height);
+
+        bool center = centerChar == 'l' || centerChar == 'j';
+        bool top = topChar == 'l' || topChar == 'j';
+        bool bottom = bottomChar == 'l' || bottomChar == 'j';
+        bool left = leftChar == 'l' || leftChar == 'j';
+        bool right = rightChar == 'l' || rightChar == 'j';
+        bool topLeft = topLeftChar == 'l' || topLeftChar == 'j';
+        bool topRight = topRightChar == 'l' || topRightChar == 'j';
+        bool bottomLeft = bottomLeftChar == 'l' || bottomLeftChar == 'j';
+        bool bottomRight = bottomRightChar == 'l' || bottomRightChar == 'j';
 
         if (center)
         {
@@ -491,11 +638,11 @@ public static class RoomTileHelper
     }
 
     /// Gets the tile value at a specific position, treating out-of-bounds as water
-    private static bool GetTileAt(bool[,] roomLayout, int x, int y, int width, int height)
+    private static char GetTileAt(char[,] roomLayout, int x, int y, int width, int height)
     {
         if (x < 0 || x >= width || y < 0 || y >= height)
         {
-            return false; // Out of bounds is considered water
+            return 'w'; // Out of bounds is considered water
         }
         return roomLayout[x, y];
     }
@@ -510,7 +657,7 @@ public static class RoomTileHelper
     // Gets the door location in a given direction for a room layout
     // If launchLocation = true, returns the location where the bubble hovers, ready for launch
     // If launchLocation = false, returns the location where the player should end up inside the room (i.e. "landing" location)
-    public static Vector2Int GetDoorLocation(bool[,] roomLayout, Door.DoorDirection doorDirection, bool launchLocation = true)
+    public static Vector2Int GetDoorLocation(char[,] roomLayout, Door.DoorDirection doorDirection, bool launchLocation = true)
     {
         if (roomLayout == null)
         {
@@ -530,7 +677,7 @@ public static class RoomTileHelper
                 // Start at highest y, centered on x, and go down until we find land
                 for (int y = height - 1; y >= 0; y--)
                 {
-                    if (roomLayout[centerX, y])
+                    if (roomLayout[centerX, y] == 'l')
                     {
                         // Go a bit further or less depending on launch state, so we are in the water or on land
                         return new Vector2Int(centerX, y + (launchLocation ? 2 : -2));
@@ -542,7 +689,7 @@ public static class RoomTileHelper
                 // Start at lowest y, centered on x, and go up until we find land
                 for (int y = 0; y < height; y++)
                 {
-                    if (roomLayout[centerX, y])
+                    if (roomLayout[centerX, y] == 'l')
                     {
                         // Go a bit further or less depending on launch state, so we are in the water or on land
                         return new Vector2Int(centerX, y + (launchLocation ? -2 : 2));
@@ -554,7 +701,7 @@ public static class RoomTileHelper
                 // Start leftmost x, centered on y, and go right until we find land
                 for (int x = 0; x < width; x++)
                 {
-                    if (roomLayout[x, centerY])
+                    if (roomLayout[x, centerY] == 'l')
                     {
                         // Go a bit further or less depending on launch state, so we are in the water or on land
                         return new Vector2Int(x + (launchLocation ? -2 : 2), centerY);
@@ -566,7 +713,7 @@ public static class RoomTileHelper
                 // Start rightmost x, centered on y, and go left until we find land
                 for (int x = width - 1; x >= 0; x--)
                 {
-                    if (roomLayout[x, centerY])
+                    if (roomLayout[x, centerY] == 'l')
                     {
                         // Go a bit further or less depending on launch state, so we are in the water or on land
                         return new Vector2Int(x + (launchLocation ? 2 : -2), centerY);

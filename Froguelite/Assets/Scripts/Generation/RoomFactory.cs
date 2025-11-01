@@ -78,7 +78,7 @@ public class RoomFactory : MonoBehaviour
         roomData.originalNoiseSettings = noiseSettings;
 
         // Generate the room layout using Perlin noise
-        bool[,] newRoomLayout = RoomTileHelper.GenRoomTiles(
+        char[,] newRoomLayout = RoomTileHelper.GenRoomTiles(
             width: roomLength,
             height: roomLength,
             offsetX: tileOffset.x,
@@ -89,6 +89,9 @@ public class RoomFactory : MonoBehaviour
         // Post process to smooth and ensure connectivity
         newRoomLayout = RoomTileHelper.SmoothRoomLayout(newRoomLayout);
         newRoomLayout = RoomTileHelper.EnsureConnectivity(newRoomLayout);
+
+        // Add restrictions on tiles where the player will arrive 'j' and path between islands 'p'
+        newRoomLayout = RoomTileHelper.AddArrivalAndPathTiles(newRoomLayout, roomData);
 
         roomData.tileLayout = newRoomLayout;
         roomData.roomLength = roomLength;

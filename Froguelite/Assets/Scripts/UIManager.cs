@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class UIManager : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private UIPanelObject[] uiPanels; //Array to hold references to different UI panels
     [SerializeField] private CanvasGroup deathScreenMainCanvasGroup, deathScreenTextCanvasGroup;
     [SerializeField] private CanvasGroup winScreenMainCanvasGroup, winScreenTextCanvasGroup;
+    [SerializeField] private bool displayOnStart = true;
+
+    [SerializeField] private InputActionReference pause;
+    private bool isPaused;
 
     private UIPanels currentPanel;
 
@@ -27,16 +32,31 @@ public class UIManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject); // persist across scenes
+
+        //Subscribe to pause input action
+        pause.action.performed += OnPauseClick;
+        pause.action.Enable();
+    }
+
+    void OnDestroy()
+    {
+        //Unsubscribe from pause input action
+        pause.action.performed -= OnPauseClick;
+        pause.action.Disable();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        previousPanel = UIPanels.None;
+
+        if (!displayOnStart)
+            return;
+            
         // Initialize to the starting panel, e.g., GameStart
         int gameStartIndex = (int)UIPanels.GameStart;
         uiPanels[gameStartIndex].panelObject.SetActive(true);
         currentPanel = UIPanels.GameStart;
-        previousPanel = UIPanels.None;
 
         //Check array index equals UIPanels enum count
         int panelCount = System.Enum.GetNames(typeof(UIPanels)).Length;
@@ -58,7 +78,7 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+       
     }
     #endregion
 
@@ -85,6 +105,14 @@ public class UIManager : MonoBehaviour
 
     public void OnBackClick()
     {
+        //Switch to start panel if current == profile and previous == pause
+        //  Will happen when game is quit, cannot go back to game then
+        if(currentPanel == UIPanels.ProfileMenu && previousPanel == UIPanels.PauseMenu)
+        {
+            PanelSwitch(UIPanels.GameStart);
+            return;
+        }
+
         //Switch to previous panel
         PanelSwitch(previousPanel);
     }
@@ -98,6 +126,18 @@ public class UIManager : MonoBehaviour
         //ProfileUIManager.Instance.CreateExistingProfiles();
     }
 
+    public void OnQuitClick()
+    {
+        //Temporarily Quit to Profile Menu
+        OnProfilesClick();
+    }
+
+    public void OnSettingsClick()
+    {
+        //Switch to Settings Panel
+        PanelSwitch(UIPanels.SettingsScreen);
+    }
+
     public void OnProfileStartClick(string sceneToLoad)
     {
         //Switch to Loading Screen and call LevelManager to load scene
@@ -109,6 +149,31 @@ public class UIManager : MonoBehaviour
     {
         //Scene loaded, switch to corresponding panel
         PanelSwitch(panelToReturnTo);
+    }
+
+    private void OnPauseClick(InputAction.CallbackContext obj)
+    {
+        //Check if clicked during game
+        if(currentPanel != UIPanels.None)
+        {
+            return;
+        }
+        
+        Time.timeScale = 0f;
+
+        //Temporary: Switch to Main Menu panel
+        PanelSwitch(UIPanels.PauseMenu);
+
+        //TO DO: Save game state if needed
+    }
+
+    public void OnResumeClick()
+    {
+        Time.timeScale = 1f;
+        //Switch back to previous panel
+        PanelSwitch(UIPanels.None);
+
+        //Time.timeScale = 1f;
     }
 
     public void OnExitClick()
@@ -222,12 +287,13 @@ public enum UIPanels
 {
     None,
     GameStart,
-    MainMenu,
+    PauseMenu,
     //OptionsMenu,
     ProfileMenu,
     LoadingScreen,
     DeathScreen,
     WinScreen,
+    SettingsScreen
     //InGameHUD,
     //PauseMenu
 }

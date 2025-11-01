@@ -79,11 +79,20 @@ public class DoorManager : MonoBehaviour
     }
 
 
+    // Called when the player completes the launch phase of travelling through a door
+    // (i.e. they have arrived on the island)
+    public void OnTravelLaunchComplete()
+    {
+        // Notify the new room that the player has entered it
+        RoomManager.Instance.GetRoomAtWorldPosition(PlayerMovement.Instance.transform.position)?.OnPlayerEnter();
+    }
+
+
     // Called when the player finishes travelling through a door
     public void OnTravelEnded()
     {
         // Notify the new room that the player has entered it
-        RoomManager.Instance.GetRoomAtWorldPosition(PlayerMovement.Instance.transform.position)?.OnPlayerEnter();
+        RoomManager.Instance.GetRoomAtWorldPosition(PlayerMovement.Instance.transform.position)?.OnDoorTransitionComplete();
     }
 
 

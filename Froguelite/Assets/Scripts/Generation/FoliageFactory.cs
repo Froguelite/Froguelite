@@ -267,8 +267,8 @@ public class FoliageFactory : MonoBehaviour
             tileCoord.y < 0 || tileCoord.y >= roomData.roomLength)
             return false;
 
-        // Check if it's land and not bordering water
-        return roomData.tileLayout[tileCoord.x, tileCoord.y] &&
+        // Check if it's land, not bordering water, and not a jump or path tile
+        return roomData.tileLayout[tileCoord.x, tileCoord.y] == 'l' &&
                !roomData.IsTileBorderingChange(tileCoord);
     }
 
@@ -281,9 +281,9 @@ public class FoliageFactory : MonoBehaviour
             tileCoord.y < 0 || tileCoord.y >= roomData.roomLength)
             return false;
 
-        // Check if it's water and not bordering land
-        return !roomData.tileLayout[tileCoord.x, tileCoord.y] &&
-               !roomData.IsTileBorderingChange(tileCoord);
+        // Check if it's water, not bordering land, and not a jump or path tile
+        return roomData.tileLayout[tileCoord.x, tileCoord.y] == 'w';
+               //&& !roomData.IsTileBorderingChange(tileCoord);
     }
 
 

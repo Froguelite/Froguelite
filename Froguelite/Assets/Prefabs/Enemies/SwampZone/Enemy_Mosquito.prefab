@@ -1,0 +1,166 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &2871866098851542231
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1397738806206786191, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_Radius
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2727076177215642101, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 7939039619528793279, guid: 3b14ea5430cbe5041a6579908592235f, type: 3}
+    - target: {fileID: 3698209165267088440, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 16.44741
+      objectReference: {fileID: 0}
+    - target: {fileID: 3698209165267088440, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 10.62731
+      objectReference: {fileID: 0}
+    - target: {fileID: 3698209165267088440, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3698209165267088440, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3698209165267088440, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3698209165267088440, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3698209165267088440, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3698209165267088440, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3698209165267088440, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3698209165267088440, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4370589815322013855, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_Acceleration
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5882462761335553892, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_Name
+      value: Enemy_Mosquito
+      objectReference: {fileID: 0}
+    - target: {fileID: 7807336152895815857, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: associatedEnemy
+      value: 
+      objectReference: {fileID: 1002974770924024167}
+    m_RemovedComponents:
+    - {fileID: 1483300078910096697, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5882462761335553892, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1002974770924024167}
+    - targetCorrespondingSourceObject: {fileID: 5882462761335553892, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6459276806488802660}
+  m_SourcePrefab: {fileID: 100100000, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+--- !u!212 &144799453320457506 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2727076177215642101, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+  m_PrefabInstance: {fileID: 2871866098851542231}
+  m_PrefabAsset: {fileID: 0}
+--- !u!195 &1980914540849464392 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 4370589815322013855, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+  m_PrefabInstance: {fileID: 2871866098851542231}
+  m_PrefabAsset: {fileID: 0}
+--- !u!50 &5129534094065454569 stripped
+Rigidbody2D:
+  m_CorrespondingSourceObject: {fileID: 6986542162239207742, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+  m_PrefabInstance: {fileID: 2871866098851542231}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8536678332011776947 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5882462761335553892, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+  m_PrefabInstance: {fileID: 2871866098851542231}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1002974770924024167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8536678332011776947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db9d88e1e1e6a5242968ffe0cefa2c02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy_SwarmAndDash
+  chaseOnStart: 0
+  enemyId: Mosquito
+  maxHealth: 10
+  navAgent: {fileID: 1980914540849464392}
+  movementType: 1
+  rb: {fileID: 5129534094065454569}
+  knockbackDuration: 0.1
+  spriteRenderer: {fileID: 144799453320457506}
+  defeatSmokeAnimator: {fileID: 8957389480216010702}
+  swarmBehavior: {fileID: 6459276806488802660}
+  chargeupSprite: {fileID: -7758905640523202750, guid: 6b52ddda2e39df045932babe1cfff1ae, type: 3}
+  defaultSprite: {fileID: 7939039619528793279, guid: 3b14ea5430cbe5041a6579908592235f, type: 3}
+--- !u!114 &6459276806488802660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8536678332011776947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b602e47dec74b4da40a39d57eb9e2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyBehavior_Swarm
+  chaseSettings:
+    chaseSpeed: 10
+    stoppingDistance: 0
+    chaseUpdateInterval: 0.5
+  navAgent: {fileID: 1980914540849464392}
+  enemyBase: {fileID: 1002974770924024167}
+  stopChaseOverride: 0
+  swarmInfo:
+    swarmName: Mosquito
+    swarmTargetDistance: 1.5
+    centerMoveSpeed: 2
+    circleUponReachingPlayer: 0
+    circleSpeed: 1.5
+    minTimeBetweenSwarmActions: 4
+    actionIntervalScalePerEnemy: 0.85
+    actionTriggersOnAll: 0
+  triggeringAction: 0
+--- !u!114 &8957389480216010702 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6599428521549949721, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+  m_PrefabInstance: {fileID: 2871866098851542231}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9067adbf4b1871a42833b06359e708a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlipbookAnimator

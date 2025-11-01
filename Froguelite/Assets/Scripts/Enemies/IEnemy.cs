@@ -9,5 +9,7 @@ public interface IEnemy
     void DamageEnemy(float damageAmount, float knockbackForce);
     void ApplyKnockback(float knockbackForce);
     void Die();
+    string GetEnemyId();
+    bool isDead { get; }
 
 }

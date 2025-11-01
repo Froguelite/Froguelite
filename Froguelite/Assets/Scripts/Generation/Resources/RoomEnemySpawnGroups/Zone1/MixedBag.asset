@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51c14629a9410b48a3ac36cd58696f3, type: 3}
+  m_Name: MixedBag
+  m_EditorClassIdentifier: Assembly-CSharp::RoomEnemySpawnGroup
+  enemySpawnEntries:
+  - minEnemyCount: 2
+    maxEnemyCount: 3
+    possibleEnemies:
+    - {fileID: 4000690402368564773, guid: df4af5bf72799ff439900ea180630445, type: 3}
+    - {fileID: 219424671850456708, guid: 2c156a7a689ef7a40b9dc21afefde668, type: 3}
+    - {fileID: 6135189463974953922, guid: 53adccd0b85035043b6ad2663f8597b6, type: 3}
+  - minEnemyCount: 3
+    maxEnemyCount: 4
+    possibleEnemies:
+    - {fileID: 1002974770924024167, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+    - {fileID: 6106056513851520351, guid: 0543ccbfa891014498d7553812425daa, type: 3}
