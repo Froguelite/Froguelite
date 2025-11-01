@@ -70,6 +70,19 @@ public class AttackOverlapHandler : MonoBehaviour
                 collectable.OnCollect();
             }
         }
+        // Totem
+        else if (collision.CompareTag("Totem"))
+        {
+            Totem totem = collision.GetComponent<Totem>();
+            if (totem == null)
+                totem = collision.GetComponentInParent<Totem>();
+
+            if (totem != null)
+            {
+                totem.OnInteract();
+                PlayerAttack.Instance.StopTongueExtension(false);
+            }
+        }
         // Foliage
         else if (collision.CompareTag("Foliage"))
         {
