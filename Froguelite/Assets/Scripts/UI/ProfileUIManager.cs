@@ -267,6 +267,7 @@ public class ProfileCardData
     public int profileNumber;
     public string name;
     public string sceneToLoad;
+    //public int sceneToLoadInt;
 
     public ProfileCardData(int number, string scene, string name)
     {

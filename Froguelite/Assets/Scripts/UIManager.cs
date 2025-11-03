@@ -88,7 +88,7 @@ public class UIManager : MonoBehaviour
     public void ResetGame()
     {
         PanelSwitch(UIPanels.LoadingScreen);
-        LevelManager.Instance.LoadScene("MenuScene");
+        LevelManager.Instance.LoadScene(LevelManager.Scenes.MenuScene);
     }
 
     public void OnStartGameClick()
@@ -138,7 +138,15 @@ public class UIManager : MonoBehaviour
         PanelSwitch(UIPanels.SettingsScreen);
     }
 
-    public void OnProfileStartClick(string sceneToLoad)
+    //public void OnProfileStartClick(string sceneToLoad)
+    //{
+    //    //Switch to Loading Screen and call LevelManager to load scene
+    //    PanelSwitch(UIPanels.LoadingScreen);
+    //    LevelManager.Instance.LoadScene(sceneToLoad);
+    //}
+
+    //Use enum instead string for setting scene to load
+    public void OnProfileStartClick(LevelManager.Scenes sceneToLoad)
     {
         //Switch to Loading Screen and call LevelManager to load scene
         PanelSwitch(UIPanels.LoadingScreen);

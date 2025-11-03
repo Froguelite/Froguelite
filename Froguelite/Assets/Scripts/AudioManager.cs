@@ -22,6 +22,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioList[] audioList;
     private static AudioManager instance;
     private AudioSource audioSource;
+    private static float globalVolumeLevel = 1.0f;
+    private static float clipVolumeLevel = 1.0f;
 
     private void Awake()
     {
@@ -31,15 +33,19 @@ public class AudioManager : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        PlaySound(SoundType.Music);
     }
+
     public static void PlaySound(SoundType sound, float volume = 1)
     {
         AudioClip[] clips = instance.audioList[(int)sound].Sounds;
         AudioClip randomClip = clips[UnityEngine.Random.Range(0, clips.Length)];
-        instance.audioSource.PlayOneShot(randomClip, volume);
+        clipVolumeLevel = volume;
+        instance.audioSource.PlayOneShot(randomClip, clipVolumeLevel * globalVolumeLevel);
 
         //instance.audioSource.PlayOneShot(instance.audioList[(int)sound], volume);
     }
+
 #if UNITY_EDITOR
     private void OnEnable()
     {
@@ -51,6 +57,25 @@ public class AudioManager : MonoBehaviour
         }
     }
 #endif
+
+    #region SET AUDIO VOLUME
+    public static void SetVolumeLevel(float volume)
+    {
+        if(volume > 1.0f)
+        {
+            Debug.LogWarning("Volume level is greater than 100%");
+            return;
+        }
+
+        //Debug.Log("Volume level: " +  volume);
+
+        //Change Global volume and apply change
+        globalVolumeLevel = volume;
+        instance.audioSource.volume = clipVolumeLevel * globalVolumeLevel;
+    }
+
+    #endregion
+
 }
 
 [Serializable]
