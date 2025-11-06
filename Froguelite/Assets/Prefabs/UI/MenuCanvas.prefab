@@ -403,7 +403,7 @@ MonoBehaviour:
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 1, b: 1, a: 1}
   rotateRings: 1
-  rotationSpeed: 30
+  rotationSpeed: 180
   backgroundBlockerCanvGroup: {fileID: 7430289314983896827}
   playerUiElement: {fileID: 7351572967278310040}
   playerSpinAccelTime: 1
