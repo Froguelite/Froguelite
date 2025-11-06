@@ -188,6 +188,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2211788457854674c985eaa25d336c6b, type: 3}
+--- !u!114 &195481984 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4633656947801611832, guid: 9347091632a430a4199d4033aa36ce31, type: 3}
+  m_PrefabInstance: {fileID: 1088245446}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b5b313fc46d36d4b886daae8bcbd5d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PortalLoadingEffect
 --- !u!4 &380878481 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3826962417473394660, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
@@ -295,6 +306,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: LevelManager
       objectReference: {fileID: 0}
+    - target: {fileID: 6791615908271390593, guid: 1d8fe40a19a31cf4aa95b12fd8f80e76, type: 3}
+      propertyPath: loadingPanel
+      value: 
+      objectReference: {fileID: 1039481523}
+    - target: {fileID: 6791615908271390593, guid: 1d8fe40a19a31cf4aa95b12fd8f80e76, type: 3}
+      propertyPath: portalLoadingEffect
+      value: 
+      objectReference: {fileID: 195481984}
     - target: {fileID: 8723377223615792254, guid: 1d8fe40a19a31cf4aa95b12fd8f80e76, type: 3}
       propertyPath: m_LocalPosition.x
       value: 273.66006
@@ -340,6 +359,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d8fe40a19a31cf4aa95b12fd8f80e76, type: 3}
+--- !u!1 &1039481523 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6068019488005229561, guid: 9347091632a430a4199d4033aa36ce31, type: 3}
+  m_PrefabInstance: {fileID: 1088245446}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1088245446
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -355,6 +379,14 @@ PrefabInstance:
     - target: {fileID: 3474332523444214854, guid: 9347091632a430a4199d4033aa36ce31, type: 3}
       propertyPath: m_Name
       value: MenuCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 4633656947801611832, guid: 9347091632a430a4199d4033aa36ce31, type: 3}
+      propertyPath: growthSpeed
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4633656947801611832, guid: 9347091632a430a4199d4033aa36ce31, type: 3}
+      propertyPath: spawnInterval
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 7286186806303639205, guid: 9347091632a430a4199d4033aa36ce31, type: 3}
       propertyPath: m_Pivot.x
@@ -961,7 +993,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7970708818849091610, guid: b4fef3bbfc2ca024f913532d0baeee97, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -1,3 +1,4 @@
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -15,6 +16,7 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private Collider2D playerCollider;
     [SerializeField] private Collider2D damageCollider;
+    [SerializeField] public SpriteRenderer playerSpriteRenderer;
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
@@ -44,7 +46,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        if (Instance != null && Instance != this)
+        {
+            TeleportInstanceToThis();
+            Destroy(gameObject);
+            return;
+        }
+        
         Instance = this;
 
         rb = GetComponent<Rigidbody2D>();
@@ -84,7 +92,7 @@ public class PlayerMovement : MonoBehaviour
                 UpdateDrunkOffset();
                 finalMoveInput += drunkOffset;
             }
-            
+
             rb.linearVelocity = finalMoveInput * StatsManager.Instance.playerSpeed.GetValueAsMultiplier() * Time.fixedDeltaTime * 200f;
         }
         else if (isManualMoving)
@@ -150,6 +158,27 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
+    private void TeleportInstanceToThis()
+    {
+        // Set the player position
+        Instance.transform.position = transform.position;
+
+        // Find and update all active CinemachineCamera components
+        CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
+        foreach (CinemachineCamera cam in cameras)
+        {
+            if (cam.isActiveAndEnabled)
+            {
+                // Force the camera to update its position immediately
+                cam.ForceCameraPosition(PlayerMovement.Instance.transform.position, Quaternion.identity);
+
+                // Manually update the camera's internal state
+                cam.UpdateCameraState(Vector3.up, Time.deltaTime);
+            }
+        }
+    }
+
+
     #endregion
 
 
@@ -187,7 +216,7 @@ public class PlayerMovement : MonoBehaviour
     public void SetUseDrunkMovement(bool value)
     {
         useDrunkMovement = value;
-        
+
         // Reset drunk offset when disabled
         if (!value)
         {
@@ -202,7 +231,7 @@ public class PlayerMovement : MonoBehaviour
     private void UpdateDrunkOffset()
     {
         drunkOffsetChangeTimer -= Time.fixedDeltaTime;
-        
+
         // Generate new random target offset when timer expires
         if (drunkOffsetChangeTimer <= 0f)
         {
@@ -212,9 +241,30 @@ public class PlayerMovement : MonoBehaviour
                 Random.Range(-drunkOffsetMagnitude, drunkOffsetMagnitude)
             );
         }
-        
+
         // Smoothly interpolate towards the target offset
         drunkOffset = Vector2.Lerp(drunkOffset, drunkOffsetTarget, Time.fixedDeltaTime * 3f);
+    }
+
+
+    #endregion
+
+
+    #region OTHER
+
+
+    public void SetRenderAbove(bool value)
+    {
+        if (value)
+            playerSpriteRenderer.sortingOrder = 10;
+        else
+            playerSpriteRenderer.sortingOrder = 0;
+    }
+
+
+    public void SetSpriteHidden(bool value)
+    {
+        playerSpriteRenderer.enabled = !value;
     }
 
 

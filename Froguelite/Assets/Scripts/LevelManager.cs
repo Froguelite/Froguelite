@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Unity.Cinemachine;
+using System.Collections;
 
 public class LevelManager : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class LevelManager : MonoBehaviour
     public static LevelManager Instance;
 
     [SerializeField] private GameObject loadingPanel;
+    [SerializeField] private PortalLoadingEffect portalLoadingEffect;
 
     [SerializeField] private Image progressBar;
 
@@ -42,20 +44,31 @@ public class LevelManager : MonoBehaviour
     }
     #endregion
 
-    public async void LoadScene(string sceneName)
+    public async void LoadScene(string sceneName, bool showPortalEffect = false, bool showLoadingScreen = true)
     {
         var scene = SceneManager.LoadSceneAsync(sceneName);
         scene.allowSceneActivation = false;
 
         //loadingPanel.SetActive(true);
 
+        if (showPortalEffect)
+        {
+            portalLoadingEffect.StartEffect();
+            await Task.Delay(2000); // Wait for portal effect duration
+        }
+
         do
         {
             await Task.Delay(100);
-            progressBar.fillAmount = scene.progress;
+            if (showLoadingScreen)
+                progressBar.fillAmount = scene.progress;
         } while (scene.progress < 0.9f);
 
-        await Task.Delay(500); //For demo purposes
+        if (showPortalEffect)
+        {
+            await Task.Delay(1000);
+            portalLoadingEffect.StopEffect();
+        }
 
         scene.allowSceneActivation = true;
 
