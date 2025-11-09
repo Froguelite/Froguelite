@@ -14,9 +14,18 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private Image progressBar;
 
-    private const string mainSceneName = "TestMainScene-AA"; // Temporary, replace with actual main scene name
-    private const string menuSceneName = "TestMenuScene-AA"; // Temporary, replace with actual menu scene name
-    private const string bossSceneName = "TestBossScene-AA"; // Temporary, replace with actual boss scene name
+    public enum Scenes
+    {
+        MainScene,
+        MenuScene,
+        BossScene,
+    }
+
+    private string[] sceneNames = { "TestMainScene-AA", "TestMenuScene-AA", "TestBossScene-AA" }; //Temporary, replace with actual scene names
+
+    //private const string mainSceneName = "TestMainScene-AA"; // Temporary, replace with actual main scene name
+    //private const string menuSceneName = "TestMenuScene-AA"; // Temporary, replace with actual menu scene name
+    //private const string bossSceneName = "TestBossScene-AA"; // Temporary, replace with actual boss scene name
 
     #endregion
 
@@ -46,9 +55,9 @@ public class LevelManager : MonoBehaviour
     }
     #endregion
 
-    public async void LoadScene(string sceneName)
+    public async void LoadScene(Scenes sceneName)
     {
-        var scene = SceneManager.LoadSceneAsync(sceneName);
+        var scene = SceneManager.LoadSceneAsync(sceneNames[(int) sceneName]);
         scene.allowSceneActivation = false;
 
         //loadingPanel.SetActive(true);
@@ -65,12 +74,12 @@ public class LevelManager : MonoBehaviour
 
         // Temporary, might need adjustment to be cleaner -
         // If we are loading the main scene, wait for ZoneGenerator to be ready then generate zone
-        if (sceneName == mainSceneName)
+        if (sceneName == Scenes.MainScene)
         {
             await GenerateZoneAndSetup();
             UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
         }
-        else if (sceneName == menuSceneName)
+        else if (sceneName == Scenes.MenuScene)
         {
             GameObject.Destroy(InputManager.Instance.gameObject);
             GameObject.Destroy(MainCanvas.Instance.gameObject);
@@ -78,7 +87,7 @@ public class LevelManager : MonoBehaviour
             GameObject.Destroy(GameManager.Instance.gameObject);
             UIManager.Instance.OnSceneLoadReturn(UIPanels.GameStart);
         }
-        else if (sceneName == bossSceneName)
+        else if (sceneName == Scenes.BossScene)
         {
             PlayerMovement.Instance.transform.position = new Vector3(0.46f, -7.16f, 0);
             MinimapManager.Instance.HideMinimap();
