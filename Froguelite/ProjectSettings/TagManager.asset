@@ -11,6 +11,7 @@ TagManager:
   - Foliage
   - Collectable
   - Boss
+  - Totem
   - Projectile
   layers:
   - Default

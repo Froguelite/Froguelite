@@ -18,7 +18,9 @@ public class BossPortal : MonoBehaviour
             if (triggered) return;
             triggered = true;
 
-            LevelManager.Instance.LoadScene("BossScene", true, false);
+            //LevelManager.Instance.LoadScene("BossScene");
+            //Change to use enum instead of string
+            LevelManager.Instance.LoadScene(LevelManager.Scenes.BossScene, true, false);
         }
     }
 }
