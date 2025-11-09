@@ -315,6 +315,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::movementManager
   playerCollider: {fileID: 2715549725962423852}
   damageCollider: {fileID: 6663584459598315437}
+  playerSpriteRenderer: {fileID: 4510821104931963814}
   onReachManualMoveTarget:
     m_PersistentCalls:
       m_Calls: []

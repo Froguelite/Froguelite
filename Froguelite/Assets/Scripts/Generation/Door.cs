@@ -243,6 +243,16 @@ public class Door : MonoBehaviour
             if (!doorData.isImpassable)
             {
                 UpdateDoorVisuals();
+                
+                // Notify MinimapManager about the unlock
+                if (MinimapManager.Instance != null && RoomManager.Instance != null)
+                {
+                    Room room = RoomManager.Instance.GetRoomAtWorldPosition(doorData.launchPosition);
+                    if (room != null)
+                    {
+                        MinimapManager.Instance.OnDoorUnlocked(room, doorData.direction);
+                    }
+                }
             }
         }
     }
@@ -290,6 +300,8 @@ public class Door : MonoBehaviour
             isTravelling = true;
             DoorManager.Instance.OnTravelStarted();
 
+            MinimapManager.Instance.OnPlayerTravelThroughDoor(RoomManager.Instance.GetRoomAtWorldPosition(doorData.launchPosition), doorData.direction);
+
             // Make it so the player cannot move or attack, and suck the player into the bubble
             PlayerAttack.Instance.StopTongueExtension(true);
             PlayerAttack.Instance.SetCanAttack(false);
@@ -334,39 +346,39 @@ public class Door : MonoBehaviour
     {
         Vector3 startPosition = PlayerMovement.Instance.transform.position;
         Vector3 endPosition = doorData.landingPosition;
-        
+
         // Calculate arc height based on distance for a natural arc
         float distance = Vector3.Distance(startPosition, endPosition);
         float arcHeight = distance * 0.5f; // Arc height is half the distance for a nice curve
-        
+
         float elapsedTime = 0f;
-        
+
         while (elapsedTime < duration)
         {
             float t = elapsedTime / duration;
-            
+
             // Use easing for smooth acceleration/deceleration
             float easedT = Mathf.SmoothStep(0f, 1f, t);
-            
+
             // Calculate the horizontal position (linear interpolation)
             Vector3 horizontalPos = Vector3.Lerp(startPosition, endPosition, easedT);
-            
+
             // Calculate the vertical arc using a parabola
             // Peak of arc occurs at t = 0.5
             float arcOffset = 4f * arcHeight * t * (1f - t);
-            
+
             // Combine horizontal movement with vertical arc
             Vector3 arcPosition = horizontalPos + Vector3.up * arcOffset;
-            
+
             PlayerMovement.Instance.transform.position = arcPosition;
-            
+
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        
+
         // Ensure we end exactly at the landing position
         PlayerMovement.Instance.transform.position = endPosition;
-        
+
         // Re-enable player collision and movement after landing
         PlayerMovement.Instance.EnableCollision();
         PlayerMovement.Instance.SetCanMove(true);
@@ -374,6 +386,30 @@ public class Door : MonoBehaviour
 
         // Notify that the launch phase is complete
         DoorManager.Instance.OnTravelLaunchComplete();
+    }
+
+
+    #endregion
+
+
+    #region HELPERS
+
+
+    public static DoorDirection GetOppositeDirection(DoorDirection direction)
+    {
+        switch (direction)
+        {
+            case DoorDirection.Up:
+                return DoorDirection.Down;
+            case DoorDirection.Down:
+                return DoorDirection.Up;
+            case DoorDirection.Left:
+                return DoorDirection.Right;
+            case DoorDirection.Right:
+                return DoorDirection.Left;
+            default:
+                return direction;
+        }
     }
 
 
@@ -425,6 +461,24 @@ public class DoorData
         this.launchPosition = launchPosition;
         this.landingPosition = landingPosition;
         this.otherRoomLaunchPosition = otherRoomLaunchPosition;
+    }
+
+
+    public Door.DoorDirection GetOppositeDirection(Door.DoorDirection direction)
+    {
+        switch (direction)
+        {
+            case Door.DoorDirection.Up:
+                return Door.DoorDirection.Down;
+            case Door.DoorDirection.Down:
+                return Door.DoorDirection.Up;
+            case Door.DoorDirection.Left:
+                return Door.DoorDirection.Right;
+            case Door.DoorDirection.Right:
+                return Door.DoorDirection.Left;
+            default:
+                return direction;
+        }
     }
 
 

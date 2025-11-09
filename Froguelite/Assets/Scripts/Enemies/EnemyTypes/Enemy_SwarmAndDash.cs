@@ -33,6 +33,9 @@ public class Enemy_SwarmAndDash : EnemyBase
     // Begin swarming behavior when starting player chase
     protected override void OnEngagePlayer()
     {
+        if (isDead)
+            return;
+            
         base.OnEngagePlayer();
         swarmBehavior.onTriggerSwarmAction.AddListener(StartDashing);
         swarmBehavior.BeginChase(PlayerMovement.Instance.transform);
@@ -42,7 +45,9 @@ public class Enemy_SwarmAndDash : EnemyBase
 
     public override void Die()
     {
-        swarmBehavior.swarmCenter.RemoveEnemyFromSwarm(swarmBehavior);
+        if (swarmBehavior.swarmCenter != null)
+            swarmBehavior.swarmCenter.RemoveEnemyFromSwarm(swarmBehavior);
+
         base.Die();
     }
 
