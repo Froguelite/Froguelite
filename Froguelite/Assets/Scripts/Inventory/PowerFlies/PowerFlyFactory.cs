@@ -67,6 +67,13 @@ public class PowerFlyFactory : MonoBehaviour
     #region ROLLING
 
 
+    // Gets all power fly datas
+    public PowerFlyData[] GetAllPowerFlyDatas()
+    {
+        return allPowerFlyDatas;
+    }
+
+
     // Rolls randomly for a power fly based on spawn chances for a standard power fly room
     public PowerFlyData RollFlyForFlyRoom()
     {
@@ -142,11 +149,11 @@ public class PowerFlyFactory : MonoBehaviour
 
 
     // Spawns a power fly at the given position with the given data
-    public PowerFly SpawnPowerFly(PowerFlyData data, Transform spawnParent, Vector3 worldPosition)
+    public PowerFly SpawnPowerFly(PowerFlyData data, Transform spawnParent, Vector3 worldPosition, bool isCapsuleFly = false)
     {
         PowerFly newPowerFly = Instantiate(powerFlyPrefab, spawnParent);
         newPowerFly.transform.position = worldPosition;
-        newPowerFly.SetupFly(data);
+        newPowerFly.SetupFly(data, isCapsuleFly);
         return newPowerFly;
     }
 

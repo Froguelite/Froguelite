@@ -12,6 +12,7 @@ public class PowerFly : MonoBehaviour, ICollectable
 
     public PowerFlyData powerFlyData;
     [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private SpriteRenderer shadowSpriteRenderer;
     [SerializeField] private Transform buzzOffset;
     [SerializeField] private bool setupOnStart = false;
     
@@ -35,8 +36,13 @@ public class PowerFly : MonoBehaviour, ICollectable
     
     private LTDescr bobTween;
     private LTDescr rotationTween;
-    
+
+    private bool canCollect = true;
     private bool hasBeenCollected = false;
+
+    private bool isCapsuleFly = false;
+    
+    private Coroutine manualMoveCoroutine;
 
 
     #endregion
@@ -55,27 +61,45 @@ public class PowerFly : MonoBehaviour, ICollectable
 
 
     // Sets up this power fly based on given power fly data
-    public void SetupFly(PowerFlyData powerFlyData)
+    public void SetupFly(PowerFlyData powerFlyData, bool isCapsuleFly = false)
     {
         this.powerFlyData = powerFlyData;
-        SetupFly();
+        SetupFly(isCapsuleFly);
     }
 
 
     // Sets up this power fly based on already assigned power fly data
-    public void SetupFly()
+    public void SetupFly(bool isCapsuleFly = false)
     {
         spriteRenderer.sprite = powerFlyData.displayImg;
         originalPosition = transform.position;
+
+        rotationDuration *= Random.Range(0.8f, 1.2f);
+        bobDuration *= Random.Range(0.8f, 1.2f);
+
+        if (isCapsuleFly)
+        {
+            this.isCapsuleFly = true;
+            buzzRadius *= 2.75f;
+            directionChangeInterval *= 2.75f;
+            shadowSpriteRenderer.enabled = false;
+        }
+
         StartBuzzing();
         StartBobbingAndRotation();
     }
-    
+
 
     void OnDestroy()
     {
         StopBuzzing();
         StopBobbingAndRotation();
+    }
+    
+
+    public void SetCanCollect(bool value)
+    {
+        canCollect = value;
     }
 
 
@@ -138,6 +162,94 @@ public class PowerFly : MonoBehaviour, ICollectable
     #endregion
 
 
+    #region MANUAL MOVEMENT
+
+
+    /// <summary>
+    /// Manually moves the fly to a target position over a specified duration, passing through a midpoint.
+    /// Stops buzzing movement but keeps bobbing and rotation active.
+    /// Uses a quadratic Bezier curve for smooth movement.
+    /// </summary>
+    /// <param name="endPosition">The final destination position</param>
+    /// <param name="midpoint">A point the fly must pass through during movement</param>
+    /// <param name="duration">Time in seconds for the complete movement</param>
+    public void ManualMoveToPosition(Vector3 endPosition, Vector3 midpoint, float duration)
+    {
+        // Stop any existing manual movement
+        if (manualMoveCoroutine != null)
+        {
+            StopCoroutine(manualMoveCoroutine);
+            manualMoveCoroutine = null;
+        }
+        
+        // Stop buzzing movement
+        StopBuzzing();
+        
+        // Start the manual movement coroutine
+        manualMoveCoroutine = StartCoroutine(ManualMoveCoroutine(endPosition, midpoint, duration));
+    }
+    
+    /// <summary>
+    /// Coroutine that handles the smooth curved movement through the midpoint to the end position.
+    /// Uses quadratic Bezier curve interpolation for smooth transitions.
+    /// </summary>
+    private IEnumerator ManualMoveCoroutine(Vector3 endPosition, Vector3 midpoint, float duration)
+    {
+        Vector3 startPosition = buzzOffset.position;
+        float elapsedTime = 0f;
+        
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTime / duration);
+            
+            // Apply ease-in-out for smoother acceleration/deceleration
+            float smoothT = t * t * (3f - 2f * t);
+            
+            // Calculate position using quadratic Bezier curve
+            // B(t) = (1-t)²P₀ + 2(1-t)tP₁ + t²P₂
+            // where P₀ = start, P₁ = midpoint, P₂ = end
+            Vector3 newPosition = QuadraticBezier(startPosition, midpoint, endPosition, smoothT);
+            
+            buzzOffset.position = newPosition;
+            
+            yield return null;
+        }
+        
+        // Ensure we end exactly at the target position
+        buzzOffset.position = endPosition;
+        
+        // Update original position so if buzzing restarts, it buzzes around the new position
+        originalPosition = endPosition;
+        
+        manualMoveCoroutine = null;
+    }
+    
+    /// <summary>
+    /// Calculates a point on a quadratic Bezier curve.
+    /// </summary>
+    /// <param name="p0">Start point</param>
+    /// <param name="p1">Control point (midpoint)</param>
+    /// <param name="p2">End point</param>
+    /// <param name="t">Interpolation value between 0 and 1</param>
+    /// <returns>Position on the curve at parameter t</returns>
+    private Vector3 QuadraticBezier(Vector3 p0, Vector3 p1, Vector3 p2, float t)
+    {
+        float u = 1 - t;
+        float tt = t * t;
+        float uu = u * u;
+        
+        Vector3 point = uu * p0; // (1-t)² * P₀
+        point += 2 * u * t * p1; // 2(1-t)t * P₁
+        point += tt * p2;        // t² * P₂
+        
+        return point;
+    }
+
+
+    #endregion
+
+
     #region LEANTWEEN ANIMATIONS
 
 
@@ -181,6 +293,8 @@ public class PowerFly : MonoBehaviour, ICollectable
     // On collect, apply the effect and destroy the game object
     public void OnCollect()
     {
+        if (!canCollect) return;
+        
         // Prevent duplicate collection
         if (hasBeenCollected) return;
         hasBeenCollected = true;
@@ -198,23 +312,28 @@ public class PowerFly : MonoBehaviour, ICollectable
         {
             sprite.enabled = false;
         }
-        
-        if (itemDef != null)
-        {
-            InventoryManager.Instance.AddItem(itemDef, 1);
-        }
 
-        InventoryManager.Instance.AddPowerFly(powerFlyData);
-        PowerFlyFactory.Instance.MarkPowerFlyAsCollected(powerFlyData);
+        CollectionOverlayHandler.Instance.ShowPowerFlyCollected(powerFlyData, true);
+        
         StopBuzzing();
         StopBobbingAndRotation();
 
-        foreach (PowerFlyEffect effect in powerFlyData.effects)
+        if (!isCapsuleFly)
         {
-            effect.ApplyEffect();
+            InventoryManager.Instance.AddPowerFly(powerFlyData);
+            PowerFlyFactory.Instance.MarkPowerFlyAsCollected(powerFlyData);
+
+            if (itemDef != null)
+            {
+                InventoryManager.Instance.AddItem(itemDef, 1);
+            }
+            
+            foreach (PowerFlyEffect effect in powerFlyData.effects)
+            {
+                effect.ApplyEffect();
+            }
         }
 
-        CollectionOverlayHandler.Instance.ShowPowerFlyCollected(powerFlyData);
         Destroy(gameObject);
     }
 
