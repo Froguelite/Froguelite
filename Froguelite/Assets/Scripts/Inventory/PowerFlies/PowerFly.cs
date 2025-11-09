@@ -28,6 +28,9 @@ public class PowerFly : MonoBehaviour, ICollectable
     
     private Vector3 originalPosition;
     private Vector3 targetPosition;
+    
+    // Pre-collection callback for totem choice system
+    public System.Action<PowerFly> onPreCollect;
     private Coroutine buzzCoroutine;
     
     private LTDescr bobTween;
@@ -181,6 +184,9 @@ public class PowerFly : MonoBehaviour, ICollectable
         // Prevent duplicate collection
         if (hasBeenCollected) return;
         hasBeenCollected = true;
+        
+        // Invoke pre-collection callback (for totem choice system)
+        onPreCollect?.Invoke(this);
         
         // Immediately disable collider and hide all visuals
         Collider2D collider = GetComponent<Collider2D>();

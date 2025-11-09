@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class UIManager : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private CanvasGroup deathScreenMainCanvasGroup, deathScreenTextCanvasGroup;
     [SerializeField] private CanvasGroup winScreenMainCanvasGroup, winScreenTextCanvasGroup;
     [SerializeField] private bool displayOnStart = true;
+
+    [SerializeField] private InputActionReference pause;
+    private bool isPaused;
 
     private UIPanels currentPanel;
 
@@ -28,6 +32,17 @@ public class UIManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject); // persist across scenes
+
+        //Subscribe to pause input action
+        pause.action.performed += OnPauseClick;
+        pause.action.Enable();
+    }
+
+    void OnDestroy()
+    {
+        //Unsubscribe from pause input action
+        pause.action.performed -= OnPauseClick;
+        pause.action.Disable();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -63,7 +78,7 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+       
     }
     #endregion
 
@@ -73,7 +88,7 @@ public class UIManager : MonoBehaviour
     public void ResetGame()
     {
         PanelSwitch(UIPanels.LoadingScreen);
-        LevelManager.Instance.LoadScene("MenuScene");
+        LevelManager.Instance.LoadScene(LevelManager.Scenes.MenuScene);
     }
 
     public void OnStartGameClick()
@@ -90,6 +105,14 @@ public class UIManager : MonoBehaviour
 
     public void OnBackClick()
     {
+        //Switch to start panel if current == profile and previous == pause
+        //  Will happen when game is quit, cannot go back to game then
+        if(currentPanel == UIPanels.ProfileMenu && previousPanel == UIPanels.PauseMenu)
+        {
+            PanelSwitch(UIPanels.GameStart);
+            return;
+        }
+
         //Switch to previous panel
         PanelSwitch(previousPanel);
     }
@@ -103,7 +126,27 @@ public class UIManager : MonoBehaviour
         //ProfileUIManager.Instance.CreateExistingProfiles();
     }
 
-    public void OnProfileStartClick(string sceneToLoad)
+    public void OnQuitClick()
+    {
+        //Temporarily Quit to Profile Menu
+        OnProfilesClick();
+    }
+
+    public void OnSettingsClick()
+    {
+        //Switch to Settings Panel
+        PanelSwitch(UIPanels.SettingsScreen);
+    }
+
+    //public void OnProfileStartClick(string sceneToLoad)
+    //{
+    //    //Switch to Loading Screen and call LevelManager to load scene
+    //    PanelSwitch(UIPanels.LoadingScreen);
+    //    LevelManager.Instance.LoadScene(sceneToLoad);
+    //}
+
+    //Use enum instead string for setting scene to load
+    public void OnProfileStartClick(LevelManager.Scenes sceneToLoad)
     {
         //Switch to Loading Screen and call LevelManager to load scene
         PanelSwitch(UIPanels.LoadingScreen);
@@ -114,6 +157,31 @@ public class UIManager : MonoBehaviour
     {
         //Scene loaded, switch to corresponding panel
         PanelSwitch(panelToReturnTo);
+    }
+
+    private void OnPauseClick(InputAction.CallbackContext obj)
+    {
+        //Check if clicked during game
+        if(currentPanel != UIPanels.None)
+        {
+            return;
+        }
+        
+        Time.timeScale = 0f;
+
+        //Temporary: Switch to Main Menu panel
+        PanelSwitch(UIPanels.PauseMenu);
+
+        //TO DO: Save game state if needed
+    }
+
+    public void OnResumeClick()
+    {
+        Time.timeScale = 1f;
+        //Switch back to previous panel
+        PanelSwitch(UIPanels.None);
+
+        //Time.timeScale = 1f;
     }
 
     public void OnExitClick()
@@ -227,12 +295,13 @@ public enum UIPanels
 {
     None,
     GameStart,
-    MainMenu,
+    PauseMenu,
     //OptionsMenu,
     ProfileMenu,
     LoadingScreen,
     DeathScreen,
     WinScreen,
+    SettingsScreen
     //InGameHUD,
     //PauseMenu
 }

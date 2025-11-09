@@ -18,6 +18,7 @@ public class Room : MonoBehaviour
         Boss,
         Shop,
         Fly,
+        Totem,
     }
 
     public RoomData roomData { get; protected set; }
@@ -27,6 +28,9 @@ public class Room : MonoBehaviour
     public List<IEnemy> enemies { get; private set; } = new List<IEnemy>();
 
     public bool isExplored { get; private set; } = false;
+    // Totem integration
+    private Totem totemInstance;
+    private bool isTotemActive = false;
 
 
     #endregion
@@ -61,6 +65,24 @@ public class Room : MonoBehaviour
                 else
                 {
                     Debug.LogWarning("No Power Fly available to spawn in Fly Room.");
+                }
+                break;
+            case RoomType.Totem:
+                // Spawn a totem at the center
+                {
+                    Vector3 totemPosition = roomData.GetRoomCenterWorldPosition();
+                    GameObject totemGO = new GameObject("Totem");
+                    totemGO.transform.position = totemPosition;
+                    totemGO.transform.SetParent(transform);
+
+                    // Add Totem component and required collider/tag
+                    Totem totem = totemGO.AddComponent<Totem>();
+                    CircleCollider2D col = totemGO.AddComponent<CircleCollider2D>();
+                    col.isTrigger = true;
+                    totemGO.tag = "Totem";
+
+                    totem.SetParentRoom(this);
+                    RegisterTotem(totem);
                 }
                 break;
             case RoomType.Normal:
@@ -175,11 +197,21 @@ public class Room : MonoBehaviour
             enemies.Remove(defeatedEnemy);
         }
 
+        // Forward defeat to totem if active
+        if (totemInstance != null && isTotemActive)
+        {
+            totemInstance.OnEnemyDefeated(defeatedEnemy);
+        }
+
         // If all enemies are defeated, mark room as cleared
         if (enemies.Count == 0)
         {
-            RoomManager.Instance.SpawnRoomClearItems(defeatedEnemy.transform.position);
-            OnRoomCleared();
+            // During active totem waves, doors should not auto-open on room clear
+            if (!isTotemActive)
+            {
+                RoomManager.Instance.SpawnRoomClearItems(defeatedEnemy.transform.position);
+                OnRoomCleared();
+            }
         }
     }
 
@@ -238,6 +270,25 @@ public class Room : MonoBehaviour
         Vector3 adjacentRoomCenter = GetAdjacentRoom(direction)?.roomData.GetRoomCenterWorldPosition() ?? roomCenter;
 
         return (roomCenter + adjacentRoomCenter) / 2f;
+    }
+
+    // Registers a totem that controls this room's wave flow
+    public void RegisterTotem(Totem totem)
+    {
+        totemInstance = totem;
+    }
+
+    // Called by Totem to indicate waves are active/inactive
+    public void SetTotemActive(bool active)
+    {
+        isTotemActive = active;
+    }
+
+    // Called by Totem when all waves are complete
+    public void OnTotemCompleted()
+    {
+        isTotemActive = false;
+        OnRoomCleared();
     }
 
 

@@ -42,7 +42,7 @@ public static class RoomGraphGenerator
             AddNormalLeafRoom(roomGraph, out roomGraph, out Vector2Int newRoomPosOut);
         }
 
-        // STEP 4: Replace a random leaf room with a shop, another with a fly.
+        // STEP 4: Replace a random leaf room with a shop, another with a fly, another with a totem.
         //-----------------------------------------//
         Vector2Int shopRoomPos = GetRandomLeaf(roomGraph);
         if (shopRoomPos == Vector2Int.zero)
@@ -59,6 +59,14 @@ public static class RoomGraphGenerator
             flyRoomPos = newRoomPosOut;
         }
         roomGraph[flyRoomPos.x, flyRoomPos.y].roomType = Room.RoomType.Fly;
+
+        Vector2Int totemRoomPos = GetRandomLeaf(roomGraph);
+        if (totemRoomPos == Vector2Int.zero)
+        {
+            AddNormalLeafRoom(roomGraph, out roomGraph, out Vector2Int newRoomPosOut);
+            totemRoomPos = newRoomPosOut;
+        }
+        roomGraph[totemRoomPos.x, totemRoomPos.y].roomType = Room.RoomType.Totem;
 
         // STEP 5: Cleanup (make new doors between adjacent rooms, lock leaf doors, etc.)
         //-----------------------------------------//
