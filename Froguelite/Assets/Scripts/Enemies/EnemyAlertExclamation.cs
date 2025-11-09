@@ -58,14 +58,17 @@ public class EnemyAlertExclamation : MonoBehaviour
                 LeanTween.scale(gameObject, baseScale, animationDuration * 0.7f)
                     .setEase(LeanTweenType.easeInBack);
             });
-        
+
         // Fade out the sprite at the end
         LeanTween.alpha(gameObject, 0f, animationDuration * 0.4f)
             .setDelay(animationDuration * 0.6f)
             .setEase(LeanTweenType.easeInQuad)
-            .setOnComplete(() => {
+            .setOnComplete(() =>
+            {
                 gameObject.SetActive(false);
             });
+            
+        Destroy(gameObject, animationDuration + 0.1f);
     }
 
 
