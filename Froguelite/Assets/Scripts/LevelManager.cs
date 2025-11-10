@@ -56,6 +56,12 @@ public class LevelManager : MonoBehaviour
 
     public async void LoadScene(Scenes sceneName, bool showPortalEffect = false, bool showLoadingScreen = true)
     {
+        // Release force show on golden fly HUD when leaving any scene
+        if (GoldenFlyHUD.Instance != null)
+        {
+            GoldenFlyHUD.Instance.ReleaseForceShow();
+        }
+
         if (showLoadingScreen)
         {
             UIManager.Instance.PanelSwitch(UIPanels.LoadingScreen);
@@ -130,6 +136,12 @@ public class LevelManager : MonoBehaviour
             case Scenes.StumpScene:
                 FindAnyObjectByType<StumpManager>().LoadStump();
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
+                
+                // Force show the golden fly HUD in the stump scene
+                if (GoldenFlyHUD.Instance != null)
+                {
+                    GoldenFlyHUD.Instance.ForceShow();
+                }
                 break;
             default:
                 FrogueliteCam.Instance.UnconfineCamera();

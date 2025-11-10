@@ -313,7 +313,7 @@ public class PowerFly : MonoBehaviour, ICollectable
             sprite.enabled = false;
         }
 
-        CollectionOverlayHandler.Instance.ShowPowerFlyCollected(powerFlyData, true);
+        CollectionOverlayHandler.Instance.ShowPowerFlyCollected(powerFlyData, isCapsuleFly);
         
         StopBuzzing();
         StopBobbingAndRotation();

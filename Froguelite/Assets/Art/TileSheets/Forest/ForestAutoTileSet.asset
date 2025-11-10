@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34972fe4ab7a28a4bb011cbf4ac18def, type: 3}
+  m_Name: ForestAutoTileSet
+  m_EditorClassIdentifier: Assembly-CSharp::AutoTileSet
+  fullWater: {fileID: 11400000, guid: 56bb8d1d7fe361e4e8a89503b98c6353, type: 2}
+  fullLand: {fileID: 11400000, guid: ddda0e06c1806c84cb4f1e5216bd9cf0, type: 2}
+  halfWaterTop: {fileID: 11400000, guid: 921dfa8228a08c848b06172005f511b7, type: 2}
+  halfWaterBottom: {fileID: 11400000, guid: 36b3c6cd3c37e7e4196c2eef4226a46f, type: 2}
+  halfWaterLeft: {fileID: 11400000, guid: 60cc8b6e4e265b84cb5f411af302450c, type: 2}
+  halfWaterRight: {fileID: 11400000, guid: d7140f2d8357c424e98a5dbefe6230e9, type: 2}
+  threeQuarterWaterBottomLeft: {fileID: 11400000, guid: 0ba79b960366fd04b8ca46b6b25c3c47, type: 2}
+  threeQuarterWaterBottomRight: {fileID: 11400000, guid: 76bc5ecb0a118524ba022a0ad817c09f, type: 2}
+  threeQuarterWaterTopLeft: {fileID: 11400000, guid: c80f49399020cb644ad41d2b64db675c, type: 2}
+  threeQuarterWaterTopRight: {fileID: 11400000, guid: 904a6abf76e135d4aa78a4a12b15cdb1, type: 2}
+  threeQuarterLandBottomLeft: {fileID: 11400000, guid: d8379395c72f4504a8e54e8bb7660eed, type: 2}
+  threeQuarterLandBottomRight: {fileID: 11400000, guid: ecabb03636c5f8241a629821f372bfab, type: 2}
+  threeQuarterLandTopLeft: {fileID: 11400000, guid: 2868ad7617784e5469e2262ef69a4883, type: 2}
+  threeQuarterLandTopRight: {fileID: 11400000, guid: 89edc7a5e016d714685f4e91eb05145f, type: 2}

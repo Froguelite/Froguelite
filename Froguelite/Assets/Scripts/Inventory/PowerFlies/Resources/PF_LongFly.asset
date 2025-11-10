@@ -15,7 +15,7 @@ MonoBehaviour:
   flyID: 066b2a48-8954-4f15-b7f0-e0a514dee4b1
   displayImg: {fileID: -9165364305613031875, guid: 017bf00d55a26564fa8692067fbdb04a, type: 3}
   powerFlyName: Long Fly
-  description: This one is long...
+  description: Range up
   flyRarity: 0
   effects:
   - {fileID: 11400000, guid: 0756fca2f0d6a7f4794c462008539f74, type: 2}

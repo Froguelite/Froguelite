@@ -15,7 +15,7 @@ MonoBehaviour:
   flyID: eb254036-b0b3-4b4b-9c9e-de1dc57d829b
   displayImg: {fileID: -3826363546712535215, guid: 16b6c42b90fd5004184281d83eefb962, type: 3}
   powerFlyName: Speedy Fly
-  description: This one is fast...
+  description: Speed up
   flyRarity: 0
   effects:
   - {fileID: 11400000, guid: 2500b5a485a914848bc0c2abc8b02802, type: 2}

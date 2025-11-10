@@ -208,5 +208,6 @@ public enum SaveVariable
     Inventory,
     Coins,
     EnemyStats,
-    PurchasedPowerFlies
+    PurchasedPowerFlies,
+    GoldenFlies
 }

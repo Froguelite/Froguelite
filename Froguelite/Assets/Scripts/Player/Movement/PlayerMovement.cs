@@ -37,6 +37,13 @@ public class PlayerMovement : MonoBehaviour
     private float drunkOffsetChangeInterval = 0.3f; // How often the drunk offset changes
     private float drunkOffsetMagnitude = .5f; // How strong the drunk effect is
 
+    [SerializeField] private bool useJitterAnimation = false;
+    private Vector3 jitterOffset = Vector3.zero;
+    private Vector3 jitterOffsetTarget = Vector3.zero;
+    private float jitterChangeTimer = 0f;
+    private float jitterChangeInterval = 0.05f; // How fast the jitter changes (faster = more jittery)
+    private float jitterMagnitude = 0.05f; // How far the sprite jitters (in world units)
+
 
     #endregion
 
@@ -56,6 +63,21 @@ public class PlayerMovement : MonoBehaviour
         Instance = this;
 
         rb = GetComponent<Rigidbody2D>();
+    }
+
+    private void Update()
+    {
+        if (useJitterAnimation)
+        {
+            UpdateJitterAnimation();
+        }
+        else if (jitterOffset != Vector3.zero)
+        {
+            // Reset jitter offset when disabled
+            playerSpriteRenderer.transform.localPosition = Vector3.zero;
+            jitterOffset = Vector3.zero;
+            jitterOffsetTarget = Vector3.zero;
+        }
     }
 
     private void FixedUpdate()
@@ -244,6 +266,42 @@ public class PlayerMovement : MonoBehaviour
 
         // Smoothly interpolate towards the target offset
         drunkOffset = Vector2.Lerp(drunkOffset, drunkOffsetTarget, Time.fixedDeltaTime * 3f);
+    }
+
+
+    #endregion
+
+
+    #region JITTER ANIMATION
+
+
+    public void SetUseJitterAnimation(bool value)
+    {
+        useJitterAnimation = value;
+    }
+
+
+    // Updates the jitter animation (visual only, doesn't affect movement)
+    private void UpdateJitterAnimation()
+    {
+        jitterChangeTimer -= Time.deltaTime;
+
+        // Generate new random target offset when timer expires
+        if (jitterChangeTimer <= 0f)
+        {
+            jitterChangeTimer = jitterChangeInterval;
+            jitterOffsetTarget = new Vector3(
+                Random.Range(-jitterMagnitude, jitterMagnitude),
+                Random.Range(-jitterMagnitude, jitterMagnitude),
+                0f
+            );
+        }
+
+        // Smoothly interpolate towards the target offset
+        jitterOffset = Vector3.Lerp(jitterOffset, jitterOffsetTarget, Time.deltaTime * 20f);
+        
+        // Apply the offset to the sprite's local position (visual only)
+        playerSpriteRenderer.transform.localPosition = jitterOffset;
     }
 
 

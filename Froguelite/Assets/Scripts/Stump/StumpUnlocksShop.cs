@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class StumpUnlocksShop : MonoBehaviour
@@ -14,8 +15,9 @@ public class StumpUnlocksShop : MonoBehaviour
     [SerializeField] private Transform flySpawnPosition;
     [SerializeField] private Transform capsuleMidpointPosition;
     [SerializeField] private Transform flyOutputPosition;
+    [SerializeField] private TMP_Text buyCostText;
 
-    [SerializeField] private int buyCost = 0;
+    [SerializeField] private int buyCost = 3;
 
     private List<PowerFly> fliesInShop = new List<PowerFly>();
     private HashSet<string> purchasedFlyIDs = new HashSet<string>();
@@ -52,6 +54,7 @@ public class StumpUnlocksShop : MonoBehaviour
         }
         
         SetupShop();
+        UpdateBuyCostDisplay();
     }
 
     void OnDestroy()
@@ -131,6 +134,34 @@ public class StumpUnlocksShop : MonoBehaviour
     #endregion
 
 
+    #region COST MANAGEMENT
+
+
+    /// <summary>
+    /// Sets the cost to buy a fly and updates the UI display.
+    /// </summary>
+    public void SetBuyCost(int newCost)
+    {
+        buyCost = newCost;
+        UpdateBuyCostDisplay();
+    }
+
+
+    /// <summary>
+    /// Updates the buy cost text display.
+    /// </summary>
+    private void UpdateBuyCostDisplay()
+    {
+        if (buyCostText != null)
+        {
+            buyCostText.text = buyCost.ToString();
+        }
+    }
+
+
+    #endregion
+
+
     #region BUY
 
 
@@ -142,7 +173,22 @@ public class StumpUnlocksShop : MonoBehaviour
         if (fliesInShop.Count == 0)
             return;
 
-        // TODO: Currency check
+        // Check if player has enough golden flies
+        if (GoldenFlyHUD.Instance == null)
+        {
+            Debug.LogError("[StumpUnlocksShop] GoldenFlyHUD instance not found!");
+            return;
+        }
+
+        if (GoldenFlyHUD.Instance.goldenFlies < buyCost)
+        {
+            // Not enough currency - shake the HUD to indicate this
+            GoldenFlyHUD.Instance.ShakeDisplay();
+            return;
+        }
+
+        // Player has enough currency - proceed with purchase
+        GoldenFlyHUD.Instance.RemoveGoldenFlies(buyCost);
 
         PowerFly flyToBuy = fliesInShop[Random.Range(0, fliesInShop.Count)];
         fliesInShop.Remove(flyToBuy);
@@ -159,8 +205,6 @@ public class StumpUnlocksShop : MonoBehaviour
         
         flyToBuy.ManualMoveToPosition(flyOutputPosition.position, capsuleMidpointPosition.position, 2f);
         flyToBuy.SetCanCollect(true);
-
-        // TODO: Add to inventory
 
         StartCoroutine(LeverCooldownCo());
     }

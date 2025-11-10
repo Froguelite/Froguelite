@@ -89,6 +89,10 @@ public class CollectionOverlayHandler : MonoBehaviour
         {
             StartCoroutine(MoveLockCo());
         }
+        else
+        {
+            lockCanvGroup.alpha = 0f;
+        }
     }
 
 

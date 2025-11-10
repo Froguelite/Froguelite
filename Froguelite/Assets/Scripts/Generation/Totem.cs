@@ -223,17 +223,15 @@ public class Totem : MonoBehaviour
     {
         currentWaveEnemies.Clear();
 
-        for (int i = 0; i < count; i++)
-        {
-            Vector2 spawnPosition = GetRandomSpawnPosition();
-            //IEnemy newEnemy = EnemyFactory.Instance.SpawnRandomEnemy(parentRoom, spawnPosition);
+        List<IEnemy> spawnedEnemies = EnemyFactory.Instance.SpawnEnemiesForRoom(parentRoom);
 
-            //if (newEnemy != null)
-            //{
-            //    currentWaveEnemies.Add(newEnemy);
-            //    newEnemy.BeginPlayerChase();
-            //}
-            Debug.LogWarning("Commented new genration of enemies in SpawnEnemies() to avoid compilation error");
+        foreach (IEnemy newEnemy in spawnedEnemies)
+        {
+            if (newEnemy != null)
+            {
+                currentWaveEnemies.Add(newEnemy);
+                newEnemy.BeginPlayerChase();
+            }
         }
     }
 
