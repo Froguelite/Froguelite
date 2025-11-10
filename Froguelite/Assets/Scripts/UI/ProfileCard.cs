@@ -62,10 +62,10 @@ public class ProfileCard : MonoBehaviour
 
     public void OnStartProfile()
     {
-        //UIManager.Instance.OnProfileStartClick(profileData.sceneToLoad);
-
-        //Temporary: always load main scene
-        UIManager.Instance.OnProfileStartClick(LevelManager.Scenes.MainScene);
+        // Set the active profile in SaveManager before loading the scene
+        SaveManager.SetActiveProfile(profileData.profileNumber);
+        
+        UIManager.Instance.OnProfileStartClick(LevelManager.Scenes.StumpScene);
     }
 
     public void OnDeleteProfile()

@@ -56,6 +56,11 @@ public class LevelManager : MonoBehaviour
 
     public async void LoadScene(Scenes sceneName, bool showPortalEffect = false, bool showLoadingScreen = true)
     {
+        if (showLoadingScreen)
+        {
+            UIManager.Instance.PanelSwitch(UIPanels.LoadingScreen);
+        }
+        
         var scene = SceneManager.LoadSceneAsync(sceneNames[(int) sceneName]);
         scene.allowSceneActivation = false;
 
@@ -81,16 +86,21 @@ public class LevelManager : MonoBehaviour
         }
 
         scene.allowSceneActivation = true;
+        Time.timeScale = 1f;
+
+        await Task.Delay(100); // Small delay to ensure scene has loaded
 
         // Temporary, might need adjustment to be cleaner -
         // Load specific setups per scene
         switch(sceneName)
         {
             case Scenes.MainScene:
+                FrogueliteCam.Instance.UnconfineCamera();
                 await GenerateZoneAndSetup();
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
                 break;
             case Scenes.MenuScene:
+                FrogueliteCam.Instance.UnconfineCamera();
                 GameObject.Destroy(InputManager.Instance.gameObject);
                 GameObject.Destroy(MainCanvas.Instance.gameObject);
                 GameObject.Destroy(FrogueliteCam.Instance.gameObject);
@@ -98,6 +108,7 @@ public class LevelManager : MonoBehaviour
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.GameStart);
                 break;
             case Scenes.BossScene:
+                FrogueliteCam.Instance.UnconfineCamera();
                 PlayerMovement.Instance.transform.position = new Vector3(0.46f, -7.16f, 0);
                 MinimapManager.Instance.HideMinimap();
 
@@ -121,6 +132,7 @@ public class LevelManager : MonoBehaviour
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
                 break;
             default:
+                FrogueliteCam.Instance.UnconfineCamera();
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
                 break;
         }
@@ -142,5 +154,10 @@ public class LevelManager : MonoBehaviour
         {
             await Task.Delay(100);
         }
+
+        MinimapManager.Instance.ShowMinimap();
+
+        // Wait to prevent blue screen flash
+        await Task.Delay(1000);
     }
 }

@@ -27,7 +27,7 @@ public class UIManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(this);
+            Destroy(gameObject);
             return;
         }
         Instance = this;
@@ -128,8 +128,7 @@ public class UIManager : MonoBehaviour
 
     public void OnQuitClick()
     {
-        //Temporarily Quit to Profile Menu
-        OnProfilesClick();
+        LevelManager.Instance.LoadScene(LevelManager.Scenes.MenuScene, showLoadingScreen: true);
     }
 
     public void OnSettingsClick()
@@ -233,7 +232,7 @@ public class UIManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
-        ResetGame();
+        LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, showLoadingScreen: true);
     }
 
     private IEnumerator WinScreenCo()
@@ -267,7 +266,7 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region HELPER METHODS
-    private void PanelSwitch(UIPanels next)
+    public void PanelSwitch(UIPanels next)
     {
         //Set current panel to inactive
         int currentIndex = (int)currentPanel;

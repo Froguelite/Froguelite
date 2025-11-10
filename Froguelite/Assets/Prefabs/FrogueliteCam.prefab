@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 731e9f5227c16f54c95b6743ea591109, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FrogueliteCam
+  cinemachineConfiner: {fileID: 4051603263836237390}
 --- !u!1 &7142800075240325255
 GameObject:
   m_ObjectHideFlags: 0

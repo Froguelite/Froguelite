@@ -1,3 +1,4 @@
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class StumpManager : MonoBehaviour
@@ -9,6 +10,7 @@ public class StumpManager : MonoBehaviour
     #region VARIABLES
 
 
+    [SerializeField] private BoxCollider2D cameraCollisionBounds;
 
 
     #endregion
@@ -19,7 +21,8 @@ public class StumpManager : MonoBehaviour
 
     public void LoadStump()
     {
-        // Code to load the stump
+        MinimapManager.Instance.HideMinimap();
+        FrogueliteCam.Instance.ConfineCamToBounds(cameraCollisionBounds);
     }
 
 

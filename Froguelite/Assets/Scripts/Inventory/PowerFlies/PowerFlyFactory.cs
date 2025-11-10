@@ -13,8 +13,10 @@ public class PowerFlyFactory : MonoBehaviour
     [SerializeField] private PowerFly powerFlyPrefab;
 
     private PowerFlyData[] allPowerFlyDatas;
+    private PowerFlyData[] powerFliesAvailableForRoll;
     private List<PowerFlyData> collectedPowerFlies = new List<PowerFlyData>();
     private Dictionary<PowerFlyData.FlyRarity, List<PowerFlyData>> powerFlyDatasByRarityTier;
+    private HashSet<string> purchasedFlyIDs = new HashSet<string>();
 
     public static PowerFlyFactory Instance { get; private set; }
 
@@ -36,6 +38,30 @@ public class PowerFlyFactory : MonoBehaviour
         Instance = this;
 
         LoadAllPowerFlyData();
+
+        // Subscribe to SaveManager events
+        SaveManager.LoadData += LoadPurchasedFlies;
+    }
+
+
+    void Start()
+    {
+        // Load purchased flies on start if SaveManager is ready
+        if (SaveManager.Instance != null)
+        {
+            LoadPurchasedFlies();
+        }
+        else
+        {
+            Debug.LogWarning("[PowerFlyFactory] SaveManager instance not found during Start. Purchased flies will not be loaded.");
+        }
+    }
+
+
+    void OnDestroy()
+    {
+        // Unsubscribe from SaveManager events
+        SaveManager.LoadData -= LoadPurchasedFlies;
     }
 
 
@@ -58,6 +84,68 @@ public class PowerFlyFactory : MonoBehaviour
                 }
             }
         }
+    }
+
+
+    // Loads the list of purchased flies from SaveManager
+    private void LoadPurchasedFlies()
+    {
+        try
+        {
+            List<string> purchasedList = SaveManager.LoadForProfile<List<string>>(SaveVariable.PurchasedPowerFlies);
+            purchasedFlyIDs = new HashSet<string>(purchasedList);
+            Debug.Log($"[PowerFlyFactory] Loaded {purchasedList.Count} purchased flies");
+        }
+        catch (System.Collections.Generic.KeyNotFoundException)
+        {
+            purchasedFlyIDs = new HashSet<string>();
+            Debug.LogWarning("[PowerFlyFactory] No saved purchased flies found. Starting fresh.");
+        }
+
+        // Automatically add all base set flies to purchased list
+        int baseFliesAdded = 0;
+        foreach (PowerFlyData flyData in allPowerFlyDatas)
+        {
+            if (flyData.isBaseSetFly && !purchasedFlyIDs.Contains(flyData.FlyID))
+            {
+                purchasedFlyIDs.Add(flyData.FlyID);
+                baseFliesAdded++;
+            }
+        }
+
+        if (baseFliesAdded > 0)
+        {
+            Debug.Log($"[PowerFlyFactory] Added {baseFliesAdded} base set flies to purchased list");
+        }
+
+        // Rebuild the rarity tier lists to only include purchased flies
+        RebuildPurchasedFlyLists();
+    }
+
+
+    // Rebuilds the rarity tier dictionaries to only include purchased flies
+    private void RebuildPurchasedFlyLists()
+    {
+        powerFlyDatasByRarityTier.Clear();
+
+        for (int rarityTier = 0; rarityTier < 3; rarityTier++)
+        {
+            PowerFlyData.FlyRarity currentRarity = (PowerFlyData.FlyRarity)rarityTier;
+            powerFlyDatasByRarityTier[currentRarity] = new List<PowerFlyData>();
+            
+            foreach (PowerFlyData data in allPowerFlyDatas)
+            {
+                // Only add flies that are purchased or base set
+                if (data.flyRarity == currentRarity && (purchasedFlyIDs.Contains(data.FlyID) || data.isBaseSetFly))
+                {
+                    powerFlyDatasByRarityTier[currentRarity].Add(data);
+                }
+            }
+        }
+
+        Debug.Log($"[PowerFlyFactory] Rebuilt fly lists. Available flies - Common: {powerFlyDatasByRarityTier[PowerFlyData.FlyRarity.Common].Count}, " +
+                  $"Uncommon: {powerFlyDatasByRarityTier[PowerFlyData.FlyRarity.Uncommon].Count}, " +
+                  $"Rare: {powerFlyDatasByRarityTier[PowerFlyData.FlyRarity.Rare].Count}");
     }
 
 
@@ -175,6 +263,7 @@ public class PowerFlyFactory : MonoBehaviour
             if (data.onlyOneAllowed)
             {
                 powerFlyDatasByRarityTier[data.flyRarity].Remove(data);
+                Debug.Log($"[PowerFlyFactory] Removed {data.powerFlyName} from spawn pool (onlyOneAllowed)");
             }
         }
     }

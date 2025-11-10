@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63ee0f7713f8c34bba32b8bbee26cfb, type: 3}
   m_Name: PF_AmmoFly
   m_EditorClassIdentifier: Assembly-CSharp::PowerFlyData
+  flyID: 2e113b0f-9cc0-423b-af51-b8831f463819
   displayImg: {fileID: -5582974196469982880, guid: a41a1fcdcfeace04c91205768cd3a00d, type: 3}
   powerFlyName: Ammo Fly
   description: This one fires fast...
@@ -19,3 +20,4 @@ MonoBehaviour:
   effects:
   - {fileID: 11400000, guid: f2b4522385b21a64286ec5ae21db47ed, type: 2}
   onlyOneAllowed: 0
+  isBaseSetFly: 1

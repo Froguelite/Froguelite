@@ -346,11 +346,20 @@ public class MinimapManager : MonoBehaviour
         if (minimapParentCanvGroup != null)
         {
             minimapParentCanvGroup.alpha = 0;
-            minimapParentCanvGroup.interactable = false;
-            minimapParentCanvGroup.blocksRaycasts = false;
 
             ToggleFullMap(false);
             canToggleFullMap = false;
+        }
+    }
+
+
+    public void ShowMinimap()
+    {
+        if (minimapParentCanvGroup != null)
+        {
+            minimapParentCanvGroup.alpha = 1;
+
+            canToggleFullMap = true;
         }
     }
 

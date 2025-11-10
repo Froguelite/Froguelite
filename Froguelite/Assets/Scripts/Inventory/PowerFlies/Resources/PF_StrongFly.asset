@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63ee0f7713f8c34bba32b8bbee26cfb, type: 3}
   m_Name: PF_StrongFly
   m_EditorClassIdentifier: Assembly-CSharp::PowerFlyData
+  flyID: bf72b664-63fe-40d4-a042-d4dfdd50c7ed
   displayImg: {fileID: -6857661151560567211, guid: 434a16249280a754e8259c34b894b9cf, type: 3}
   powerFlyName: Buff Fly
   description: This one is strong...
@@ -19,3 +20,4 @@ MonoBehaviour:
   effects:
   - {fileID: 11400000, guid: f8759ccdf171372459d715cd3167fa75, type: 2}
   onlyOneAllowed: 0
+  isBaseSetFly: 1

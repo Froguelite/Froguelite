@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63ee0f7713f8c34bba32b8bbee26cfb, type: 3}
   m_Name: PF_HeartyFly
   m_EditorClassIdentifier: Assembly-CSharp::PowerFlyData
+  flyID: 3a7d94c6-53cb-4f20-8c2b-accc27bf11e0
   displayImg: {fileID: -2824327750953270971, guid: c2492bf6f690ff44ea6d913da0044532, type: 3}
   powerFlyName: Hearty Fly
   description: This one is healthy...
@@ -19,3 +20,4 @@ MonoBehaviour:
   effects:
   - {fileID: 11400000, guid: 724b5553718c41348a11e612bafe3bca, type: 2}
   onlyOneAllowed: 0
+  isBaseSetFly: 1

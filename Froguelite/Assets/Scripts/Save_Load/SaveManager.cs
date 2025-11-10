@@ -90,6 +90,12 @@ public class SaveManager : MonoBehaviour
     {
         CheckInstance();
 
+        if (Instance == null || Instance.fullPath == null)
+        {
+            Debug.LogWarning("[SaveManager] No active profile set, cannot save data. Skipping for now - might be due to saving without passing through menu first.");
+            return;
+        }
+
         string json = JsonConvert.SerializeObject(Instance.profileData, jsonSettings);
         File.WriteAllText(Instance.fullPath, json);
         Debug.Log($"[SaveManager] Saved profile {activeProfile} to {Instance.fullPath}");
@@ -201,5 +207,6 @@ public enum SaveVariable
     CurrentLevel,
     Inventory,
     Coins,
-    EnemyStats
+    EnemyStats,
+    PurchasedPowerFlies
 }
