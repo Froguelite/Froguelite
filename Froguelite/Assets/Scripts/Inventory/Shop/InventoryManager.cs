@@ -15,6 +15,15 @@ public class InventoryManager : MonoBehaviour
 
     public int lotuses { get; private set; }
     public int woodpeckers { get; private set; } = 0;
+    
+    // Bridge property to get golden flies from GoldenFlyHUD
+    public int goldenFlies 
+    { 
+        get 
+        { 
+            return GoldenFlyHUD.Instance != null ? GoldenFlyHUD.Instance.goldenFlies : 0; 
+        } 
+    }
 
     public List<PowerFlyData> collectedPowerFlies = new List<PowerFlyData>();
 
@@ -25,6 +34,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private ItemDefinition lotusDef;
     [SerializeField] private ItemDefinition woodpeckerDef;
     [SerializeField] private ItemDefinition powerFlyDef;
+    [SerializeField] private GroundCollectable goldenFlyPrefab;
 
     public class Entry
     {
@@ -107,6 +117,89 @@ public class InventoryManager : MonoBehaviour
     #endregion
 
 
+    #region GOLDEN FLIES
+
+
+    // Spews a number of golden flies at a given position.
+    public void SpewGoldenFlies(Vector3 position, int amount)
+    {
+        if (goldenFlyPrefab == null)
+        {
+            Debug.LogWarning("InventoryManager: goldenFlyPrefab is not assigned!");
+            return;
+        }
+
+        for (int i = 0; i < amount; i++)
+        {
+            // Instantiate the golden fly
+            GameObject flyObject = Instantiate(goldenFlyPrefab.gameObject, position, Quaternion.identity);
+
+            // Calculate random direction and distance (bottom semicircle only: 180° to 360°)
+            float angle = UnityEngine.Random.Range(180f, 360f);
+            float distance = UnityEngine.Random.Range(3f, 4.5f);
+            Vector3 targetPosition = position + new Vector3(
+                Mathf.Cos(angle * Mathf.Deg2Rad) * distance,
+                Mathf.Sin(angle * Mathf.Deg2Rad) * distance,
+                0f
+            );
+
+            // Calculate arc parameters
+            float arcHeight = UnityEngine.Random.Range(2f, 4f);
+            float duration = UnityEngine.Random.Range(0.6f, 1f);
+
+            // Delay each fly slightly for a cascading effect
+            float delay = i * 0.05f;
+
+            // Animate the fly along an arc path
+            LeanTween.move(flyObject, targetPosition, duration)
+                .setEase(LeanTweenType.easeOutQuad)
+                .setDelay(delay);
+
+            // Separate Y animation for the arc effect (gravity)
+            Vector3 startPos = flyObject.transform.position;
+            LeanTween.value(flyObject, 0f, 1f, duration)
+                .setDelay(delay)
+                .setOnUpdate((float t) =>
+                {
+                    if (flyObject != null)
+                    {
+                        // Parabolic arc: peaks at t=0.5
+                        float yOffset = arcHeight * Mathf.Sin(t * Mathf.PI);
+                        Vector3 currentPos = Vector3.Lerp(startPos, targetPosition, t);
+                        currentPos.y += yOffset;
+                        flyObject.transform.position = currentPos;
+                    }
+                });
+        }
+    }
+
+
+    // Adds a number of golden flies to the player's inventory.
+    // This is a bridge method that delegates to GoldenFlyHUD.
+    public void AddGoldenFlies(int amount)
+    {
+        if (GoldenFlyHUD.Instance != null)
+        {
+            GoldenFlyHUD.Instance.AddGoldenFlies(amount);
+        }
+        else
+        {
+            Debug.LogWarning("InventoryManager.AddGoldenFlies: GoldenFlyHUD.Instance is null!");
+        }
+        
+        OnInventoryChanged?.Invoke();
+    }
+
+
+    public void RemoveGoldenFlies(int amount)
+    {
+        AddGoldenFlies(-amount);
+    }
+
+
+    #endregion
+
+
     #region POWER FLY MANAGEMENT
 
 
@@ -125,6 +218,7 @@ public class InventoryManager : MonoBehaviour
 
 
     #endregion
+
 
     #region DYNAMIC INVENTORY
 
@@ -158,7 +252,7 @@ public class InventoryManager : MonoBehaviour
         OnItemChanged?.Invoke(e);  // tell HUD to create/update row for this id
         OnInventoryChanged?.Invoke();
     }
-        
+
     public bool TryPurchase(ItemDefinition def, int price)
     {
         if (!def || string.IsNullOrEmpty(def.id)) return false;
@@ -170,4 +264,6 @@ public class InventoryManager : MonoBehaviour
     }
 
     #endregion
+
+
 }

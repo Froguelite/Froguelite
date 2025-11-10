@@ -73,7 +73,7 @@ public class InputManager : MonoBehaviour
 
 
     // Enables all actions and subscribes to their events
-    private void EnableActions()
+    public void EnableActions()
     {
         moveAction.performed += OnMove;
         moveAction.canceled += OnMoveCanceled;
@@ -86,7 +86,7 @@ public class InputManager : MonoBehaviour
 
 
     // Disables all actions and unsubscribes from their events
-    private void DisableActions()
+    public void DisableActions()
     {
         moveAction.performed -= OnMove;
         moveAction.canceled -= OnMoveCanceled;

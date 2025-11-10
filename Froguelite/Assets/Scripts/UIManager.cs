@@ -20,6 +20,8 @@ public class UIManager : MonoBehaviour
 
     private UIPanels previousPanel;
 
+    private bool overrideUnsubscribe = false;
+
     #endregion
 
     #region SETUP
@@ -27,7 +29,8 @@ public class UIManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(this);
+            overrideUnsubscribe = true;
+            Destroy(gameObject);
             return;
         }
         Instance = this;
@@ -40,6 +43,9 @@ public class UIManager : MonoBehaviour
 
     void OnDestroy()
     {
+        // Prevents singleton destruction from unsubscribing events
+        if (overrideUnsubscribe) return;
+
         //Unsubscribe from pause input action
         pause.action.performed -= OnPauseClick;
         pause.action.Disable();
@@ -128,8 +134,7 @@ public class UIManager : MonoBehaviour
 
     public void OnQuitClick()
     {
-        //Temporarily Quit to Profile Menu
-        OnProfilesClick();
+        LevelManager.Instance.LoadScene(LevelManager.Scenes.MenuScene, showLoadingScreen: true);
     }
 
     public void OnSettingsClick()
@@ -160,19 +165,24 @@ public class UIManager : MonoBehaviour
     }
 
     private void OnPauseClick(InputAction.CallbackContext obj)
-    {
-        //Check if clicked during game
-        if(currentPanel != UIPanels.None)
+    {        
+        // Check state during click
+
+        switch(currentPanel)
         {
-            return;
+            case UIPanels.None:
+                // If no panel is shown, pause the game
+                Time.timeScale = 0f;
+                PanelSwitch(UIPanels.PauseMenu);
+                break;
+            case UIPanels.PauseMenu:
+                // If pause menu is already open, resume the game
+                OnResumeClick();
+                break;
+            default:
+                Debug.LogWarning($"Pause clicked but current panel is {currentPanel}. No action taken.");
+                break;
         }
-        
-        Time.timeScale = 0f;
-
-        //Temporary: Switch to Main Menu panel
-        PanelSwitch(UIPanels.PauseMenu);
-
-        //TO DO: Save game state if needed
     }
 
     public void OnResumeClick()
@@ -181,7 +191,11 @@ public class UIManager : MonoBehaviour
         //Switch back to previous panel
         PanelSwitch(UIPanels.None);
 
-        //Time.timeScale = 1f;
+        // Push any pending inputs
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.PushAnyPendingMovement();
+        }
     }
 
     public void OnExitClick()
@@ -233,7 +247,7 @@ public class UIManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
-        ResetGame();
+        LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, showLoadingScreen: true);
     }
 
     private IEnumerator WinScreenCo()
@@ -267,7 +281,7 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region HELPER METHODS
-    private void PanelSwitch(UIPanels next)
+    public void PanelSwitch(UIPanels next)
     {
         //Set current panel to inactive
         int currentIndex = (int)currentPanel;

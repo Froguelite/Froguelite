@@ -71,8 +71,9 @@ public class GameManager : MonoBehaviour
     
     private IEnumerator WinRoutine()
     {
-        yield return new WaitForSeconds(4f);
-        UIManager.Instance.ShowWinScreen();
+        // TEMPORARY: Load stump scene after win
+        yield return new WaitForSeconds(10f);
+        LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, showPortalEffect: true, showLoadingScreen: false);
     }
 
 

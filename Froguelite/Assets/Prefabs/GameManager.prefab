@@ -60,6 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatsManager
   playerHealth: {fileID: 0}
+  godmode: 0
 --- !u!114 &4966045886001203952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,3 +77,4 @@ MonoBehaviour:
   lotusDef: {fileID: 11400000, guid: 747fb209e19f44ada891d0d4b79d0db2, type: 2}
   woodpeckerDef: {fileID: 11400000, guid: ad282f15a3c4641769dfa491e34f13c4, type: 2}
   powerFlyDef: {fileID: 11400000, guid: deaaecc2686564a5d8bf493505e69db5, type: 2}
+  goldenFlyPrefab: {fileID: 4331219375149471362, guid: d7840234a886c8749a447697888f22cd, type: 3}

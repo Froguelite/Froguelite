@@ -106,13 +106,31 @@ public class BossEntity : MonoBehaviour
 
         healthBar.HideHealthBar();
 
+        // Disable all colliders on the boss
+        DisableAllColliders();
+
         if (bossController != null)
         {
             bossController.Death();
         }
         //Implement animations, loot drops, or cutscene transitions here
 
+        InventoryManager.Instance.SpewGoldenFlies(transform.position, Random.Range(3, 6));
+
     } // END Die
+
+    // Disable all colliders on this GameObject and its children
+    //-----------------------------------//
+    private void DisableAllColliders()
+    //-----------------------------------//
+    {
+        Collider2D[] colliders = GetComponentsInChildren<Collider2D>();
+        foreach (Collider2D col in colliders)
+        {
+            col.enabled = false;
+        }
+        Debug.Log($"Disabled {colliders.Length} collider(s) on {stats.bossName}.");
+    } // END DisableAllColliders
 
     public void OnPlayerDie()
     {

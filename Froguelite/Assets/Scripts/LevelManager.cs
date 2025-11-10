@@ -21,13 +21,10 @@ public class LevelManager : MonoBehaviour
         MainScene,
         MenuScene,
         BossScene,
+        StumpScene,
     }
 
-    private string[] sceneNames = { "TestMainScene-AA", "TestMenuScene-AA", "TestBossScene-AA" }; //Temporary, replace with actual scene names
-
-    //private const string mainSceneName = "TestMainScene-AA"; // Temporary, replace with actual main scene name
-    //private const string menuSceneName = "TestMenuScene-AA"; // Temporary, replace with actual menu scene name
-    //private const string bossSceneName = "TestBossScene-AA"; // Temporary, replace with actual boss scene name
+    private string[] sceneNames = { "MainScene", "MenuScene", "BossScene", "StumpScene" };
 
     #endregion
 
@@ -59,6 +56,17 @@ public class LevelManager : MonoBehaviour
 
     public async void LoadScene(Scenes sceneName, bool showPortalEffect = false, bool showLoadingScreen = true)
     {
+        // Release force show on golden fly HUD when leaving any scene
+        if (GoldenFlyHUD.Instance != null)
+        {
+            GoldenFlyHUD.Instance.ReleaseForceShow();
+        }
+
+        if (showLoadingScreen)
+        {
+            UIManager.Instance.PanelSwitch(UIPanels.LoadingScreen);
+        }
+        
         var scene = SceneManager.LoadSceneAsync(sceneNames[(int) sceneName]);
         scene.allowSceneActivation = false;
 
@@ -84,41 +92,61 @@ public class LevelManager : MonoBehaviour
         }
 
         scene.allowSceneActivation = true;
+        Time.timeScale = 1f;
+
+        await Task.Delay(100); // Small delay to ensure scene has loaded
 
         // Temporary, might need adjustment to be cleaner -
-        // If we are loading the main scene, wait for ZoneGenerator to be ready then generate zone
-        if (sceneName == Scenes.MainScene)
+        // Load specific setups per scene
+        switch(sceneName)
         {
-            await GenerateZoneAndSetup();
-            UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
-        }
-        else if (sceneName == Scenes.MenuScene)
-        {
-            GameObject.Destroy(InputManager.Instance.gameObject);
-            GameObject.Destroy(MainCanvas.Instance.gameObject);
-            GameObject.Destroy(FrogueliteCam.Instance.gameObject);
-            GameObject.Destroy(GameManager.Instance.gameObject);
-            UIManager.Instance.OnSceneLoadReturn(UIPanels.GameStart);
-        }
-        else if (sceneName == Scenes.BossScene)
-        {
-            PlayerMovement.Instance.transform.position = new Vector3(0.46f, -7.16f, 0);
-            MinimapManager.Instance.HideMinimap();
+            case Scenes.MainScene:
+                FrogueliteCam.Instance.UnconfineCamera();
+                await GenerateZoneAndSetup();
+                UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
+                break;
+            case Scenes.MenuScene:
+                FrogueliteCam.Instance.UnconfineCamera();
+                GameObject.Destroy(InputManager.Instance.gameObject);
+                GameObject.Destroy(MainCanvas.Instance.gameObject);
+                GameObject.Destroy(FrogueliteCam.Instance.gameObject);
+                GameObject.Destroy(GameManager.Instance.gameObject);
+                UIManager.Instance.OnSceneLoadReturn(UIPanels.GameStart);
+                break;
+            case Scenes.BossScene:
+                FrogueliteCam.Instance.UnconfineCamera();
+                PlayerMovement.Instance.transform.position = new Vector3(0.46f, -7.16f, 0);
+                MinimapManager.Instance.HideMinimap();
 
-            // Find and update all active CinemachineCamera components
-            CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
-            foreach (CinemachineCamera cam in cameras)
-            {
-                if (cam.isActiveAndEnabled)
+                // Find and update all active CinemachineCamera components
+                CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
+                foreach (CinemachineCamera cam in cameras)
                 {
-                    // Force the camera to update its position immediately
-                    cam.ForceCameraPosition(PlayerMovement.Instance.transform.position, Quaternion.identity);
-                    
-                    // Manually update the camera's internal state
-                    cam.UpdateCameraState(Vector3.up, Time.deltaTime);
+                    if (cam.isActiveAndEnabled)
+                    {
+                        // Force the camera to update its position immediately
+                        cam.ForceCameraPosition(PlayerMovement.Instance.transform.position, Quaternion.identity);
+                        
+                        // Manually update the camera's internal state
+                        cam.UpdateCameraState(Vector3.up, Time.deltaTime);
+                    }
                 }
-            }
-            UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
+                UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
+                break;
+            case Scenes.StumpScene:
+                FindAnyObjectByType<StumpManager>().LoadStump();
+                UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
+                
+                // Force show the golden fly HUD in the stump scene
+                if (GoldenFlyHUD.Instance != null)
+                {
+                    GoldenFlyHUD.Instance.ForceShow();
+                }
+                break;
+            default:
+                FrogueliteCam.Instance.UnconfineCamera();
+                UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
+                break;
         }
     }
 
@@ -138,5 +166,10 @@ public class LevelManager : MonoBehaviour
         {
             await Task.Delay(100);
         }
+
+        MinimapManager.Instance.ShowMinimap();
+
+        // Wait to prevent blue screen flash
+        await Task.Delay(1000);
     }
 }
