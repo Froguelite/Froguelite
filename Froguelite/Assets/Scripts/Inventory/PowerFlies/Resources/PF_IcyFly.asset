@@ -17,6 +17,8 @@ MonoBehaviour:
   powerFlyName: Icy Fly
   description: This one is slippery...
   flyRarity: 2
-  effects: []
+  effects:
+  - {fileID: 11400000, guid: 056f6633faf724946acaa60b7a51ab97, type: 2}
+  - {fileID: 11400000, guid: e806bf3a6e4134297b687d30478e6933, type: 2}
   onlyOneAllowed: 1
   isBaseSetFly: 0
