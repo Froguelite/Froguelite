@@ -44,6 +44,9 @@ public class PlayerMovement : MonoBehaviour
     private float jitterChangeInterval = 0.05f; // How fast the jitter changes (faster = more jittery)
     private float jitterMagnitude = 0.05f; // How far the sprite jitters (in world units)
 
+    private float originalDrag;
+    private bool useReducedFriction = false;
+
 
     #endregion
 
@@ -63,6 +66,7 @@ public class PlayerMovement : MonoBehaviour
         Instance = this;
 
         rb = GetComponent<Rigidbody2D>();
+        originalDrag = rb.linearDamping;
     }
 
     private void Update()
@@ -115,7 +119,26 @@ public class PlayerMovement : MonoBehaviour
                 finalMoveInput += drunkOffset;
             }
 
-            rb.linearVelocity = finalMoveInput * StatsManager.Instance.playerSpeed.GetValueAsMultiplier() * Time.fixedDeltaTime * 200f;
+            // If reduced friction is active, use momentum-based movement (ice sliding)
+            if (useReducedFriction)
+            {
+                float speedMultiplier = StatsManager.Instance.playerSpeed.GetValueAsMultiplier() * Time.fixedDeltaTime * 200f;
+                Vector2 targetVelocity = finalMoveInput * speedMultiplier;
+                
+                // If there's input, accelerate towards target velocity
+                if (finalMoveInput.magnitude > 0.01f)
+                {
+                    // Smoothly accelerate towards target velocity
+                    rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, targetVelocity, Time.fixedDeltaTime * 8f);
+                }
+                // If no input, let velocity decay naturally (low damping will make it slide)
+                // Velocity will naturally decay due to low linearDamping
+            }
+            else
+            {
+                // Normal movement: directly set velocity
+                rb.linearVelocity = finalMoveInput * StatsManager.Instance.playerSpeed.GetValueAsMultiplier() * Time.fixedDeltaTime * 200f;
+            }
         }
         else if (isManualMoving)
             HandleManualMove();
@@ -302,6 +325,35 @@ public class PlayerMovement : MonoBehaviour
         
         // Apply the offset to the sprite's local position (visual only)
         playerSpriteRenderer.transform.localPosition = jitterOffset;
+    }
+
+
+    #endregion
+
+
+    #region REDUCED FRICTION
+
+
+    // Sets whether to use reduced friction (slippery movement) or not
+    public void SetReducedFriction(bool value)
+    {
+        useReducedFriction = value;
+        
+        if (value)
+        {
+            // Set very low damping for ice-like sliding
+            rb.linearDamping = 0.1f;
+        }
+        else
+        {
+            // Restore original damping
+            rb.linearDamping = originalDrag;
+            // Stop any sliding momentum when disabled
+            if (moveInput.magnitude < 0.01f)
+            {
+                rb.linearVelocity = Vector2.zero;
+            }
+        }
     }
 
 
