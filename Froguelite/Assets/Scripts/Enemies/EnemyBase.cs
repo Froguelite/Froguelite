@@ -39,6 +39,13 @@ public class EnemyBase : MonoBehaviour, IEnemy
     public bool isKnockedBack { get; private set; } = false; // Tracks if enemy is currently being knocked back
     private Color originalColor; // Store the original sprite color
 
+    [Header("Poison")]
+    [SerializeField] private GameObject poisonBubbleParticlesPrefab; // Prefab for bubble particles above head when poisoned
+    public bool isPoisoned { get; private set; } = false; // Tracks if enemy is currently poisoned
+    private Coroutine poisonCoroutine; // Reference to active poison coroutine
+    private GameObject poisonParticlesInstance; // Instance of bubble particles above head when poisoned
+    private Color poisonColor = new Color(0.7f, 1f, 0.7f, 1f); // Green tint color for poison
+
     public Room parentRoom { get; private set; } = null; // The room this enemy belongs to
     public bool engagedWithPlayer { get; private set; } = false;
     public bool isDead { get { return currentHealth <= 0f; } }
@@ -146,6 +153,12 @@ public class EnemyBase : MonoBehaviour, IEnemy
         if (parentRoom != null)
             parentRoom.OnEnemyDefeated(this);
 
+        // Clean up poison if active
+        if (isPoisoned)
+        {
+            RemovePoison();
+        }
+
         spriteRenderer.enabled = false;
         StopPlayerChase();
         defeatSmokeAnimator.Play(true);
@@ -205,6 +218,101 @@ public class EnemyBase : MonoBehaviour, IEnemy
         {
             spriteRenderer.color = newColor;
         });
+    }
+
+
+    #endregion
+
+
+    #region POISON
+
+
+    // Applies poison to this enemy
+    public void ApplyPoison(float duration, float damagePerSecond)
+    {
+        // If already poisoned, stop existing poison and restart with new duration
+        if (isPoisoned)
+        {
+            RemovePoison();
+        }
+
+        isPoisoned = true;
+        
+        // Apply green tint
+        spriteRenderer.color = poisonColor;
+
+        // Spawn bubble particles above head
+        if (poisonBubbleParticlesPrefab != null)
+        {
+            // Calculate position above enemy's head (offset upward by sprite height)
+            Vector3 particlePosition = transform.position;
+            if (spriteRenderer != null && spriteRenderer.bounds.size.y > 0)
+            {
+                particlePosition.y += spriteRenderer.bounds.size.y * 0.5f + 0.3f; // Above head with small offset
+            }
+            else
+            {
+                particlePosition.y += 0.5f; // Fallback offset
+            }
+
+            poisonParticlesInstance = Instantiate(poisonBubbleParticlesPrefab, particlePosition, Quaternion.identity, transform);
+        }
+
+        // Start poison coroutine
+        poisonCoroutine = StartCoroutine(PoisonCoroutine(duration, damagePerSecond));
+
+    }
+
+
+    // Coroutine to handle poison damage over time and visuals
+    private IEnumerator PoisonCoroutine(float duration, float damagePerSecond)
+    {
+        float elapsedTime = 0f;
+        float damageInterval = 1f; // Damage every second
+        float nextDamageTime = 0f;
+
+        while (elapsedTime < duration && !isDead)
+        {
+            elapsedTime += Time.deltaTime;
+
+            // Apply damage every second
+            if (elapsedTime >= nextDamageTime)
+            {
+                DamageEnemy(damagePerSecond, 0f); // Apply poison damage without knockback
+                nextDamageTime += damageInterval;
+            }
+
+            yield return null;
+        }
+
+        // Poison duration ended, remove it
+        RemovePoison();
+    }
+
+
+    // Removes poison effect and restores original color
+    private void RemovePoison()
+    {
+        if (!isPoisoned) return;
+
+        isPoisoned = false;
+
+        // Stop poison coroutine if running
+        if (poisonCoroutine != null)
+        {
+            StopCoroutine(poisonCoroutine);
+            poisonCoroutine = null;
+        }
+
+        // Restore original sprite color
+        spriteRenderer.color = originalColor;
+
+        // Clean up particles if they exist
+        if (poisonParticlesInstance != null)
+        {
+            Destroy(poisonParticlesInstance);
+            poisonParticlesInstance = null;
+        }
     }
 
 

@@ -234,6 +234,7 @@ MonoBehaviour:
   knockbackDuration: 0.1
   spriteRenderer: {fileID: 2727076177215642101}
   defeatSmokeAnimator: {fileID: 6599428521549949721}
+  poisonBubbleParticlesPrefab: {fileID: 1735324610835059132, guid: 93d2a621f0eb77e4198c8a8438697bcf, type: 3}
 --- !u!195 &4370589815322013855
 NavMeshAgent:
   m_ObjectHideFlags: 0
