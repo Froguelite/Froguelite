@@ -34,6 +34,18 @@ public class AttackOverlapHandler : MonoBehaviour
             if (enemy != null && !enemy.isDead)
             {
                 enemy.DamageEnemy(StatsManager.Instance.playerDamage.GetValue(), StatsManager.Instance.playerKnockback.GetValue());
+                
+                // Apply poison if Sick Fly is active
+                if (PlayerAttack.Instance.HasTongueTag("sickFly"))
+                {
+                    EnemyBase enemyBase = enemy as EnemyBase;
+                    if (enemyBase != null)
+                    {
+                        float poisonDamage = StatsManager.Instance.playerDamage.GetValue() * 0.05f; // 5% of player damage per second
+                        enemyBase.ApplyPoison(5f, poisonDamage); // 5 second duration (25% total damage)
+                    }
+                }
+                
                 PlayerAttack.Instance.StopTongueExtension(false);
             }
         }

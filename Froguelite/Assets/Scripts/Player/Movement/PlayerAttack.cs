@@ -29,6 +29,7 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private SpriteRenderer tongueSprite;
     [SerializeField] private Transform playerMouth;
     [SerializeField] private float tongueWidth = 0.2f;
+    private Color originalTongueColor; // Store original tongue color
 
     private Vector3 targetLocalPosition;
     private bool isExtending = false;
@@ -71,6 +72,12 @@ public class PlayerAttack : MonoBehaviour
             // Also enable the GameObject if it was disabled in editor
             tongueVisual.gameObject.SetActive(true);
             tongueSprite.gameObject.SetActive(true);
+            
+            // Store original tongue color
+            if (tongueSprite != null)
+            {
+                originalTongueColor = tongueSprite.color;
+            }
         }
     }
 
@@ -238,6 +245,13 @@ public class PlayerAttack : MonoBehaviour
                 InitializeBackwardsTongue();
             }
         }
+    }
+
+
+    // Checks if a tongue tag is active
+    public bool HasTongueTag(string tag)
+    {
+        return activeTongueTags.Contains(tag);
     }
 
 
@@ -451,6 +465,16 @@ public class PlayerAttack : MonoBehaviour
         // Subtract 90 degrees because sprites typically face "up" by default
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
         tongueVisual.transform.rotation = Quaternion.Euler(0, 0, angle);
+
+        // Set tongue color based on Sick Fly status
+        if (HasTongueTag("sickFly"))
+        {
+            tongueSprite.color = Color.green;
+        }
+        else
+        {
+            tongueSprite.color = originalTongueColor;
+        }
     }
 
 
