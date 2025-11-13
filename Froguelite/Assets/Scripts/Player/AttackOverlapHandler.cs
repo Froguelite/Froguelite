@@ -60,6 +60,14 @@ public class AttackOverlapHandler : MonoBehaviour
             {
                 door.OnInteract();
             }
+            else
+            {
+                SubZoneFinalDoor finalDoor = collision.GetComponent<SubZoneFinalDoor>();
+                if (finalDoor != null)
+                {
+                    finalDoor.OnInteract();
+                }
+            }
         }
         // Collectables
         else if (collision.CompareTag("Collectable"))

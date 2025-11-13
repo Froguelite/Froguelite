@@ -94,7 +94,7 @@ public class UIManager : MonoBehaviour
     public void ResetGame()
     {
         PanelSwitch(UIPanels.LoadingScreen);
-        LevelManager.Instance.LoadScene(LevelManager.Scenes.MenuScene);
+        LevelManager.Instance.LoadScene(LevelManager.Scenes.MenuScene, LevelManager.LoadEffect.LoadingScreen);
     }
 
     public void OnStartGameClick()
@@ -134,7 +134,7 @@ public class UIManager : MonoBehaviour
 
     public void OnQuitClick()
     {
-        LevelManager.Instance.LoadScene(LevelManager.Scenes.MenuScene, showLoadingScreen: true);
+        LevelManager.Instance.LoadScene(LevelManager.Scenes.MenuScene, LevelManager.LoadEffect.LoadingScreen);
     }
 
     public void OnSettingsClick()
@@ -155,7 +155,7 @@ public class UIManager : MonoBehaviour
     {
         //Switch to Loading Screen and call LevelManager to load scene
         PanelSwitch(UIPanels.LoadingScreen);
-        LevelManager.Instance.LoadScene(sceneToLoad);
+        LevelManager.Instance.LoadScene(sceneToLoad, LevelManager.LoadEffect.LoadingScreen);
     }
 
     public void OnSceneLoadReturn(UIPanels panelToReturnTo)
@@ -247,7 +247,7 @@ public class UIManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
-        LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, showLoadingScreen: true);
+        LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, LevelManager.LoadEffect.LoadingScreen);
     }
 
     private IEnumerator WinScreenCo()

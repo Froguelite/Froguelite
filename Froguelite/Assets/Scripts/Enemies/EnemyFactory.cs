@@ -80,6 +80,33 @@ public class EnemyFactory : MonoBehaviour
 
         return spawnedEnemies;
     }
+
+
+    // Spawns a sub-zone boss for the given room
+    public List<IEnemy> SpawnSubZoneBossForRoom(Room room)
+    {
+        List<IEnemy> spawnedEnemies = new List<IEnemy>();
+
+        // Choose a random spawn group
+        RoomEnemySpawnGroup spawnGroup = roomEnemySpawnGroups[Random.Range(0, roomEnemySpawnGroups.Length)];
+
+        // Loop through each enemy spawn entry and spawn appropriate enemies
+        foreach (RoomEnemySpawnGroup.EnemySpawnEntry entry in spawnGroup.enemySpawnEntries)
+        {
+            int enemyCount = Random.Range(entry.minEnemyCount, entry.maxEnemyCount + 1);
+            for (int i = 0; i < enemyCount; i++)
+            {
+                // Choose a random enemy type from the possible enemies
+                EnemyBase enemyType = entry.possibleEnemies[Random.Range(0, entry.possibleEnemies.Count)];
+                Vector2 spawnPosition = room.GetRandomEnemySpawnPosition();
+                EnemyBase newEnemy = Instantiate(enemyType, spawnPosition, Quaternion.identity, room.transform);
+                newEnemy.InitializeEnemy(room);
+                spawnedEnemies.Add(newEnemy);
+            }
+        }
+
+        return spawnedEnemies;
+    }
     
 
     #endregion

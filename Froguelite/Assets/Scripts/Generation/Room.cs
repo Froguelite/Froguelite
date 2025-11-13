@@ -15,7 +15,8 @@ public class Room : MonoBehaviour
     {
         Normal,
         Starter,
-        Boss,
+        BossPortal,
+        SubZoneBoss,
         Shop,
         Fly,
         Totem,
@@ -27,7 +28,10 @@ public class Room : MonoBehaviour
 
     public List<IEnemy> enemies { get; private set; } = new List<IEnemy>();
 
+    private SubZoneFinalDoor subZoneFinalDoor;
+
     public bool isExplored { get; private set; } = false;
+
     // Totem integration
     private Totem totemInstance;
     private bool isTotemActive = false;
@@ -49,8 +53,11 @@ public class Room : MonoBehaviour
         {
             case RoomType.Starter:
                 break;
-            case RoomType.Boss:
+            case RoomType.BossPortal:
                 // TODO: Boss room specific setup
+                break;
+            case RoomType.SubZoneBoss:
+                // TODO: Sub-zone boss specific setup
                 break;
             case RoomType.Shop:
                 // TODO: Spawn shopkeeper and shop items
@@ -103,10 +110,10 @@ public class Room : MonoBehaviour
     // Generates a few enemies for this room
     public void GenerateEnemies()
     {
-        if (roomData.roomType != RoomType.Normal)
-            return; // Only spawn enemies in normal rooms
-
-        enemies = EnemyFactory.Instance.SpawnEnemiesForRoom(this);
+        if (roomData.roomType == RoomType.Normal)
+            enemies = EnemyFactory.Instance.SpawnEnemiesForRoom(this);
+        else if (roomData.roomType == RoomType.SubZoneBoss)
+            enemies = EnemyFactory.Instance.SpawnSubZoneBossForRoom(this);
     }
 
 
@@ -229,6 +236,35 @@ public class Room : MonoBehaviour
 
         // Ping the minimap notifying we have cleared the room
         MinimapManager.Instance.OnClearRoom(this);
+
+        // Perform sub-zone specific actions
+        if (roomData.roomType == RoomType.SubZoneBoss)
+        {
+            OnSubZoneBossDefeated();
+        }
+    }
+
+
+    #endregion
+
+
+    #region SUB-ZONE BOSS ROOM
+
+
+    public void SetSubZoneFinalDoor(SubZoneFinalDoor finalDoor)
+    {
+        subZoneFinalDoor = finalDoor;
+    }
+
+
+    private void OnSubZoneBossDefeated()
+    {
+        Debug.Log("Sub-zone boss defeated!");
+        // Open the final door when the sub-zone boss is defeated
+        if (subZoneFinalDoor != null)
+        {
+            subZoneFinalDoor.OpenDoor();
+        }
     }
 
 

@@ -51,6 +51,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomFactory
   shopAlternatePrefab: {fileID: 3868817830965573783, guid: 69cd4188c67e8a34b8b4d695e0550fc2, type: 3}
   bossPortalPrefab: {fileID: 6171626646396682201, guid: ad4200558d1f7534d8125994135bb6a7, type: 3}
+  totemPrefab: {fileID: 6824224713774371344, guid: efebbcd19132342dfb61e2e92a021878, type: 3}
+  subZoneFinalDoorPrefab: {fileID: 2993340084417876695, guid: 562a565c4d4134e48a27b0149b7600f4, type: 3}
 --- !u!114 &8433390846284386573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -679,6 +681,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZoneGenManager
   generateZoneOnStart: 0
+  generateZoneOnStartSubZone: 0
   teleportPlayerToStarterRoom: 1
   roomFactory: {fileID: 8450570922276623831}
   foliageFactory: {fileID: 8433390846284386573}
@@ -747,3 +750,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomManager
   shopAlternatePrefab: {fileID: 3868817830965573783, guid: 69cd4188c67e8a34b8b4d695e0550fc2, type: 3}
   bossPortalPrefab: {fileID: 6171626646396682201, guid: ad4200558d1f7534d8125994135bb6a7, type: 3}
+  totemPrefab: {fileID: 0}
+  subZoneFinalDoorPrefab: {fileID: 0}

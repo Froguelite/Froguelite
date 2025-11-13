@@ -13,8 +13,11 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private GameObject loadingPanel;
     [SerializeField] private PortalLoadingEffect portalLoadingEffect;
+    [SerializeField] private BubbleLoadingEffect bubbleLoadingEffect;
 
     [SerializeField] private Image progressBar;
+
+    private int nextSubZone = 0;
 
     public enum Scenes
     {
@@ -22,6 +25,14 @@ public class LevelManager : MonoBehaviour
         MenuScene,
         BossScene,
         StumpScene,
+    }
+
+    public enum LoadEffect
+    {
+        None,
+        LoadingScreen,
+        Portal,
+        Bubble
     }
 
     private string[] sceneNames = { "MainScene", "MenuScene", "BossScene", "StumpScene" };
@@ -54,7 +65,7 @@ public class LevelManager : MonoBehaviour
     }
     #endregion
 
-    public async void LoadScene(Scenes sceneName, bool showPortalEffect = false, bool showLoadingScreen = true)
+    public async void LoadScene(Scenes sceneName, LoadEffect loadEffect)
     {
         // Release force show on golden fly HUD when leaving any scene
         if (GoldenFlyHUD.Instance != null)
@@ -62,7 +73,7 @@ public class LevelManager : MonoBehaviour
             GoldenFlyHUD.Instance.ReleaseForceShow();
         }
 
-        if (showLoadingScreen)
+        if (loadEffect == LoadEffect.LoadingScreen)
         {
             UIManager.Instance.PanelSwitch(UIPanels.LoadingScreen);
         }
@@ -72,23 +83,34 @@ public class LevelManager : MonoBehaviour
 
         //loadingPanel.SetActive(true);
 
-        if (showPortalEffect)
+        if (loadEffect == LoadEffect.Portal)
         {
             portalLoadingEffect.StartEffect();
             await Task.Delay(2000); // Wait for portal effect duration
         }
 
+        if (loadEffect == LoadEffect.Bubble)
+        {
+            bubbleLoadingEffect.StartEffect();
+            await Task.Delay(2000); // Wait for bubble effect duration
+        }
+
         do
         {
             await Task.Delay(100);
-            if (showLoadingScreen)
+            if (loadEffect == LoadEffect.LoadingScreen)
                 progressBar.fillAmount = scene.progress;
         } while (scene.progress < 0.9f);
 
-        if (showPortalEffect)
+        if (loadEffect == LoadEffect.Portal)
         {
             await Task.Delay(1000);
             portalLoadingEffect.StopEffect();
+        }
+
+        if (loadEffect == LoadEffect.Bubble)
+        {
+            bubbleLoadingEffect.StopEffect();
         }
 
         scene.allowSceneActivation = true;
@@ -102,7 +124,9 @@ public class LevelManager : MonoBehaviour
         {
             case Scenes.MainScene:
                 FrogueliteCam.Instance.UnconfineCamera();
-                await GenerateZoneAndSetup();
+                // TODO: Needs to load a value or something
+                await GenerateZoneAndSetup(nextSubZone);
+                nextSubZone++;
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
                 break;
             case Scenes.MenuScene:
@@ -150,7 +174,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    private async Task GenerateZoneAndSetup()
+    private async Task GenerateZoneAndSetup(int subZone)
     {
         // Wait for ZoneGenerator to be ready
         while (ZoneGenerator.Instance == null)
@@ -159,7 +183,7 @@ public class LevelManager : MonoBehaviour
         }
 
         // Generate the zone
-        ZoneGenerator.Instance.GenerateZone();
+        ZoneGenerator.Instance.GenerateZone(subZone);
 
         // Wait for the zone to be generated
         while (!ZoneGenerator.Instance.zoneGenerated)

@@ -2,6 +2,9 @@
 
 public class PlayerAnimationController : MonoBehaviour
 {
+
+    public static PlayerAnimationController Instance { get; private set; }
+
     [Header("References")]
     [SerializeField] private FlipbookAnimator animator;
     [SerializeField] private SpriteRenderer spriteRenderer;
@@ -25,14 +28,27 @@ public class PlayerAnimationController : MonoBehaviour
     private Vector2 lastAimDirection = Vector2.right;
     private bool isAttacking = false;
     private AnimationState currentState = AnimationState.Idle;
-    
+
+    public bool overrideAnimations = false;
+
     private enum AnimationState
     {
         Idle,
         Moving,
         Attacking
     }
-    
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        
+        Instance = this;
+    }
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -47,7 +63,7 @@ public class PlayerAnimationController : MonoBehaviour
     
     void Update()
     {
-        if (!isAttacking)
+        if (!isAttacking && !overrideAnimations)
         {
             UpdateMovementAnimation();
             UpdateFacingDirection();
