@@ -183,10 +183,10 @@ public class LevelManager : MonoBehaviour
         }
 
         // Generate the zone
-        ZoneGenerator.Instance.GenerateZone(subZone);
+        ZoneGeneratorAsync.Instance.GenerateZoneAsync(subZone);
 
         // Wait for the zone to be generated
-        while (!ZoneGenerator.Instance.zoneGenerated)
+        while (!ZoneGeneratorAsync.Instance.zoneGenerated)
         {
             await Task.Delay(100);
         }

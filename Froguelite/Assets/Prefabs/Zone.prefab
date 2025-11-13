@@ -643,6 +643,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1607073901108990455}
   - component: {fileID: 9100879258194543538}
+  - component: {fileID: 5981309382374857493}
   m_Layer: 0
   m_Name: Zone
   m_TagString: Untagged
@@ -675,7 +676,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3270492577662656267}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1668fa2b975c5e42a2ec4ff38d01bfc, type: 3}
   m_Name: 
@@ -690,6 +691,30 @@ MonoBehaviour:
   zoneAutoTileSet: {fileID: 11400000, guid: 1063836c3e2dcd049ad2d56048fef9af, type: 2}
   roomParent: {fileID: 4205104158127926426}
   doorPrefab: {fileID: 4124863209244450078, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+--- !u!114 &5981309382374857493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3270492577662656267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f689949d7c93d04a94424e5ae68d5d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ZoneGeneratorAsync
+  generateZoneOnStart: 1
+  generateZoneOnStartSubZone: 0
+  teleportPlayerToStarterRoom: 1
+  roomFactory: {fileID: 8450570922276623831}
+  foliageFactory: {fileID: 8433390846284386573}
+  roomsTilemap: {fileID: 7065974836948173000}
+  navigationSurface: {fileID: 1638085136770975292}
+  zoneAutoTileSet: {fileID: 11400000, guid: 1063836c3e2dcd049ad2d56048fef9af, type: 2}
+  roomParent: {fileID: 4205104158127926426}
+  doorPrefab: {fileID: 4124863209244450078, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+  maxRoomsPerFrame: 2
+  maxFoliageGroupsPerFrame: 1
 --- !u!1 &9048152094569799816
 GameObject:
   m_ObjectHideFlags: 0
