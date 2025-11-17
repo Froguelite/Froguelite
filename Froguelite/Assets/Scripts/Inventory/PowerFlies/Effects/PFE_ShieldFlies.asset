@@ -9,11 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a26bc9c225986244a6a78efcc45ee46, type: 3}
-  m_Name: PFE_IcyFlySpeed
-  m_EditorClassIdentifier: Assembly-CSharp::PFE_StatBooster
-  statBoosts:
-  - statType: 2
-    boostType: 1
-    boostAmount: 1
-
+  m_Script: {fileID: 11500000, guid: 419bd075ad99e43b2aad1aac25e9d66d, type: 3}
+  m_Name: PFE_ShieldFlies
+  m_EditorClassIdentifier: Assembly-CSharp::PFE_ShieldFlies

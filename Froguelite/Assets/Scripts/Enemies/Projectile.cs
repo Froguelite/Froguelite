@@ -73,7 +73,7 @@ public class Projectile : MonoBehaviour
     }
 
 
-    private void DestroyProjectile()
+    public void DestroyProjectile()
     {
         if (destroyed)
             return;
