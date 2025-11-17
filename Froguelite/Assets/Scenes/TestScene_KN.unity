@@ -672,8 +672,59 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3826962417473394660, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 756489583}
+    - targetCorrespondingSourceObject: {fileID: 3826962417473394660, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1645887500}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
+--- !u!1 &1645887499
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1645887500}
+  - component: {fileID: 1645887501}
+  m_Layer: 0
+  m_Name: OrbitalFlyManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1645887500
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645887499}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.009808556, y: -0, z: -0, w: 0.9999519}
+  m_LocalPosition: {x: 259.14716, y: 272.12195, z: 5.339017}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1383408131}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1645887501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645887499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e333bdcf32e24a8c8269d4cf6790235, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrbitalFlyManager
+  orbitalFlyPrefab: {fileID: 2950355301493638431, guid: 2544805fb8b344069950f2e9cffba901, type: 3}
+  orbitRadius: 2.5
+  rotationSpeed: 2
+  spriteSpinSpeed: 360
 --- !u!1001 &1997342861
 PrefabInstance:
   m_ObjectHideFlags: 0
