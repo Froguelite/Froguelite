@@ -245,6 +245,8 @@ public class SubZoneFinalDoor : MonoBehaviour
         
         // Ensure we end at the exact position
         frogRenderer.transform.localPosition = sinkPos;
+        PlayerMovement.Instance.transform.SetParent(null);
+        DontDestroyOnLoad(PlayerMovement.Instance.gameObject);
 
         LevelManager.Instance.LoadScene(LevelManager.Scenes.MainScene, LevelManager.LoadEffect.Bubble);
     }

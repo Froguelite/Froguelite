@@ -104,6 +104,7 @@ public class LevelManager : MonoBehaviour
         } while (scene.progress < 0.9f);
 
         scene.allowSceneActivation = true;
+
         Time.timeScale = 1f;
 
         await Task.Delay(100); // Small delay to ensure scene has loaded
@@ -176,6 +177,9 @@ public class LevelManager : MonoBehaviour
         {
             bubbleLoadingEffect.StopEffect();
         }
+
+        PlayerMovement.Instance.SetCanMove(true);
+        PlayerAttack.Instance.SetCanAttack(true);
     }
 
     private async Task GenerateZoneAndSetup(int zone, int subZone)
@@ -195,6 +199,9 @@ public class LevelManager : MonoBehaviour
             await Task.Delay(100);
         }
 
+        PlayerMovement.Instance.EnableCollision();
+        PlayerMovement.Instance.playerSpriteRenderer.maskInteraction = SpriteMaskInteraction.None;
+
         MinimapManager.Instance.ShowMinimap();
         GameManager.Instance.SetPlayerState(GameManager.PlayerState.Exploring);
     }
@@ -202,7 +209,7 @@ public class LevelManager : MonoBehaviour
     private void IncrementZoneProgression()
     {
         currentSubZone++;
-        if (currentSubZone >= 2)
+        if (currentSubZone > 2)
         {
             currentSubZone = 0;
             currentZone++;
