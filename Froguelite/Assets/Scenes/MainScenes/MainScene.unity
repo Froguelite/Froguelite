@@ -752,6 +752,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Zone
       objectReference: {fileID: 0}
+    - target: {fileID: 4828610950023218230, guid: 1f22e60e09677994bb7ad739eb8171eb, type: 3}
+      propertyPath: roomEnemySpawnGroupResourcePath
+      value: RoomEnemySpawnGroups/Zone1/Basic
+      objectReference: {fileID: 0}
+    - target: {fileID: 5981309382374857493, guid: 1f22e60e09677994bb7ad739eb8171eb, type: 3}
+      propertyPath: generateZoneOnStart
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -16,6 +16,7 @@ public class ZoneGeneratorAsync : MonoBehaviour
     public bool isGenerating { get; private set; } = false;
 
     [SerializeField] private bool generateZoneOnStart = true;
+    [SerializeField] private int generateZoneOnStartZone = 0;
     [SerializeField] private int generateZoneOnStartSubZone = 0;
     [SerializeField] private bool teleportPlayerToStarterRoom = true;
     
@@ -23,7 +24,8 @@ public class ZoneGeneratorAsync : MonoBehaviour
     [SerializeField] private FoliageFactory foliageFactory;
     [SerializeField] private Tilemap roomsTilemap;
     [SerializeField] private NavMeshSurface navigationSurface;
-    [SerializeField] private AutoTileSet zoneAutoTileSet;
+    [SerializeField] private AutoTileSet zone1AutoTileSet;
+    [SerializeField] private AutoTileSet zone2AutoTileSet;
     [SerializeField] private Transform roomParent;
 
     [SerializeField] private Door doorPrefab;
@@ -60,7 +62,7 @@ public class ZoneGeneratorAsync : MonoBehaviour
     void Start()
     {
         if (generateZoneOnStart)
-            StartCoroutine(GenerateZoneAsync(generateZoneOnStartSubZone));
+            StartCoroutine(GenerateZoneAsync(generateZoneOnStartZone, generateZoneOnStartSubZone));
     }
 
     #endregion
@@ -70,8 +72,10 @@ public class ZoneGeneratorAsync : MonoBehaviour
     /// <summary>
     /// Main async generation coroutine that spreads work across multiple frames
     /// </summary>
-    public IEnumerator GenerateZoneAsync(int subZone, Action onComplete = null)
+    public IEnumerator GenerateZoneAsync(int zone, int subZone, Action onComplete = null)
     {
+        Debug.Log("Generating Zone: " + zone + ", SubZone: " + subZone);
+
         if (isGenerating)
         {
             Debug.LogWarning("Zone generation already in progress!");
@@ -92,19 +96,27 @@ public class ZoneGeneratorAsync : MonoBehaviour
         roomGraph = RoomGraphGenerator.GetRoomGraph(8, subZone);
         yield return null; // Yield to prevent frame spike
 
+        Debug.Log("Step 1: Room graph successfully generated.");
+
         // Step 2: Spawn rooms across multiple frames
         OnGenerationProgress?.Invoke(0.10f);
-        yield return StartCoroutine(SpawnRoomsFromGraphAsync());
+        yield return StartCoroutine(SpawnRoomsFromGraphAsync(zone));
+
+        Debug.Log("Step 2: Rooms successfully spawned.");
 
         // Step 3: Combine tile layouts (relatively fast)
         OnGenerationProgress?.Invoke(0.70f);
         combinedTileLayout = CombineRoomTileLayouts();
         yield return null;
 
+        Debug.Log("Step 3: Tile layouts successfully combined.");
+
         // Step 4: Initialize minimap
         OnGenerationProgress?.Invoke(0.75f);
         MinimapManager.Instance.InitializeMinimap(combinedTileLayout);
         yield return null;
+
+        Debug.Log("Step 4: Minimap successfully initialized.");
 
         // Step 5: Initialize RoomManager
         OnGenerationProgress?.Invoke(0.80f);
@@ -118,15 +130,21 @@ public class ZoneGeneratorAsync : MonoBehaviour
         }
         yield return null;
 
+        Debug.Log("Step 5: RoomManager successfully initialized.");
+
         // Step 6: Set player to starter room
         OnGenerationProgress?.Invoke(0.85f);
         if (teleportPlayerToStarterRoom)
             SetPlayerToStarterRoomAndClear();
         yield return null;
 
+        Debug.Log("Step 6: Player successfully teleported to starter room.");
+
         // Step 7: Build NavMesh (can be heavy, spread across frames)
         OnGenerationProgress?.Invoke(0.90f);
         yield return StartCoroutine(BuildNavMeshAsync());
+
+        Debug.Log("Step 7: NavMesh successfully built.");
 
         OnGenerationProgress?.Invoke(1.0f);
         
@@ -146,6 +164,8 @@ public class ZoneGeneratorAsync : MonoBehaviour
         
         zoneGenerated = true;
         isGenerating = false;
+
+        Debug.Log("Successfully finished generating");
         
         onComplete?.Invoke();
     }
@@ -153,7 +173,7 @@ public class ZoneGeneratorAsync : MonoBehaviour
     /// <summary>
     /// Spawns rooms across multiple frames to prevent freezing
     /// </summary>
-    private IEnumerator SpawnRoomsFromGraphAsync()
+    private IEnumerator SpawnRoomsFromGraphAsync(int zone)
     {
         if (roomGraph == null)
         {
@@ -189,12 +209,12 @@ public class ZoneGeneratorAsync : MonoBehaviour
                 if (room != null)
                 {
                     // Land-containing room - always generate
-                    yield return StartCoroutine(SpawnRoomAsync(room, position, batchIndex));
+                    yield return StartCoroutine(SpawnRoomAsync(zone, room, position, batchIndex));
                 }
                 else if (ShouldGenerateWaterRoom(position))
                 {
                     // Water room adjacent to land - generate as buffer
-                    SpawnEmptyRoom(position);
+                    SpawnEmptyRoom(zone, position);
                 }
                 else
                 {
@@ -284,9 +304,10 @@ public class ZoneGeneratorAsync : MonoBehaviour
 
     #region SPAWNING ROOMS
 
-    private IEnumerator SpawnRoomAsync(RoomData roomData, Vector2Int gridPosition, int batchIndex)
+    private IEnumerator SpawnRoomAsync(int zone, RoomData roomData, Vector2Int gridPosition, int batchIndex)
     {
-        Room spawnedRoom = roomFactory.SpawnRoom(roomsTilemap, zoneAutoTileSet, roomParent, roomData, 32);
+        AutoTileSet autoTileSet = (zone == 0) ? zone1AutoTileSet : zone2AutoTileSet;
+        Room spawnedRoom = roomFactory.SpawnRoom(roomsTilemap, autoTileSet, roomParent, roomData, 32);
         spawnedRooms[gridPosition] = spawnedRoom;
 
         // Yield after room creation to prevent frame spikes
@@ -307,7 +328,7 @@ public class ZoneGeneratorAsync : MonoBehaviour
         foliageFactory.GenerateFoliageForRoom(spawnedRoom, foliageLandDensity);
     }
 
-    private void SpawnEmptyRoom(Vector2Int gridPosition)
+    private void SpawnEmptyRoom(int zone, Vector2Int gridPosition)
     {
         if (roomGraph == null)
         {
@@ -345,10 +366,12 @@ public class ZoneGeneratorAsync : MonoBehaviour
             }
         }
 
+        AutoTileSet autoTileSet = (zone == 0) ? zone1AutoTileSet : zone2AutoTileSet;
+
         RoomTileHelper.SetTilemapToLayoutWithAutoTiling(
             waterLayout,
             roomsTilemap,
-            zoneAutoTileSet,
+            autoTileSet,
             tileOffset.x,
             tileOffset.y
         );
@@ -646,6 +669,7 @@ public class ZoneGeneratorAsync : MonoBehaviour
         {
             if (cam.isActiveAndEnabled)
             {
+                cam.Follow = PlayerMovement.Instance.transform;
                 cam.ForceCameraPosition(PlayerMovement.Instance.transform.position, Quaternion.identity);
                 cam.UpdateCameraState(Vector3.up, Time.deltaTime);
             }

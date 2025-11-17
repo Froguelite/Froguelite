@@ -17,7 +17,8 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private Image progressBar;
 
-    private int nextSubZone = 0;
+    private int currentZone = 0;
+    private int currentSubZone = -1;
 
     public enum Scenes
     {
@@ -102,17 +103,6 @@ public class LevelManager : MonoBehaviour
                 progressBar.fillAmount = scene.progress;
         } while (scene.progress < 0.9f);
 
-        if (loadEffect == LoadEffect.Portal)
-        {
-            await Task.Delay(1000);
-            portalLoadingEffect.StopEffect();
-        }
-
-        if (loadEffect == LoadEffect.Bubble)
-        {
-            bubbleLoadingEffect.StopEffect();
-        }
-
         scene.allowSceneActivation = true;
         Time.timeScale = 1f;
 
@@ -125,11 +115,12 @@ public class LevelManager : MonoBehaviour
             case Scenes.MainScene:
                 FrogueliteCam.Instance.UnconfineCamera();
                 // TODO: Needs to load a value or something
-                await GenerateZoneAndSetup(nextSubZone);
-                nextSubZone++;
+                IncrementZoneProgression();
+                await GenerateZoneAndSetup(currentZone, currentSubZone);
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
                 break;
             case Scenes.MenuScene:
+                ResetZoneProgression();
                 FrogueliteCam.Instance.UnconfineCamera();
                 GameObject.Destroy(InputManager.Instance.gameObject);
                 GameObject.Destroy(MainCanvas.Instance.gameObject);
@@ -158,6 +149,7 @@ public class LevelManager : MonoBehaviour
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
                 break;
             case Scenes.StumpScene:
+                ResetZoneProgression();
                 FindAnyObjectByType<StumpManager>().LoadStump();
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
                 
@@ -172,18 +164,30 @@ public class LevelManager : MonoBehaviour
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
                 break;
         }
+
+        // Hide any loading effects
+        if (loadEffect == LoadEffect.Portal)
+        {
+            await Task.Delay(1000);
+            portalLoadingEffect.StopEffect();
+        }
+
+        if (loadEffect == LoadEffect.Bubble)
+        {
+            bubbleLoadingEffect.StopEffect();
+        }
     }
 
-    private async Task GenerateZoneAndSetup(int subZone)
+    private async Task GenerateZoneAndSetup(int zone, int subZone)
     {
         // Wait for ZoneGenerator to be ready
-        while (ZoneGenerator.Instance == null)
+        while (ZoneGeneratorAsync.Instance == null)
         {
             await Task.Delay(100);
         }
 
         // Generate the zone
-        ZoneGeneratorAsync.Instance.GenerateZoneAsync(subZone);
+        StartCoroutine(ZoneGeneratorAsync.Instance.GenerateZoneAsync(zone, subZone));
 
         // Wait for the zone to be generated
         while (!ZoneGeneratorAsync.Instance.zoneGenerated)
@@ -192,8 +196,22 @@ public class LevelManager : MonoBehaviour
         }
 
         MinimapManager.Instance.ShowMinimap();
+        GameManager.Instance.SetPlayerState(GameManager.PlayerState.Exploring);
+    }
 
-        // Wait to prevent blue screen flash
-        await Task.Delay(1000);
+    private void IncrementZoneProgression()
+    {
+        currentSubZone++;
+        if (currentSubZone >= 2)
+        {
+            currentSubZone = 0;
+            currentZone++;
+        }
+    }
+
+    private void ResetZoneProgression()
+    {
+        currentZone = 0;
+        currentSubZone = -1;
     }
 }

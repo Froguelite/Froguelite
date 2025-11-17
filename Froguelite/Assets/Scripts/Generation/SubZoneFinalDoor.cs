@@ -201,7 +201,6 @@ public class SubZoneFinalDoor : MonoBehaviour
     // Coroutine that handles the whirlpool-like sinking and spinning animation
     private IEnumerator SinkAndSpinSequence()
     {
-        PlayerAnimationController.Instance.overrideAnimations = true;
         PlayerMovement.Instance.playerSpriteRenderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
 
         // Calculate the final sink position (twice as far down as normal hidden position)
@@ -229,35 +228,12 @@ public class SubZoneFinalDoor : MonoBehaviour
         float elapsedTime = 0f;
         float nextSpinTime = spinInterval;
         
-        // while (elapsedTime < initialSpinDuration)
-        // {
-        //     elapsedTime += Time.deltaTime;
-            
-        //     // Check if it's time to update the sprite direction (spin effect)
-        //     if (elapsedTime >= nextSpinTime)
-        //     {
-        //         currentDirectionIndex = (currentDirectionIndex + 1) % directions.Length;
-        //         UpdateFrogSprite(directions[currentDirectionIndex]);
-        //         nextSpinTime += spinInterval;
-        //     }
-            
-        //     yield return null;
-        // }
-        
         // Phase 2: Sinking while spinning
         elapsedTime = 0f;
         
         while (elapsedTime < sinkDuration)
         {
             elapsedTime += Time.deltaTime;
-            
-            // Check if it's time to update the sprite direction (spin effect)
-            // if (elapsedTime >= nextSpinTime)
-            // {
-            //     currentDirectionIndex = (currentDirectionIndex + 1) % directions.Length;
-            //     UpdateFrogSprite(directions[currentDirectionIndex]);
-            //     nextSpinTime += spinInterval;
-            // }
             
             // Smoothly interpolate the position downward with easing
             float t = elapsedTime / sinkDuration;
@@ -270,29 +246,7 @@ public class SubZoneFinalDoor : MonoBehaviour
         // Ensure we end at the exact position
         frogRenderer.transform.localPosition = sinkPos;
 
-        PlayerAnimationController.Instance.overrideAnimations = false;
-
         LevelManager.Instance.LoadScene(LevelManager.Scenes.MainScene, LevelManager.LoadEffect.Bubble);
-    }
-    
-    // Updates only the frog sprite based on direction
-    private void UpdateFrogSprite(Door.DoorDirection direction)
-    {
-        switch (direction)
-        {
-            case Door.DoorDirection.Up:
-                frogRenderer.sprite = spriteUp;
-                break;
-            case Door.DoorDirection.Down:
-                frogRenderer.sprite = spriteDown;
-                break;
-            case Door.DoorDirection.Left:
-                frogRenderer.sprite = spriteLeft;
-                break;
-            case Door.DoorDirection.Right:
-                frogRenderer.sprite = spriteRight;
-                break;
-        }
     }
 
 

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &3149456303478162641
+--- !u!1001 &2537969104010831853
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -47,6 +47,18 @@ PrefabInstance:
     - target: {fileID: 3462094319449922566, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
       propertyPath: m_LocalPosition.y
       value: -0.112
+      objectReference: {fileID: 0}
+    - target: {fileID: 3698209165267088440, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3698209165267088440, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3698209165267088440, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3698209165267088440, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
       propertyPath: m_LocalPosition.x
@@ -114,12 +126,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5882462761335553892, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
       propertyPath: m_Name
-      value: Enemy_Lizard
+      value: Enemy_Lizard_Boss
       objectReference: {fileID: 0}
     - target: {fileID: 7807336152895815857, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
       propertyPath: associatedEnemy
       value: 
-      objectReference: {fileID: 219424671850456708}
+      objectReference: {fileID: 830418482755487160}
     m_RemovedComponents:
     - {fileID: 1397738806206786191, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
     - {fileID: 1483300078910096697, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
@@ -128,41 +140,41 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5882462761335553892, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 219424671850456708}
+      addedObject: {fileID: 830418482755487160}
     - targetCorrespondingSourceObject: {fileID: 5882462761335553892, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3667030018611236273}
+      addedObject: {fileID: 4210400531515010701}
     - targetCorrespondingSourceObject: {fileID: 5519356621205672419, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6538916115462734944}
+      addedObject: {fileID: 5923171572544104284}
   m_SourcePrefab: {fileID: 100100000, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
---- !u!212 &1039654798576590116 stripped
+--- !u!212 &495440084114685464 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 2727076177215642101, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
-  m_PrefabInstance: {fileID: 3149456303478162641}
+  m_PrefabInstance: {fileID: 2537969104010831853}
   m_PrefabAsset: {fileID: 0}
---- !u!195 &1662507303629960270 stripped
+--- !u!195 &2278778753134761842 stripped
 NavMeshAgent:
   m_CorrespondingSourceObject: {fileID: 4370589815322013855, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
-  m_PrefabInstance: {fileID: 3149456303478162641}
+  m_PrefabInstance: {fileID: 2537969104010831853}
   m_PrefabAsset: {fileID: 0}
---- !u!50 &5422389780574961135 stripped
+--- !u!50 &4885704521809256147 stripped
 Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 6986542162239207742, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
-  m_PrefabInstance: {fileID: 3149456303478162641}
+  m_PrefabInstance: {fileID: 2537969104010831853}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &7434787988984583474 stripped
+--- !u!1 &8043460745776690702 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5519356621205672419, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
-  m_PrefabInstance: {fileID: 3149456303478162641}
+  m_PrefabInstance: {fileID: 2537969104010831853}
   m_PrefabAsset: {fileID: 0}
---- !u!61 &6538916115462734944
+--- !u!61 &5923171572544104284
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7434787988984583474}
+  m_GameObject: {fileID: 8043460745776690702}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -202,29 +214,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.178772, y: 0.4874878}
   m_EdgeRadius: 0
---- !u!114 &8079735444759031752 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6599428521549949721, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
-  m_PrefabInstance: {fileID: 3149456303478162641}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9067adbf4b1871a42833b06359e708a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FlipbookAnimator
---- !u!1 &8797686647034493877 stripped
+--- !u!1 &8257941191822481545 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5882462761335553892, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
-  m_PrefabInstance: {fileID: 3149456303478162641}
+  m_PrefabInstance: {fileID: 2537969104010831853}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &219424671850456708
+--- !u!114 &830418482755487160
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8797686647034493877}
+  m_GameObject: {fileID: 8257941191822481545}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45f1d82f0cdb96f48a64ec5be36c859c, type: 3}
@@ -232,30 +233,41 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy_Chase
   chaseOnStart: 0
   enemyId: EnemyBase
-  maxHealth: 20
-  navAgent: {fileID: 1662507303629960270}
+  maxHealth: 50
+  navAgent: {fileID: 2278778753134761842}
   movementType: 0
-  rb: {fileID: 5422389780574961135}
+  rb: {fileID: 4885704521809256147}
   knockbackDuration: 0.1
-  spriteRenderer: {fileID: 1039654798576590116}
-  defeatSmokeAnimator: {fileID: 8079735444759031752}
-  chaseBehavior: {fileID: 3667030018611236273}
---- !u!114 &3667030018611236273
+  spriteRenderer: {fileID: 495440084114685464}
+  defeatSmokeAnimator: {fileID: 8695690234847530228}
+  chaseBehavior: {fileID: 4210400531515010701}
+--- !u!114 &4210400531515010701
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8797686647034493877}
+  m_GameObject: {fileID: 8257941191822481545}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 28444a6b9a11eb042aa7720293ebb1bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBehavior_Chase
   chaseSettings:
-    chaseSpeed: 3
+    chaseSpeed: 5
     stoppingDistance: 0.5
     chaseUpdateInterval: 0.5
-  navAgent: {fileID: 1662507303629960270}
-  enemyBase: {fileID: 219424671850456708}
+  navAgent: {fileID: 2278778753134761842}
+  enemyBase: {fileID: 830418482755487160}
   stopChaseOverride: 0
+--- !u!114 &8695690234847530228 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6599428521549949721, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+  m_PrefabInstance: {fileID: 2537969104010831853}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9067adbf4b1871a42833b06359e708a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlipbookAnimator

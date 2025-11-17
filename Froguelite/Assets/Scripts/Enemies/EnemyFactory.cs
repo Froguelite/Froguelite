@@ -14,7 +14,9 @@ public class EnemyFactory : MonoBehaviour
     public static EnemyFactory Instance { get; private set; }
 
     private RoomEnemySpawnGroup[] roomEnemySpawnGroups;
-    [SerializeField] private string roomEnemySpawnGroupResourcePath = "RoomEnemySpawnGroups/Zone1";
+    private RoomEnemySpawnGroup[] subBossEnemySpawnGroups;
+    [SerializeField] private string roomEnemySpawnGroupResourcePath = "RoomEnemySpawnGroups/Zone1/Basic";
+    [SerializeField] private string subBossEnemySpawnGroupResourcePath = "RoomEnemySpawnGroups/Zone1/SubBosses";
 
 
     #endregion
@@ -43,9 +45,15 @@ public class EnemyFactory : MonoBehaviour
     {
         roomEnemySpawnGroups = Resources.LoadAll<RoomEnemySpawnGroup>(roomEnemySpawnGroupResourcePath);
         if (roomEnemySpawnGroups.Length == 0)
-        {
             Debug.LogWarning($"No RoomEnemySpawnGroup assets found in {roomEnemySpawnGroupResourcePath}!");
-        }
+        else
+            Debug.Log($"Loaded {roomEnemySpawnGroups.Length} basic spawn groups");
+
+        subBossEnemySpawnGroups = Resources.LoadAll<RoomEnemySpawnGroup>(subBossEnemySpawnGroupResourcePath);
+        if (subBossEnemySpawnGroups.Length == 0)
+            Debug.LogWarning($"No RoomEnemySpawnGroup assets found in {subBossEnemySpawnGroupResourcePath}!");
+        else
+            Debug.Log($"Loaded {subBossEnemySpawnGroups.Length} sub-boss spawn groups");
     }
 
 
@@ -88,7 +96,7 @@ public class EnemyFactory : MonoBehaviour
         List<IEnemy> spawnedEnemies = new List<IEnemy>();
 
         // Choose a random spawn group
-        RoomEnemySpawnGroup spawnGroup = roomEnemySpawnGroups[Random.Range(0, roomEnemySpawnGroups.Length)];
+        RoomEnemySpawnGroup spawnGroup = subBossEnemySpawnGroups[Random.Range(0, subBossEnemySpawnGroups.Length)];
 
         // Loop through each enemy spawn entry and spawn appropriate enemies
         foreach (RoomEnemySpawnGroup.EnemySpawnEntry entry in spawnGroup.enemySpawnEntries)
