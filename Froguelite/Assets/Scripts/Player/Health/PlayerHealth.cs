@@ -16,10 +16,10 @@ public class PlayerHealth : MonoBehaviour
     public bool overrideHealAnims = false;
     public bool needsBigBeat = false;
 
-    public UnityEvent onHealthChanged; // Event triggered when health changes (damage or heal)
-    public UnityEvent onHealthDamaged; // Event triggered when the player takes damage
-    public UnityEvent onHealthHealed;  // Event triggered when the player is healed
-    public UnityEvent onPlayerDie; // Event triggered when the player dies
+    public UnityEvent onHealthChanged = new UnityEvent(); // Event triggered when health changes (damage or heal)
+    public UnityEvent onHealthDamaged = new UnityEvent(); // Event triggered when the player takes damage
+    public UnityEvent onHealthHealed = new UnityEvent();  // Event triggered when the player is healed
+    public UnityEvent onPlayerDie = new UnityEvent(); // Event triggered when the player dies
 
     private float timeSinceLastDamage = 0f;
     private const float damageCooldown = 0.3f; // Minimum time between damage instances
@@ -97,6 +97,10 @@ public class PlayerHealth : MonoBehaviour
     // Damages player by given amount; if health drops to 0 or below, player dies
     public void DamagePlayer(int dmgAmount)
     {
+        // Ignore damage if player is dashing
+        if (PlayerMovement.Instance.IsDashing)
+            return;
+
         if (timeSinceLastDamage < damageCooldown)
             return;
 

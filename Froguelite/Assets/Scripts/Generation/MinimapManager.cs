@@ -145,6 +145,27 @@ public class MinimapManager : MonoBehaviour
             return;
         }
 
+        // Reset all room connections
+        foreach (var connection in minimapRoomConnections.Values)
+        {
+            if (connection != null)
+            {
+                Destroy(connection.gameObject);
+            }
+        }
+        minimapRoomConnections.Clear();
+
+        foreach (var connection in fullMapRoomConnections.Values)
+        {
+            if (connection != null)
+            {
+                Destroy(connection.gameObject);
+            }
+        }
+        fullMapRoomConnections.Clear();
+
+        roomConnectionKeys.Clear();
+
         // Get dimensions of the land tile array
         int width = landTileArray.GetLength(0);
         int height = landTileArray.GetLength(1);

@@ -17,6 +17,7 @@ public class ZoneGenerator : MonoBehaviour
     public bool zoneGenerated { get; private set; } = false;
 
     [SerializeField] private bool generateZoneOnStart = true;
+    [SerializeField] private int generateZoneOnStartSubZone = 0;
     [SerializeField] private bool teleportPlayerToStarterRoom = true;
     
     [SerializeField] private RoomFactory roomFactory;
@@ -53,7 +54,7 @@ public class ZoneGenerator : MonoBehaviour
     void Start()
     {
         if (generateZoneOnStart)
-            GenerateZone();
+            GenerateZone(generateZoneOnStartSubZone);
     }
 
 
@@ -64,12 +65,12 @@ public class ZoneGenerator : MonoBehaviour
 
 
     // Generates the zone by creating a room graph and spawning rooms and doors
-    public void GenerateZone()
+    public void GenerateZone(int subZone)
     {
         // TODO: Temporary, chooses a random seed every time
         UnityEngine.Random.InitState(UnityEngine.Random.Range(int.MinValue, int.MaxValue));
 
-        roomGraph = RoomGraphGenerator.GetRoomGraph(8);
+        roomGraph = RoomGraphGenerator.GetRoomGraph(8, subZone);
         combinedTileLayout = SpawnRoomsFromGraph();
         MinimapManager.Instance.InitializeMinimap(combinedTileLayout);
 
@@ -215,7 +216,7 @@ public class ZoneGenerator : MonoBehaviour
         // Generate foliage for the room
         float foliageLandDensity = 1f;
 
-        if (roomData.roomType == Room.RoomType.Boss || roomData.roomType == Room.RoomType.Fly || roomData.roomType == Room.RoomType.Shop)
+        if (roomData.roomType == Room.RoomType.SubZoneBoss || roomData.roomType == Room.RoomType.BossPortal || roomData.roomType == Room.RoomType.Fly || roomData.roomType == Room.RoomType.Shop)
         {
             foliageLandDensity = 5f; // Less foliage in special rooms
         }

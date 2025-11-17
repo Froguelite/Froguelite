@@ -10,7 +10,7 @@ public static class RoomGraphGenerator
     #region GENERATION
 
 
-    public static RoomData[,] GetRoomGraph(int maxDistFromStarter, int roomSizeScaler = 1)
+    public static RoomData[,] GetRoomGraph(int maxDistFromStarter, int subZone, int roomSizeScaler = 1)
     {
         // STEP 1: Create empty graph with starter room in center
         //-----------------------------------------//
@@ -31,8 +31,14 @@ public static class RoomGraphGenerator
             AddRandRoomToStarterPath(Room.RoomType.Normal, currentPos, starterPos, roomGraph, out currentPos, out roomGraph);
         }
 
-        // Place the boss room at the end of the path
-        AddRandRoomToStarterPath(Room.RoomType.Boss, currentPos, starterPos, roomGraph, out currentPos, out roomGraph);
+        // Place the final room at the end of the path (sub-zone boss, or boss portal)
+        Room.RoomType finalRoomType;
+        if (subZone < 2)
+            finalRoomType = Room.RoomType.SubZoneBoss;
+        else
+            finalRoomType = Room.RoomType.BossPortal;
+
+        AddRandRoomToStarterPath(finalRoomType, currentPos, starterPos, roomGraph, out currentPos, out roomGraph);
 
         // STEP 3: Randomly add new normal rooms branching off existing rooms (weighted by genWeight)
         //-----------------------------------------//
@@ -445,7 +451,7 @@ public static class RoomGraphGenerator
             for (int y = 0; y < graph.GetLength(1); y++)
             {
                 RoomData room = graph[x, y];
-                if (room != null && room.roomType != Room.RoomType.Boss && room.isLeaf)
+                if (room != null && room.roomType != Room.RoomType.BossPortal && room.roomType != Room.RoomType.SubZoneBoss && room.isLeaf)
                 {
                     // This room is not the boss room, and it is a leaf room. Lock it at 50% chance.
 
