@@ -62,6 +62,9 @@ public class GameManager : MonoBehaviour
     {
         SetPlayerState(PlayerState.Dead);
         UIManager.Instance.ShowDeathScreen();
+
+        PlayerMovement.Instance.SetCanMove(false);
+        PlayerAttack.Instance.SetCanAttack(false);
     }
 
     public void OnWin()

@@ -42,6 +42,10 @@ public class EnemyOverlapHandler : MonoBehaviour
 
         if (collision.CompareTag("Player"))
         {
+            // Don't damage player if they are dashing
+            if (PlayerMovement.Instance.IsDashing)
+                return;
+
             StatsManager.Instance.playerHealth.DamagePlayer(damage);
             
             if (applyKnockbackOnDamage)

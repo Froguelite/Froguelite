@@ -97,6 +97,10 @@ public class PlayerHealth : MonoBehaviour
     // Damages player by given amount; if health drops to 0 or below, player dies
     public void DamagePlayer(int dmgAmount)
     {
+        // Ignore damage if player is dashing
+        if (PlayerMovement.Instance.IsDashing)
+            return;
+
         if (timeSinceLastDamage < damageCooldown)
             return;
 

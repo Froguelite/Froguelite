@@ -415,6 +415,10 @@ MonoBehaviour:
   - {fileID: -8238694808984575434, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
   - {fileID: -749034433948679102, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
   attackingFrameDuration: 0.06
+  dashingSprites:
+  - {fileID: 398253203554383916, guid: a6e4a4e8612e5df4cacb75723ba9724a, type: 3}
+  - {fileID: 4900125362090257478, guid: ec5aa7b9e0d940146b5d42ed18e93f44, type: 3}
+  dashingFrameDuration: 0.05
   movementThreshold: 0.1
   overrideAnimations: 0
 --- !u!1 &2751189623172936127

@@ -21,12 +21,17 @@ public class PlayerAnimationController : MonoBehaviour
     [SerializeField] private Sprite[] attackingSprites;
     [SerializeField] private float attackingFrameDuration = 0.08f;
     
+    [Header("Dashing Animation")]
+    [SerializeField] private Sprite[] dashingSprites;
+    [SerializeField] private float dashingFrameDuration = 0.05f;
+    
     [Header("Movement Detection")]
     [SerializeField] private float movementThreshold = 0.1f;
     
     private Rigidbody2D rb;
     private Vector2 lastAimDirection = Vector2.right;
     private bool isAttacking = false;
+    private bool isDashing = false;
     private AnimationState currentState = AnimationState.Idle;
 
     public bool overrideAnimations = false;
@@ -35,7 +40,8 @@ public class PlayerAnimationController : MonoBehaviour
     {
         Idle,
         Moving,
-        Attacking
+        Attacking,
+        Dashing
     }
 
     void Awake()
@@ -63,7 +69,7 @@ public class PlayerAnimationController : MonoBehaviour
     
     void Update()
     {
-        if (!isAttacking && !overrideAnimations)
+        if (!isAttacking && !isDashing && !overrideAnimations)
         {
             UpdateMovementAnimation();
             UpdateFacingDirection();
@@ -140,6 +146,14 @@ public class PlayerAnimationController : MonoBehaviour
                     animator.Play();
                 }
                 break;
+                
+            case AnimationState.Dashing:
+                if (dashingSprites != null && dashingSprites.Length > 0)
+                {
+                    animator.SetSprites(dashingSprites, dashingFrameDuration, FlipbookLoopMethod.Loop);
+                    animator.Play();
+                }
+                break;
         }
     }
     
@@ -197,6 +211,39 @@ public class PlayerAnimationController : MonoBehaviour
         {
             lastAimDirection = direction;
         }
+    }
+    
+    /// Call this when the player starts dashing
+    public void PlayDashAnimation(Vector2 dashDirection)
+    {
+        isDashing = true;
+        
+        // Update facing direction based on dash direction
+        if (Mathf.Abs(dashDirection.x) > 0.1f)
+        {
+            lastAimDirection = dashDirection;
+            bool shouldFlipX = dashDirection.x < 0;
+            
+            if (animator != null)
+            {
+                animator.SetFlipX(shouldFlipX);
+            }
+            else if (spriteRenderer != null)
+            {
+                spriteRenderer.flipX = shouldFlipX;
+            }
+        }
+        
+        PlayAnimation(AnimationState.Dashing);
+    }
+    
+    /// Call this when the player stops dashing
+    public void EndDashAnimation()
+    {
+        isDashing = false;
+        
+        // Return to appropriate animation (idle or moving)
+        UpdateMovementAnimation();
     }
 }
 
