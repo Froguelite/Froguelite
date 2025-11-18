@@ -47,14 +47,14 @@ public class SaveManager : MonoBehaviour
         DontDestroyOnLoad(gameObject); // persist across scenes
     }
 
-    private void OnApplicationQuit()
-    {
-        // Only save if a profile has been selected
-        if (fullPath != null)
-        {
-            WriteToFile();
-        }
-    }
+    //private void OnApplicationQuit()
+    //{
+    //    // Only save if a profile has been selected
+    //    if (fullPath != null)
+    //    {
+    //        WriteToFile();
+    //    }
+    //}
 
     #endregion
 
@@ -202,12 +202,11 @@ public class SaveManager : MonoBehaviour
 
 public enum SaveVariable
 {
-    PlayerHealth,
-    PlayerPosition,
+    RemainingHealth,
     CurrentLevel,
-    Inventory,
-    Coins,
-    EnemyStats,
+    Lotus,
+    Woodpeckers,
+    CollectedPowerflies,
     PurchasedPowerFlies,
     GoldenFlies
 }

@@ -136,6 +136,10 @@ PrefabInstance:
       value: GameManager
       objectReference: {fileID: 0}
     - target: {fileID: 5673963059578216789, guid: 2211788457854674c985eaa25d336c6b, type: 3}
+      propertyPath: godmode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5673963059578216789, guid: 2211788457854674c985eaa25d336c6b, type: 3}
       propertyPath: playerHealth
       value: 
       objectReference: {fileID: 471385698}

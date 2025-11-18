@@ -20,7 +20,7 @@ public class PlayerHealthDisplay : MonoBehaviour
 
     public int maxHealth { get; private set; } = 0;
     private int displayedMaxHealth = 0;
-    public int remainingHealth { get; private set; } = 0;
+    public int remainingHealth { get; private set; } = 0; //save and load variable
     private int displayedRemainingHealth = 0;
     public bool isDead { get; private set; } = false;
     private bool beatTopHeart = false;
@@ -153,6 +153,36 @@ public class PlayerHealthDisplay : MonoBehaviour
 
     #endregion
 
+    #region SAVE AND LOAD HEALTH
+
+    private void SaveRemainingHealth()
+    {
+        SaveManager.SaveForProfile<int>(SaveVariable.RemainingHealth, remainingHealth);
+    }
+
+    private void LoadRemainingHealth()
+    {
+        try
+        {
+            remainingHealth = SaveManager.LoadForProfile<int>(SaveVariable.RemainingHealth);
+            Debug.Log($"[PlayerHealthDisplay] Loaded {remainingHealth} remaining health from profile {SaveManager.activeProfile}");
+        }
+        catch (System.Collections.Generic.KeyNotFoundException)
+        {
+            // No saved data yet, use default value (0)
+            lotuses = 0;
+            Debug.Log($"[InventoryManager] No saved lotuses found, defaulting to 0");
+        }
+        catch (System.Exception ex)
+        {
+            // Handle other exceptions (e.g., no active profile set)
+            Debug.LogWarning($"[InventoryManager] Failed to load lotuses: {ex.Message}");
+            lotuses = 0;
+        }
+
+    }
+
+    #endregion
 
     #region REMAINING HEALTH
 
