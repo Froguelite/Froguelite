@@ -15,7 +15,11 @@ public class SubZoneFinalDoor : MonoBehaviour
 
     [SerializeField] private SpriteRenderer frogRenderer;
     [SerializeField] private SpriteMask frogMask;
+    [SerializeField] private bool useWaterSway = true;
+    [SerializeField] private bool useRipples = true;
     [SerializeField] private ParticleSystem rippleParticles;
+    [SerializeField] private bool useLeafTrail = false;
+    [SerializeField] private ParticleSystem[] leafTrailParticles;
 
     [SerializeField] private Sprite spriteUp;
     [SerializeField] private Sprite spriteDown;
@@ -30,6 +34,8 @@ public class SubZoneFinalDoor : MonoBehaviour
     private float timeOffset;
     private bool inShownPosition = true;
 
+    [SerializeField] private int zone = 0;
+
 
     #endregion
 
@@ -38,7 +44,7 @@ public class SubZoneFinalDoor : MonoBehaviour
 
     private void Update()
     {
-        if (frogMask != null)
+        if (frogMask != null && useWaterSway)
         {
             FloatFrog();
         }
@@ -99,11 +105,18 @@ public class SubZoneFinalDoor : MonoBehaviour
             LeanTween.cancel(frogRenderer.gameObject);
 
             frogRenderer.enabled = true;
-            rippleParticles.Play();
+            if (useRipples)
+                rippleParticles.Play();
 
             if (animate)
             {
-                frogRenderer.transform.LeanMoveLocal(frogRendShownPos, 0.5f).setEaseOutSine();
+                if (useLeafTrail)
+                    StartLeafParticles();
+                frogRenderer.transform.LeanMoveLocal(frogRendShownPos, 0.5f).setEaseOutSine().setOnComplete(() =>
+                {
+                    if (useLeafTrail)
+                        StopLeafParticles();
+                });
             }
             else
             {
@@ -116,13 +129,18 @@ public class SubZoneFinalDoor : MonoBehaviour
 
             inShownPosition = false;
             LeanTween.cancel(frogRenderer.gameObject);
-            rippleParticles.Stop();
+            if (useRipples)
+                rippleParticles.Stop();
 
             if (animate)
             {
+                if (useLeafTrail)
+                    StartLeafParticles();
                 frogRenderer.transform.LeanMoveLocal(frogRendHiddenPos, 0.5f).setEaseInSine().setOnComplete(() =>
                 {
                     frogRenderer.enabled = false;
+                    if (useLeafTrail)
+                        StopLeafParticles();
                 });
             }
             else
@@ -227,6 +245,9 @@ public class SubZoneFinalDoor : MonoBehaviour
         // Phase 1: Initial spinning without sinking
         float elapsedTime = 0f;
         float nextSpinTime = spinInterval;
+
+        if (useLeafTrail)
+            StartLeafParticles();
         
         // Phase 2: Sinking while spinning
         elapsedTime = 0f;
@@ -242,13 +263,42 @@ public class SubZoneFinalDoor : MonoBehaviour
             
             yield return null;
         }
+
+        if (useLeafTrail)
+            StopLeafParticles();
         
         // Ensure we end at the exact position
         frogRenderer.transform.localPosition = sinkPos;
         PlayerMovement.Instance.transform.SetParent(null);
         DontDestroyOnLoad(PlayerMovement.Instance.gameObject);
 
-        LevelManager.Instance.LoadScene(LevelManager.Scenes.MainScene, LevelManager.LoadEffect.Bubble);
+        if (zone == 0)
+            LevelManager.Instance.LoadScene(LevelManager.Scenes.MainScene, LevelManager.LoadEffect.Bubble);
+        else
+            LevelManager.Instance.LoadScene(LevelManager.Scenes.MainScene, LevelManager.LoadEffect.Leaves);
+    }
+
+
+    private void StartLeafParticles()
+    {
+        if (leafTrailParticles != null)
+        {
+            foreach (ParticleSystem ps in leafTrailParticles)
+            {
+                ps.Play();
+            }
+        }
+    }
+
+    private void StopLeafParticles()
+    {
+        if (leafTrailParticles != null)
+        {
+            foreach (ParticleSystem ps in leafTrailParticles)
+            {
+                ps.Stop();
+            }
+        }
     }
 
 

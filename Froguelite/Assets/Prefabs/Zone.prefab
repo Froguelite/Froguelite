@@ -52,7 +52,8 @@ MonoBehaviour:
   shopAlternatePrefab: {fileID: 3868817830965573783, guid: 69cd4188c67e8a34b8b4d695e0550fc2, type: 3}
   bossPortalPrefab: {fileID: 6171626646396682201, guid: ad4200558d1f7534d8125994135bb6a7, type: 3}
   totemPrefab: {fileID: 6824224713774371344, guid: efebbcd19132342dfb61e2e92a021878, type: 3}
-  subZoneFinalDoorPrefab: {fileID: 2993340084417876695, guid: 562a565c4d4134e48a27b0149b7600f4, type: 3}
+  swampSubZoneFinalDoorPrefab: {fileID: 2993340084417876695, guid: 562a565c4d4134e48a27b0149b7600f4, type: 3}
+  forestSubZoneFinalDoorPrefab: {fileID: 8259498985756009523, guid: 348664a7b758b2a44879d1fca8d3acb6, type: 3}
 --- !u!114 &8433390846284386573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,7 +66,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01f1fc851a222974381fd0f4128ebe6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FoliageFactory
-  foliageGroups:
+  swampFoliageGroups:
   - groupName: ClumpedBushes
     foliageSpawnParams:
     - foliagePrefab: {fileID: 1806051144689502209, guid: fd3e702b94ea407408ebd5267bc2f9d3, type: 3}
@@ -165,6 +166,57 @@ MonoBehaviour:
     matchWithRoomNoise: 0
     perlinScale: 0.1
     perlinThreshold: 0.9
+    perlinOffset: {x: 0, y: 0}
+  forestFoliageGroups:
+  - groupName: ClumpedBushes
+    foliageSpawnParams:
+    - foliagePrefab: {fileID: 1806051144689502209, guid: de2fa3b8f89a27b4fa9833b3516e498b, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 1806051144689502209, guid: 954cde3e85ce0d24398c87ae81436fc4, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 1806051144689502209, guid: a9142e5d99198d244a60bd0f22da059d, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 1806051144689502209, guid: f98dad9e0171e74439301dc7086700f6, type: 3}
+      relativeWeight: 1
+    minDistance: 2
+    maxSamplingAttempts: 30
+    isLandGroup: 1
+    usePerlinFiltering: 1
+    matchWithRoomNoise: 1
+    perlinScale: 0.1
+    perlinThreshold: 0.7
+    perlinOffset: {x: 0, y: 0}
+  - groupName: Pebbles
+    foliageSpawnParams:
+    - foliagePrefab: {fileID: 3172530779058870057, guid: cbc138ddf667cfd4ea3d6c153b1cf048, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 3172530779058870057, guid: 4c8515d9e00fdee4091537a3d818443d, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 3172530779058870057, guid: 1e7985e927bdd2e4b9c5d50ed73ee849, type: 3}
+      relativeWeight: 1
+    minDistance: 4
+    maxSamplingAttempts: 30
+    isLandGroup: 1
+    usePerlinFiltering: 1
+    matchWithRoomNoise: 1
+    perlinScale: 0.1
+    perlinThreshold: 0.6
+    perlinOffset: {x: 0, y: 0}
+  - groupName: Rocks
+    foliageSpawnParams:
+    - foliagePrefab: {fileID: 3842618770890410296, guid: b9e0e77c4a1807e4cbc82b42662a5640, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 3842618770890410296, guid: d9bf3b2eb79c5ec458105703d96f17b0, type: 3}
+      relativeWeight: 1
+    - foliagePrefab: {fileID: 3842618770890410296, guid: 2b65db60d6e010f46b990c45efd9934a, type: 3}
+      relativeWeight: 1
+    minDistance: 4
+    maxSamplingAttempts: 30
+    isLandGroup: 1
+    usePerlinFiltering: 0
+    matchWithRoomNoise: 0
+    perlinScale: 0.1
+    perlinThreshold: 0.5
     perlinOffset: {x: 0, y: 0}
 --- !u!114 &3090749461015167332
 MonoBehaviour:
@@ -683,6 +735,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZoneGenManager
   generateZoneOnStart: 0
+  generateZoneOnStartZone: 0
   generateZoneOnStartSubZone: 0
   teleportPlayerToStarterRoom: 1
   roomFactory: {fileID: 8450570922276623831}
@@ -715,7 +768,8 @@ MonoBehaviour:
   zone1AutoTileSet: {fileID: 11400000, guid: 1063836c3e2dcd049ad2d56048fef9af, type: 2}
   zone2AutoTileSet: {fileID: 11400000, guid: e3e2fba709e7a0143b6257561a463a6e, type: 2}
   roomParent: {fileID: 4205104158127926426}
-  doorPrefab: {fileID: 4124863209244450078, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+  swampDoorPrefab: {fileID: 4124863209244450078, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+  forestDoorPrefab: {fileID: 5930588474806892657, guid: a182c8b173e801f4dbaa0adfec7fb6ef, type: 3}
   maxRoomsPerFrame: 2
   maxFoliageGroupsPerFrame: 1
   enableGarbageCollection: 1
@@ -782,4 +836,5 @@ MonoBehaviour:
   shopAlternatePrefab: {fileID: 3868817830965573783, guid: 69cd4188c67e8a34b8b4d695e0550fc2, type: 3}
   bossPortalPrefab: {fileID: 6171626646396682201, guid: ad4200558d1f7534d8125994135bb6a7, type: 3}
   totemPrefab: {fileID: 0}
-  subZoneFinalDoorPrefab: {fileID: 0}
+  swampSubZoneFinalDoorPrefab: {fileID: 0}
+  forestSubZoneFinalDoorPrefab: {fileID: 0}

@@ -33,7 +33,8 @@ public class LevelManager : MonoBehaviour
         None,
         LoadingScreen,
         Portal,
-        Bubble
+        Bubble,
+        Leaves
     }
 
     private string[] sceneNames = { "MainScene", "MenuScene", "BossScene", "StumpScene" };
@@ -92,7 +93,13 @@ public class LevelManager : MonoBehaviour
 
         if (loadEffect == LoadEffect.Bubble)
         {
-            bubbleLoadingEffect.StartEffect();
+            bubbleLoadingEffect.StartEffect(false);
+            await Task.Delay(2000); // Wait for bubble effect duration
+        }
+
+        if (loadEffect == LoadEffect.Leaves)
+        {
+            bubbleLoadingEffect.StartEffect(true);
             await Task.Delay(2000); // Wait for bubble effect duration
         }
 
@@ -173,7 +180,7 @@ public class LevelManager : MonoBehaviour
             portalLoadingEffect.StopEffect();
         }
 
-        if (loadEffect == LoadEffect.Bubble)
+        if (loadEffect == LoadEffect.Bubble || loadEffect == LoadEffect.Leaves)
         {
             bubbleLoadingEffect.StopEffect();
         }

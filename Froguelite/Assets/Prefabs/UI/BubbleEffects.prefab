@@ -71,7 +71,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.003921569, g: 0.4431373, b: 0.54509807, a: 1}
+  m_Color: {r: 0.17254902, g: 0.24705882, b: 0.25490198, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
@@ -252,8 +252,9 @@ MonoBehaviour:
   bubblePrefab: {fileID: 2327489887800955789, guid: 2b931ebee6debb649bdad690cf5cf28d, type: 3}
   bubbleContainer: {fileID: 438706075248518623}
   backgroundBlockerCanvGroup: {fileID: 3129074880432318275}
-  bubbleCount: 50
-  spawnWidth: 2000
+  background: {fileID: 7813895767484427700}
+  bubblesPerSecond: 60
+  spawnWidthMultiplier: 1.2
   spawnYOffset: -100
   minBubbleSpeed: 300
   maxBubbleSpeed: 600
@@ -263,3 +264,7 @@ MonoBehaviour:
   maxBubbleSize: 150
   minAlpha: 0.6
   maxAlpha: 1
+  bubbleSprite: {fileID: 21300000, guid: 1ff90b9dac512d34e88c70d7aa709acd, type: 3}
+  bubbleBgColor: {r: 0.17254902, g: 0.24705882, b: 0.25490198, a: 1}
+  leafSprite: {fileID: 7647240639167449756, guid: 0fa8f13880312cf42b4b9d0b59cbb1a5, type: 3}
+  leafBgColor: {r: 0.105882354, g: 0.23921569, b: 0.10980392, a: 1}

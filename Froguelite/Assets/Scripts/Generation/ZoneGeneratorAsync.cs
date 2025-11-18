@@ -28,7 +28,8 @@ public class ZoneGeneratorAsync : MonoBehaviour
     [SerializeField] private AutoTileSet zone2AutoTileSet;
     [SerializeField] private Transform roomParent;
 
-    [SerializeField] private Door doorPrefab;
+    [SerializeField] private Door swampDoorPrefab;
+    [SerializeField] private Door forestDoorPrefab;
 
     // Progress tracking
     [SerializeField] private int maxRoomsPerFrame = 2; // Number of rooms to process per frame
@@ -260,7 +261,7 @@ public class ZoneGeneratorAsync : MonoBehaviour
                 RoomData room = roomGraph[x, y];
                 if (room != null)
                 {
-                    SpawnDoorsForRoom(room, new Vector2Int(x, y));
+                    SpawnDoorsForRoom(zone, room, new Vector2Int(x, y));
                     
                     processedRooms++;
                     batchIndex++;
@@ -307,7 +308,7 @@ public class ZoneGeneratorAsync : MonoBehaviour
     private IEnumerator SpawnRoomAsync(int zone, RoomData roomData, Vector2Int gridPosition, int batchIndex)
     {
         AutoTileSet autoTileSet = (zone == 0) ? zone1AutoTileSet : zone2AutoTileSet;
-        Room spawnedRoom = roomFactory.SpawnRoom(roomsTilemap, autoTileSet, roomParent, roomData, 32);
+        Room spawnedRoom = roomFactory.SpawnRoom(zone, roomsTilemap, autoTileSet, roomParent, roomData, 32);
         spawnedRooms[gridPosition] = spawnedRoom;
 
         // Yield after room creation to prevent frame spikes
@@ -325,7 +326,7 @@ public class ZoneGeneratorAsync : MonoBehaviour
             foliageLandDensity = 5f; // Less foliage in special rooms
         }
 
-        foliageFactory.GenerateFoliageForRoom(spawnedRoom, foliageLandDensity);
+        foliageFactory.GenerateFoliageForRoom(zone, spawnedRoom, foliageLandDensity);
     }
 
     private void SpawnEmptyRoom(int zone, Vector2Int gridPosition)
@@ -395,14 +396,8 @@ public class ZoneGeneratorAsync : MonoBehaviour
 
     #region SPAWNING DOORS
 
-    private void SpawnDoorsForRoom(RoomData roomData, Vector2Int gridPosition)
+    private void SpawnDoorsForRoom(int zone, RoomData roomData, Vector2Int gridPosition)
     {
-        if (doorPrefab == null)
-        {
-            Debug.LogError("Door prefab is null - cannot spawn doors");
-            return;
-        }
-
         if (!spawnedRooms.ContainsKey(gridPosition))
         {
             Debug.LogError($"Room at {gridPosition} not found in spawned rooms");
@@ -416,13 +411,24 @@ public class ZoneGeneratorAsync : MonoBehaviour
 
             if (!doorData.isImpassable)
             {
-                SpawnDoor(roomData, direction, doorData, gridPosition);
+                SpawnDoor(zone, roomData, direction, doorData, gridPosition);
             }
         }
     }
 
-    private void SpawnDoor(RoomData roomData, Door.DoorDirection direction, DoorData doorData, Vector2Int roomGridPos)
+    private void SpawnDoor(int zone, RoomData roomData, Door.DoorDirection direction, DoorData doorData, Vector2Int roomGridPos)
     {
+        Door doorPrefab = null;
+        switch (zone)
+        {
+            case 0:
+                doorPrefab = swampDoorPrefab;
+                break;
+            case 1:
+                doorPrefab = forestDoorPrefab;
+                break;
+        }
+
         if (doorPrefab == null || roomData.tileLayout == null)
         {
             Debug.LogError("Door prefab or room tile layout is null");

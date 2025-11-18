@@ -13,7 +13,8 @@ public class RoomFactory : MonoBehaviour
     [SerializeField] private ShopAlternate shopAlternatePrefab;
     [SerializeField] private GameObject bossPortalPrefab;
     [SerializeField] private GameObject totemPrefab;
-    [SerializeField] private SubZoneFinalDoor subZoneFinalDoorPrefab;
+    [SerializeField] private SubZoneFinalDoor swampSubZoneFinalDoorPrefab;
+    [SerializeField] private SubZoneFinalDoor forestSubZoneFinalDoorPrefab;
 
 
     #endregion
@@ -25,7 +26,7 @@ public class RoomFactory : MonoBehaviour
     // Spawns a room at the given grid position with the given room data
     // Uses auto-tiling for tilemap generation
     // Sets the tiles, then returns the new Room component
-    public Room SpawnRoom(Tilemap roomsTilemap, AutoTileSet autoTileSet, Transform roomParent, RoomData roomData, int roomLength)
+    public Room SpawnRoom(int zone, Tilemap roomsTilemap, AutoTileSet autoTileSet, Transform roomParent, RoomData roomData, int roomLength)
     {
         // Get the offset of this room in tile coordinates
         Vector2Int tileOffset = new Vector2Int(
@@ -164,6 +165,7 @@ public class RoomFactory : MonoBehaviour
                 );
 
                 // Spawn the SubZoneFinalDoor prefab
+                SubZoneFinalDoor subZoneFinalDoorPrefab = (zone == 0) ? swampSubZoneFinalDoorPrefab : forestSubZoneFinalDoorPrefab;
                 SubZoneFinalDoor finalDoorInstance = Instantiate(subZoneFinalDoorPrefab, finalDoorWorldPos, Quaternion.identity);
                 finalDoorInstance.transform.SetParent(roomObject.transform);
 
