@@ -202,11 +202,13 @@ public class SaveManager : MonoBehaviour
 
 public enum SaveVariable
 {
-    RemainingHealth,
+    CurrentHealth,
+    MaxHealth,
     CurrentLevel,
     Lotus,
     Woodpeckers,
     CollectedPowerflies,
     PurchasedPowerFlies,
-    GoldenFlies
+    GoldenFlies,
+    RandomSeed
 }

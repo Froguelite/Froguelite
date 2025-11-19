@@ -3,20 +3,20 @@ using UnityEngine;
 
 public class SaveExample : MonoBehaviour
 {
-    // Player's current health
-    [SerializeField] private int healthLevel = 100;
+    //// Player's current health
+    //[SerializeField] private int healthLevel = 100;
 
-    // Number of coins the player has
-    [SerializeField] private int _coinNum = 5;
+    //// Number of coins the player has
+    //[SerializeField] private int _coinNum = 5;
 
-    // Player's position in the game world
-    [SerializeField] private Vector3 playerPosition;
+    //// Player's position in the game world
+    //[SerializeField] private Vector3 playerPosition;
 
-    // Player's inventory items
-    [SerializeField] private List<string> inventory;
+    //// Player's inventory items
+    //[SerializeField] private List<string> inventory;
 
-    // Example enemy data
-    [SerializeField] private EnemyDataExample enemy;
+    //// Example enemy data
+    //[SerializeField] private EnemyDataExample enemy;
 
     // Property that saves automatically whenever CoinNum changes
     //private int CoinNum
@@ -62,11 +62,11 @@ public class SaveExample : MonoBehaviour
     }
 
     // Save the player's health to profile
-    private void SaveHealth()
-    {
-        SaveManager.SaveForProfile(SaveVariable.PlayerHealth, healthLevel);
-        Debug.Log("Health saved: " + healthLevel);
-    }
+    //private void SaveHealth()
+    //{
+    //    SaveManager.SaveForProfile(SaveVariable.PlayerHealth, healthLevel);
+    //    Debug.Log("Health saved: " + healthLevel);
+    //}
 
     // Save the player's coins to profile (alternative using property)
     //private void SaveCoins()
@@ -97,19 +97,19 @@ public class SaveExample : MonoBehaviour
     //}
 
     // Load the player's health from profile
-    private void LoadHealth()
-    {
-        try
-        {
-            healthLevel = SaveManager.LoadForProfile<int>(SaveVariable.PlayerHealth);
-            Debug.Log("Health loaded: " + healthLevel);
-        }
-        catch (KeyNotFoundException)
-        {
-            healthLevel = 100; // default value
-            Debug.LogWarning("No saved health found. Using default: " + healthLevel);
-        }
-    }
+    //private void LoadHealth()
+    //{
+    //    try
+    //    {
+    //        healthLevel = SaveManager.LoadForProfile<int>(SaveVariable.PlayerHealth);
+    //        Debug.Log("Health loaded: " + healthLevel);
+    //    }
+    //    catch (KeyNotFoundException)
+    //    {
+    //        healthLevel = 100; // default value
+    //        Debug.LogWarning("No saved health found. Using default: " + healthLevel);
+    //    }
+    //}
 
     //// Load the player's coins from profile
     //private void LoadCoins()

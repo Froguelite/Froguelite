@@ -96,12 +96,14 @@ public class LevelManager : MonoBehaviour
             await Task.Delay(2000); // Wait for bubble effect duration
         }
 
-        do
+        if(loadEffect == LoadEffect.LoadingScreen)
         {
-            await Task.Delay(100);
-            if (loadEffect == LoadEffect.LoadingScreen)
+            do
+            {
+                await Task.Delay(100);
                 progressBar.fillAmount = scene.progress;
-        } while (scene.progress < 0.9f);
+            } while (scene.progress < 0.9f);
+        }
 
         scene.allowSceneActivation = true;
 
