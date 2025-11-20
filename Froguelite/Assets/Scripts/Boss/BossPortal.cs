@@ -20,7 +20,8 @@ public class BossPortal : MonoBehaviour
 
             //LevelManager.Instance.LoadScene("BossScene");
             //Change to use enum instead of string
-            LevelManager.Instance.LoadScene(LevelManager.Scenes.BossScene, LevelManager.LoadEffect.Portal);
+            //Supress await _=
+            _ = LevelManager.Instance.LoadScene(LevelManager.Scenes.BossScene, LevelManager.LoadEffect.Portal);
         }
     }
 }

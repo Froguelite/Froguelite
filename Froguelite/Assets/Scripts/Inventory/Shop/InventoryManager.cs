@@ -26,6 +26,9 @@ public class InventoryManager : MonoBehaviour
     }
 
     public List<PowerFlyData> collectedPowerFlies; //save and load variable
+    private PowerFlyData[] allPowerFlyData;
+    //private HashSet<string> collectedFlyIDs = new HashSet<string>();
+
 
     public event Action<int> OnLotusesChanged;
     public event Action<int> OnWoodpeckersChanged;
@@ -70,6 +73,8 @@ public class InventoryManager : MonoBehaviour
 
         Instance = this;
 
+        LoadAllPowerFlyData();
+
         //Subscribe to save and load actions
         SaveManager.SaveData += SaveLotuses;
         SaveManager.SaveData += SaveWoodpeckers;
@@ -90,6 +95,27 @@ public class InventoryManager : MonoBehaviour
         SaveManager.LoadData -= LoadLotuses;
         SaveManager.LoadData -= LoadWoodpeckers;
         SaveManager.LoadData -= LoadCollectedPowerFlies;
+    }
+
+    // Loads all power fly data from resources
+    private void LoadAllPowerFlyData()
+    {
+        allPowerFlyData = Resources.LoadAll<PowerFlyData>("");
+
+        //// Organize power flies by rarity tier
+        //powerFlyDatasByRarityTier = new Dictionary<PowerFlyData.FlyRarity, List<PowerFlyData>>();
+        //for (int rarityTier = 0; rarityTier < 3; rarityTier++)
+        //{
+        //    PowerFlyData.FlyRarity currentRarity = (PowerFlyData.FlyRarity)rarityTier;
+        //    powerFlyDatasByRarityTier[currentRarity] = new List<PowerFlyData>();
+        //    foreach (PowerFlyData data in allPowerFlyDatas)
+        //    {
+        //        if (data.flyRarity == currentRarity)
+        //        {
+        //            powerFlyDatasByRarityTier[currentRarity].Add(data);
+        //        }
+        //    }
+        //}
     }
 
     #endregion
@@ -166,34 +192,89 @@ public class InventoryManager : MonoBehaviour
 
     private void SaveCollectedPowerFlies()
     {
-        SaveManager.SaveForProfile<List<PowerFlyData>>(SaveVariable.CollectedPowerflies, collectedPowerFlies);
+        List<string> collectedList = new List<string>();
+        foreach(PowerFlyData powerfly in collectedPowerFlies)
+        {
+            collectedList.Add(powerfly.FlyID);
+        }
+
+        SaveManager.SaveForProfile<List<string>>(SaveVariable.CollectedPowerflies, collectedList);
         Debug.Log("Saved collectedpowerflies to profile data");
     }
 
+    //private void LoadCollectedPowerFlies()
+    //{
+    //    try
+    //    {
+    //        collectedPowerFlies = SaveManager.LoadForProfile<List<PowerFlyData>>(SaveVariable.CollectedPowerflies);
+    //        Debug.Log($"[InventoryManager] Loaded {collectedPowerFlies.Count} power flies from profile {SaveManager.activeProfile}");
+    //    }
+    //    catch (System.Collections.Generic.KeyNotFoundException)
+    //    {
+    //        // No saved data yet, use default value (0)
+    //        collectedPowerFlies = new List<PowerFlyData>();
+    //        Debug.Log($"[InventoryManager] No saved powerflies found, defaulting to 0");
+    //    }
+    //    catch (System.Exception ex)
+    //    {
+    //        // Handle other exceptions (e.g., no active profile set)
+    //        Debug.LogWarning($"[InventoryManager] Failed to load powerflies: {ex.Message}");
+    //        collectedPowerFlies = new List<PowerFlyData>();
+    //    }
+
+    //    //collectedPowerFlies.Add(powerFly);
+    //    OnPowerFlyCountChanged?.Invoke(collectedPowerFlies.Count);
+    //    //if (powerFlyDef) AddItem(powerFlyDef, 1);
+    //    OnInventoryChanged?.Invoke();
+    //}
+
+    // Loads the list of purchased flies from SaveManager
     private void LoadCollectedPowerFlies()
     {
+        List<string> collectedList;
+        collectedPowerFlies = new List<PowerFlyData>();
+        //HashSet<string> collectedFlyIDs;
         try
         {
-            collectedPowerFlies = SaveManager.LoadForProfile<List<PowerFlyData>>(SaveVariable.CollectedPowerflies);
-            Debug.Log($"[InventoryManager] Loaded {collectedPowerFlies.Count} power flies from profile {SaveManager.activeProfile}");
+            collectedList = SaveManager.LoadForProfile<List<string>>(SaveVariable.CollectedPowerflies);
+            //collectedFlyIDs = new HashSet<string>(collectedList);
+            Debug.Log($"[InventoryManager] Loaded {collectedList.Count} power flies from profile {SaveManager.activeProfile}");
         }
         catch (System.Collections.Generic.KeyNotFoundException)
         {
-            // No saved data yet, use default value (0)
-            collectedPowerFlies = new List<PowerFlyData>();
+            //collectedFlyIDs = new HashSet<string>();
+            collectedList = new List<string>();
             Debug.Log($"[InventoryManager] No saved powerflies found, defaulting to 0");
         }
         catch (System.Exception ex)
         {
             // Handle other exceptions (e.g., no active profile set)
             Debug.LogWarning($"[InventoryManager] Failed to load powerflies: {ex.Message}");
-            collectedPowerFlies = new List<PowerFlyData>();
+            collectedList = new List<string>();
         }
 
-        //collectedPowerFlies.Add(powerFly);
-        OnPowerFlyCountChanged?.Invoke(collectedPowerFlies.Count);
-        //if (powerFlyDef) AddItem(powerFlyDef, 1);
-        OnInventoryChanged?.Invoke();
+        //Add powerflies in the list to collectedpowerflies list
+        if (collectedList.Count > 0)
+        {
+            foreach(string flyID in collectedList)
+            {
+                //Check which fly it is and add it to collected flies
+                foreach(PowerFlyData flyData in allPowerFlyData)
+                {
+                    if(flyData.FlyID == flyID)
+                    {
+                        AddPowerFly(flyData);
+                        PowerFlyFactory.Instance.MarkPowerFlyAsCollected(flyData);
+                        //Apply powerfly's effect
+                        foreach (PowerFlyEffect effect in flyData.effects)
+                        {
+                            effect.ApplyEffect();
+                        }
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     #endregion

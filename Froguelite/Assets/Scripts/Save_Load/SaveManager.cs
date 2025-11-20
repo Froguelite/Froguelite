@@ -157,6 +157,7 @@ public class SaveManager : MonoBehaviour
                 catch (Exception ex) { Debug.LogError($"[SaveManager] LoadData subscriber failed: {ex}"); }
             }
         }
+
     }
 
     #endregion
@@ -175,8 +176,6 @@ public class SaveManager : MonoBehaviour
         string fileName = "profile_" + activeProfile + Instance.fileNameEnd;
         Instance.fullPath = Path.Combine(Instance.folderPath, fileName);
         Debug.Log($"[SaveManager] Active profile set to {activeProfile}, file path: {Instance.fullPath}");
-
-        LoadDataToScript();
     }
 
     public static string GetFileNameEnd()
@@ -210,5 +209,7 @@ public enum SaveVariable
     CollectedPowerflies,
     PurchasedPowerFlies,
     GoldenFlies,
-    RandomSeed
+    RandomSeed,
+    CurrentZone,
+    CurrentSubZone
 }

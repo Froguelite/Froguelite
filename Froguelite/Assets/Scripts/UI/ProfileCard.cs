@@ -65,7 +65,7 @@ public class ProfileCard : MonoBehaviour
         // Set the active profile in SaveManager before loading the scene
         SaveManager.SetActiveProfile(profileData.profileNumber);
         
-        UIManager.Instance.OnProfileStartClick(LevelManager.Scenes.StumpScene);
+        UIManager.Instance.OnProfileStartClick(profileData.sceneToLoad);
     }
 
     public void OnDeleteProfile()
@@ -82,6 +82,9 @@ public class ProfileCard : MonoBehaviour
         //Unsubscribe from event and hide input field
         profileNameInputField.GetComponent<InputFieldGrabber>().OnInputGrabbed -= UpdateProfileName;
         ShowNameTMP();
+
+        //Save changes to file
+        ProfileUIManager.Instance.SaveProfileCardsData();
     }
 
     #endregion

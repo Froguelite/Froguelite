@@ -108,6 +108,7 @@ public class ZoneGenerator : MonoBehaviour
         {
             randomSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
             UnityEngine.Random.InitState(randomSeed);
+            SaveManager.WriteToFile(); //Need to save the next seed for generation ?
         }
 
         roomGraph = RoomGraphGenerator.GetRoomGraph(8, subZone);

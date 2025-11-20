@@ -76,7 +76,8 @@ public class GameManager : MonoBehaviour
     {
         // TEMPORARY: Load stump scene after win
         yield return new WaitForSeconds(10f);
-        LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, LevelManager.LoadEffect.Portal);
+        //Supress await _=
+        _ = LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, LevelManager.LoadEffect.Portal);
     }
 
 

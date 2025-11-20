@@ -19,7 +19,7 @@ public class ProfileUIManager : MonoBehaviour
 
     private GameObject[] profileCards;
 
-    private string defaultSceneName = "TestMainScene-AA"; //TO DO: Replace with actual default scene name
+    private LevelManager.Scenes defaultSceneName = LevelManager.Scenes.StumpScene; //TO DO: Replace with actual default scene name
 
     private const int maxProfiles = 3;
 
@@ -75,6 +75,7 @@ public class ProfileUIManager : MonoBehaviour
     private void OnApplicationQuit()
     {
         SaveProfileCardsData();
+        Debug.Log("Called Save profile card data");
     }
 
     #endregion
@@ -105,7 +106,7 @@ public class ProfileUIManager : MonoBehaviour
         CreateExistingProfiles();
     }
 
-    private void SaveProfileCardsData()
+    public void SaveProfileCardsData()
     {
         string filePath = Path.Combine(Application.persistentDataPath, profileCardsFileName);
 
@@ -258,6 +259,14 @@ public class ProfileUIManager : MonoBehaviour
 
         return profileNumbers;
     }
+
+    public void UpdateSceneToLoadForProfile(int profileNumber, LevelManager.Scenes scene)
+    {
+        profileCardDataList.profiles[profileNumber].sceneToLoad = scene;
+
+        //Save changes to file
+        SaveProfileCardsData();
+    }
     #endregion
 }
 
@@ -266,17 +275,17 @@ public class ProfileCardData
 {
     public int profileNumber;
     public string name;
-    public string sceneToLoad;
+    public LevelManager.Scenes sceneToLoad;
     //public int sceneToLoadInt;
 
-    public ProfileCardData(int number, string scene, string name)
+    public ProfileCardData(int number, LevelManager.Scenes scene, string name)
     {
         profileNumber = number;
         sceneToLoad = scene;
         this.name = name;
     }
 
-    public ProfileCardData(int number, string scene)
+    public ProfileCardData(int number, LevelManager.Scenes scene)
     {
         profileNumber = number;
         sceneToLoad = scene;

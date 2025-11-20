@@ -548,7 +548,8 @@ public class BossController : MonoBehaviour
     private IEnumerator WaitThenLoadNextZone()
     {
         yield return new WaitForSeconds(10f);
-        LevelManager.Instance.LoadScene(LevelManager.Scenes.MainScene, LevelManager.LoadEffect.Portal);
+        //Supress await _=
+        _ = LevelManager.Instance.LoadScene(LevelManager.Scenes.MainScene, LevelManager.LoadEffect.Portal);
     }
 
     public void ForceEnterDefense() => state = State.DefensePhase;

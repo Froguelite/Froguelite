@@ -64,7 +64,6 @@ public class PowerFlyFactory : MonoBehaviour
         SaveManager.LoadData -= LoadPurchasedFlies;
     }
 
-
     // Loads all power fly data from resources
     private void LoadAllPowerFlyData()
     {
