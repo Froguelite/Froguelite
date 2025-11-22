@@ -223,7 +223,8 @@ public class ProfileUIManager : MonoBehaviour
         //Remove from profileCardDataList
         profileCardDataList.profiles.Remove(cardData);
 
-        //TO DO: Delete save file
+        //Delete save file
+        SaveManager.DeleteProfile(cardData.profileNumber);
     }
 
     #endregion

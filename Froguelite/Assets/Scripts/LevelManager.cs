@@ -55,14 +55,14 @@ public class LevelManager : MonoBehaviour
 
         //Subscribe to save and load
         SaveManager.SaveData += SaveZones;
-        SaveManager.LoadData += LoadZones;
+        SaveManager.LoadZone += LoadZones;
     }
 
     private void OnDestroy()
     {
         //Unsubscribe to save and load
         SaveManager.SaveData -= SaveZones;
-        SaveManager.LoadData -= LoadZones;
+        SaveManager.LoadZone -= LoadZones;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -186,7 +186,9 @@ public class LevelManager : MonoBehaviour
                 ResetZoneProgression();
                 FindAnyObjectByType<StumpManager>().LoadStump();
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
-                
+
+                useLoadedVal = false; //if start of profile play
+
                 // Force show the golden fly HUD in the stump scene
                 if (GoldenFlyHUD.Instance != null)
                 {

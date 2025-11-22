@@ -158,8 +158,9 @@ public class UIManager : MonoBehaviour
         //Switch to Loading Screen and call LevelManager to load scene
         PanelSwitch(UIPanels.LoadingScreen);
         LevelManager.Instance.useLoadedVal = true;
+        SaveManager.LoadDataBeforeGeneration();
         await LevelManager.Instance.LoadScene(sceneToLoad, LevelManager.LoadEffect.LoadingScreen);
-        SaveManager.LoadDataToScript(); //Load from save file after scene is loaded
+        SaveManager.LoadDataAfterGeneration(); //Load from save file after scene is loaded
     }
 
     public void OnSceneLoadReturn(UIPanels panelToReturnTo)

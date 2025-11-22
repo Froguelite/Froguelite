@@ -27,6 +27,7 @@ public class InventoryManager : MonoBehaviour
 
     public List<PowerFlyData> collectedPowerFlies; //save and load variable
     private PowerFlyData[] allPowerFlyData;
+    [SerializeField] private string HeartyFlyID; //Must be updated manually
     //private HashSet<string> collectedFlyIDs = new HashSet<string>();
 
 
@@ -202,32 +203,6 @@ public class InventoryManager : MonoBehaviour
         Debug.Log("Saved collectedpowerflies to profile data");
     }
 
-    //private void LoadCollectedPowerFlies()
-    //{
-    //    try
-    //    {
-    //        collectedPowerFlies = SaveManager.LoadForProfile<List<PowerFlyData>>(SaveVariable.CollectedPowerflies);
-    //        Debug.Log($"[InventoryManager] Loaded {collectedPowerFlies.Count} power flies from profile {SaveManager.activeProfile}");
-    //    }
-    //    catch (System.Collections.Generic.KeyNotFoundException)
-    //    {
-    //        // No saved data yet, use default value (0)
-    //        collectedPowerFlies = new List<PowerFlyData>();
-    //        Debug.Log($"[InventoryManager] No saved powerflies found, defaulting to 0");
-    //    }
-    //    catch (System.Exception ex)
-    //    {
-    //        // Handle other exceptions (e.g., no active profile set)
-    //        Debug.LogWarning($"[InventoryManager] Failed to load powerflies: {ex.Message}");
-    //        collectedPowerFlies = new List<PowerFlyData>();
-    //    }
-
-    //    //collectedPowerFlies.Add(powerFly);
-    //    OnPowerFlyCountChanged?.Invoke(collectedPowerFlies.Count);
-    //    //if (powerFlyDef) AddItem(powerFlyDef, 1);
-    //    OnInventoryChanged?.Invoke();
-    //}
-
     // Loads the list of purchased flies from SaveManager
     private void LoadCollectedPowerFlies()
     {
@@ -266,6 +241,7 @@ public class InventoryManager : MonoBehaviour
                         AddPowerFly(flyData);
                         PowerFlyFactory.Instance.MarkPowerFlyAsCollected(flyData);
                         //Apply powerfly's effect
+                        if (flyID == HeartyFlyID) continue; //effect already applied
                         foreach (PowerFlyEffect effect in flyData.effects)
                         {
                             effect.ApplyEffect();
