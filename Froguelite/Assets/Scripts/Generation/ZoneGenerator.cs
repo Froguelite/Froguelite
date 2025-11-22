@@ -71,7 +71,7 @@ public class ZoneGenerator : MonoBehaviour
         // TODO: Temporary, chooses a random seed every time
         UnityEngine.Random.InitState(UnityEngine.Random.Range(int.MinValue, int.MaxValue));
 
-        roomGraph = RoomGraphGenerator.GetRoomGraph(8, subZone);
+        roomGraph = RoomGraphGenerator.GetRoomGraph(zone, 8, subZone);
         combinedTileLayout = SpawnRoomsFromGraph(zone);
         MinimapManager.Instance.InitializeMinimap(combinedTileLayout);
 

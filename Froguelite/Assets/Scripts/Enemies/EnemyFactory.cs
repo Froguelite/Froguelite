@@ -13,10 +13,14 @@ public class EnemyFactory : MonoBehaviour
 
     public static EnemyFactory Instance { get; private set; }
 
-    private RoomEnemySpawnGroup[] roomEnemySpawnGroups;
-    private RoomEnemySpawnGroup[] subBossEnemySpawnGroups;
-    [SerializeField] private string roomEnemySpawnGroupResourcePath = "RoomEnemySpawnGroups/Zone1/Basic";
-    [SerializeField] private string subBossEnemySpawnGroupResourcePath = "RoomEnemySpawnGroups/Zone1/SubBosses";
+    private RoomEnemySpawnGroup[] swampRoomEnemySpawnGroups;
+    private RoomEnemySpawnGroup[] swampSubBossEnemySpawnGroups;
+    private RoomEnemySpawnGroup[] forestRoomEnemySpawnGroups;
+    private RoomEnemySpawnGroup[] forestSubBossEnemySpawnGroups;
+    [SerializeField] private string swampRoomEnemySpawnGroupResourcePath = "RoomEnemySpawnGroups/Zone1/Basic";
+    [SerializeField] private string swampSubBossEnemySpawnGroupResourcePath = "RoomEnemySpawnGroups/Zone1/SubBosses";
+    [SerializeField] private string forestRoomEnemySpawnGroupResourcePath = "RoomEnemySpawnGroups/Zone2/Basic";
+    [SerializeField] private string forestSubBossEnemySpawnGroupResourcePath = "RoomEnemySpawnGroups/Zone2/SubBosses";
 
 
     #endregion
@@ -43,19 +47,30 @@ public class EnemyFactory : MonoBehaviour
     // Loads all RoomEnemySpawnGroup assets from the Resources folder
     private void LoadEnemySpawnGroups()
     {
-        roomEnemySpawnGroups = Resources.LoadAll<RoomEnemySpawnGroup>(roomEnemySpawnGroupResourcePath);
-        if (roomEnemySpawnGroups.Length == 0)
-            Debug.LogWarning($"No RoomEnemySpawnGroup assets found in {roomEnemySpawnGroupResourcePath}!");
+        swampRoomEnemySpawnGroups = Resources.LoadAll<RoomEnemySpawnGroup>(swampRoomEnemySpawnGroupResourcePath);
+        if (swampRoomEnemySpawnGroups.Length == 0)
+            Debug.LogWarning($"No RoomEnemySpawnGroup assets found in {swampRoomEnemySpawnGroupResourcePath}!");
         else
-            Debug.Log($"Loaded {roomEnemySpawnGroups.Length} basic spawn groups");
+            Debug.Log($"Loaded {swampRoomEnemySpawnGroups.Length} basic spawn groups");
 
-        subBossEnemySpawnGroups = Resources.LoadAll<RoomEnemySpawnGroup>(subBossEnemySpawnGroupResourcePath);
-        if (subBossEnemySpawnGroups.Length == 0)
-            Debug.LogWarning($"No RoomEnemySpawnGroup assets found in {subBossEnemySpawnGroupResourcePath}!");
+        swampSubBossEnemySpawnGroups = Resources.LoadAll<RoomEnemySpawnGroup>(swampSubBossEnemySpawnGroupResourcePath);
+        if (swampSubBossEnemySpawnGroups.Length == 0)
+            Debug.LogWarning($"No RoomEnemySpawnGroup assets found in {swampSubBossEnemySpawnGroupResourcePath}!");
         else
-            Debug.Log($"Loaded {subBossEnemySpawnGroups.Length} sub-boss spawn groups");
+            Debug.Log($"Loaded {swampSubBossEnemySpawnGroups.Length} sub-boss spawn groups");
+
+        forestRoomEnemySpawnGroups = Resources.LoadAll<RoomEnemySpawnGroup>(forestRoomEnemySpawnGroupResourcePath);
+        if (forestRoomEnemySpawnGroups.Length == 0)
+            Debug.LogWarning($"No RoomEnemySpawnGroup assets found in {forestRoomEnemySpawnGroupResourcePath}!");
+        else
+            Debug.Log($"Loaded {forestRoomEnemySpawnGroups.Length} basic spawn groups");
+
+        forestSubBossEnemySpawnGroups = Resources.LoadAll<RoomEnemySpawnGroup>(forestSubBossEnemySpawnGroupResourcePath);
+        if (forestSubBossEnemySpawnGroups.Length == 0)
+            Debug.LogWarning($"No RoomEnemySpawnGroup assets found in {forestSubBossEnemySpawnGroupResourcePath}!");
+        else
+            Debug.Log($"Loaded {forestSubBossEnemySpawnGroups.Length} sub-boss spawn groups");
     }
-
 
     #endregion
 
@@ -64,11 +79,12 @@ public class EnemyFactory : MonoBehaviour
 
 
     // Spawns all enemies for a given room based on a randomly chosen spawn group
-    public List<IEnemy> SpawnEnemiesForRoom(Room room)
+    public List<IEnemy> SpawnEnemiesForRoom(int zone, Room room)
     {
         List<IEnemy> spawnedEnemies = new List<IEnemy>();
 
         // Choose a random spawn group
+        RoomEnemySpawnGroup[] roomEnemySpawnGroups = zone == 0 ? swampRoomEnemySpawnGroups : forestRoomEnemySpawnGroups;
         RoomEnemySpawnGroup spawnGroup = roomEnemySpawnGroups[Random.Range(0, roomEnemySpawnGroups.Length)];
 
         // Loop through each enemy spawn entry and spawn appropriate enemies
@@ -91,11 +107,12 @@ public class EnemyFactory : MonoBehaviour
 
 
     // Spawns a sub-zone boss for the given room
-    public List<IEnemy> SpawnSubZoneBossForRoom(Room room)
+    public List<IEnemy> SpawnSubZoneBossForRoom(int zone, Room room)
     {
         List<IEnemy> spawnedEnemies = new List<IEnemy>();
 
         // Choose a random spawn group
+        RoomEnemySpawnGroup[] subBossEnemySpawnGroups = zone == 0 ? swampSubBossEnemySpawnGroups : forestSubBossEnemySpawnGroups;
         RoomEnemySpawnGroup spawnGroup = subBossEnemySpawnGroups[Random.Range(0, subBossEnemySpawnGroups.Length)];
 
         // Loop through each enemy spawn entry and spawn appropriate enemies

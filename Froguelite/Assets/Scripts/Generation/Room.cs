@@ -111,9 +111,9 @@ public class Room : MonoBehaviour
     public void GenerateEnemies()
     {
         if (roomData.roomType == RoomType.Normal)
-            enemies = EnemyFactory.Instance.SpawnEnemiesForRoom(this);
+            enemies = EnemyFactory.Instance.SpawnEnemiesForRoom(roomData.zone, this);
         else if (roomData.roomType == RoomType.SubZoneBoss)
-            enemies = EnemyFactory.Instance.SpawnSubZoneBossForRoom(this);
+            enemies = EnemyFactory.Instance.SpawnSubZoneBossForRoom(roomData.zone, this);
     }
 
 
@@ -357,6 +357,7 @@ public class RoomData
     public float genWeight = 1f; // Weight for random selection during generation (higher = more likely)
     public bool isLeaf = false; // Whether this room is a leaf node (dead end) in the graph
     public PerlinNoiseSettings originalNoiseSettings; // Original noise settings used for generating the room layout
+    public int zone = 0; // Zone this room belongs to (0 = swamp, 1 = forest, etc.)
 
 
     #endregion
@@ -366,10 +367,11 @@ public class RoomData
 
 
     // Constructor to initialize base RoomData with type and coordinates. Doors are set as empty.
-    public RoomData(Room.RoomType roomType, Vector2Int roomCoordinate)
+    public RoomData(Room.RoomType roomType, Vector2Int roomCoordinate, int zone)
     {
         this.roomType = roomType;
         this.roomCoordinate = roomCoordinate;
+        this.zone = zone;
         InitializeDoors();
     }
 

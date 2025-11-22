@@ -94,7 +94,7 @@ public class ZoneGeneratorAsync : MonoBehaviour
 
         // Step 1: Generate room graph (this is fast, can be done immediately)
         OnGenerationProgress?.Invoke(0.05f);
-        roomGraph = RoomGraphGenerator.GetRoomGraph(8, subZone);
+        roomGraph = RoomGraphGenerator.GetRoomGraph(zone, 8, subZone);
         yield return null; // Yield to prevent frame spike
 
         Debug.Log("Step 1: Room graph successfully generated.");
@@ -378,7 +378,7 @@ public class ZoneGeneratorAsync : MonoBehaviour
         );
 
         // Create a RoomData for this water-only room for minimap and other systems
-        RoomData waterRoomData = new RoomData(Room.RoomType.Normal, gridPosition);
+        RoomData waterRoomData = new RoomData(Room.RoomType.Normal, gridPosition, zone);
         waterRoomData.tileLayout = waterLayout;
         waterRoomData.roomLength = roomLength;
 

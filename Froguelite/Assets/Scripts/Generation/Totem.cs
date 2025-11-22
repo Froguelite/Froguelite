@@ -223,7 +223,7 @@ public class Totem : MonoBehaviour
     {
         currentWaveEnemies.Clear();
 
-        List<IEnemy> spawnedEnemies = EnemyFactory.Instance.SpawnEnemiesForRoom(parentRoom);
+        List<IEnemy> spawnedEnemies = EnemyFactory.Instance.SpawnEnemiesForRoom(parentRoom.roomData.zone, parentRoom);
 
         foreach (IEnemy newEnemy in spawnedEnemies)
         {

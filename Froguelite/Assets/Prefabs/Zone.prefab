@@ -255,8 +255,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d61132ba75a1c8248b4c607884fe7103, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFactory
-  roomEnemySpawnGroupResourcePath: RoomEnemySpawnGroups/Zone1
-  subBossEnemySpawnGroupResourcePath: RoomEnemySpawnGroups/Zone1/SubBosses
+  swampRoomEnemySpawnGroupResourcePath: RoomEnemySpawnGroups/Zone1/Basic
+  swampSubBossEnemySpawnGroupResourcePath: RoomEnemySpawnGroups/Zone1/SubBosses
+  forestRoomEnemySpawnGroupResourcePath: RoomEnemySpawnGroups/Zone2/Basic
+  forestSubBossEnemySpawnGroupResourcePath: RoomEnemySpawnGroups/Zone2/SubBosses
 --- !u!114 &6276265264647561921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -592,6 +594,54 @@ MonoBehaviour:
   - tile: {fileID: 11400000, guid: 624053f94b9f5a349b0615fe824fa5c8, type: 2}
     overrideArea: 1
     area: 0
+  - tile: {fileID: 11400000, guid: 0ba79b960366fd04b8ca46b6b25c3c47, type: 2}
+    overrideArea: 1
+    area: 1
+  - tile: {fileID: 11400000, guid: 60cc8b6e4e265b84cb5f411af302450c, type: 2}
+    overrideArea: 1
+    area: 1
+  - tile: {fileID: 11400000, guid: 89edc7a5e016d714685f4e91eb05145f, type: 2}
+    overrideArea: 1
+    area: 1
+  - tile: {fileID: 11400000, guid: 921dfa8228a08c848b06172005f511b7, type: 2}
+    overrideArea: 1
+    area: 1
+  - tile: {fileID: 11400000, guid: 363c54fd2696d51468e81a873864e387, type: 2}
+    overrideArea: 1
+    area: 1
+  - tile: {fileID: 11400000, guid: 2868ad7617784e5469e2262ef69a4883, type: 2}
+    overrideArea: 1
+    area: 1
+  - tile: {fileID: 11400000, guid: ddda0e06c1806c84cb4f1e5216bd9cf0, type: 2}
+    overrideArea: 1
+    area: 0
+  - tile: {fileID: 11400000, guid: ecabb03636c5f8241a629821f372bfab, type: 2}
+    overrideArea: 1
+    area: 1
+  - tile: {fileID: 11400000, guid: 904a6abf76e135d4aa78a4a12b15cdb1, type: 2}
+    overrideArea: 1
+    area: 1
+  - tile: {fileID: 11400000, guid: 36b3c6cd3c37e7e4196c2eef4226a46f, type: 2}
+    overrideArea: 1
+    area: 1
+  - tile: {fileID: 11400000, guid: d8379395c72f4504a8e54e8bb7660eed, type: 2}
+    overrideArea: 1
+    area: 1
+  - tile: {fileID: 11400000, guid: d7140f2d8357c424e98a5dbefe6230e9, type: 2}
+    overrideArea: 1
+    area: 1
+  - tile: {fileID: 11400000, guid: 56bb8d1d7fe361e4e8a89503b98c6353, type: 2}
+    overrideArea: 1
+    area: 1
+  - tile: {fileID: 11400000, guid: 76bc5ecb0a118524ba022a0ad817c09f, type: 2}
+    overrideArea: 1
+    area: 1
+  - tile: {fileID: 11400000, guid: 91646124b4cdfd44f988b56c9fbd1a68, type: 2}
+    overrideArea: 1
+    area: 1
+  - tile: {fileID: 11400000, guid: c80f49399020cb644ad41d2b64db675c, type: 2}
+    overrideArea: 1
+    area: 1
 --- !u!1 &1820787995636504994
 GameObject:
   m_ObjectHideFlags: 0

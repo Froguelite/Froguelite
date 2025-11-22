@@ -30,6 +30,7 @@ public class EnemyBase : MonoBehaviour, IEnemy
 
     [Header("Effects")]
     [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private bool useKnockback = true;
     [SerializeField] private float knockbackDuration = 0.1f; // How long knockback lasts
     [SerializeField] protected SpriteRenderer spriteRenderer;
     [SerializeField] private FlipbookAnimator defeatSmokeAnimator;
@@ -133,7 +134,7 @@ public class EnemyBase : MonoBehaviour, IEnemy
         FlashSprite();
 
         // Apply knockback if force is greater than 0
-        if (knockbackForce > 0f)
+        if (knockbackForce > 0f && useKnockback)
         {
             ApplyKnockback(knockbackForce);
         }

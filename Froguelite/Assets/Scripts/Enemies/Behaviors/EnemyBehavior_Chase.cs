@@ -28,6 +28,20 @@ public class EnemyBehavior_Chase : MonoBehaviour
     public bool stopChaseOverride = false; // If true, stops the chase regardless of other conditions
     public UnityEvent onDestinationReached { get; private set; } = new UnityEvent();
 
+    // Speed control property that immediately applies to nav agent
+    public float Speed
+    {
+        get => chaseSettings.chaseSpeed;
+        set
+        {
+            chaseSettings.chaseSpeed = value;
+            if (navAgent != null)
+            {
+                navAgent.speed = value;
+            }
+        }
+    }
+
 
     #endregion
 
