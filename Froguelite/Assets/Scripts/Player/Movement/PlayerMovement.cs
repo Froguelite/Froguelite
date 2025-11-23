@@ -20,6 +20,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
+    private Vector2 lastMoveDirection = Vector2.right; // Track last movement direction, default to right
     private Vector2 currentVel;
 
     private bool isManualMoving = false;
@@ -121,6 +122,12 @@ public class PlayerMovement : MonoBehaviour
     public void SetMoveInputAxes(Vector2 newMoveInput)
     {
         moveInput = newMoveInput;
+        
+        // Track last movement direction when there's valid input
+        if (newMoveInput.magnitude > 0.1f)
+        {
+            lastMoveDirection = newMoveInput.normalized;
+        }
     }
 
 
@@ -281,22 +288,35 @@ public class PlayerMovement : MonoBehaviour
     // Initiates a dash in the current movement direction
     public void InitiateDash()
     {
-        // Check if player can dash (not on cooldown, can move, not manually moving, not attacking)
-        if (dashCooldownTimer > 0f || !canMove || isManualMoving || isDashing || isAttackingOverride)
+        // Check if player can dash (not on cooldown, can move, not manually moving, already dashing)
+        if (dashCooldownTimer > 0f || !canMove || isManualMoving || isDashing)
             return;
+
+        // If attacking, immediately retract tongue and stop attack
+        if (isAttackingOverride && PlayerAttack.Instance.IsAttacking())
+        {
+            PlayerAttack.Instance.ImmediateRetract();
+        }
 
         // Determine dash direction based on current movement input
         Vector2 direction = moveInput;
         
-        // If no movement input, dash in the direction the player is currently moving
+        // If no movement input, try velocity direction
         if (direction.magnitude < 0.1f)
         {
-            // If not moving at all, dash forward (could use last facing direction if you track it)
             direction = rb.linearVelocity.normalized;
-            
-            // If still no direction, don't dash
-            if (direction.magnitude < 0.1f)
-                return;
+        }
+        
+        // If still no direction, use last stored movement direction
+        if (direction.magnitude < 0.1f)
+        {
+            direction = lastMoveDirection;
+        }
+        
+        // Final fallback: dash to the right (should never reach here due to initialization)
+        if (direction.magnitude < 0.1f)
+        {
+            direction = Vector2.right;
         }
 
         // Start the dash

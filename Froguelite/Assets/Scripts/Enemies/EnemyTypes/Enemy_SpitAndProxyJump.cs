@@ -20,6 +20,7 @@ public class Enemy_SpitAndProxyJump : EnemyBase
     [SerializeField] private float durationBetweenJumps = 1f;
     [SerializeField] private float jumpDistance = 3f;
     [SerializeField] private float arcJumpDuration = 0.5f;
+    [SerializeField] private bool triggerProxyJump = true;
 
     private bool overlapped = false;
     private bool jumping = false;
@@ -167,6 +168,8 @@ public class Enemy_SpitAndProxyJump : EnemyBase
             overlapped = true;
 
             if (!engagedWithPlayer) return;
+
+            if (!triggerProxyJump) return;
 
             if (!jumping)
             {

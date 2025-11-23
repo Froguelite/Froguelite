@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b51c14629a9410b48a3ac36cd58696f3, type: 3}
-  m_Name: CapybaraRoom
+  m_Name: ButterflyRoom
   m_EditorClassIdentifier: Assembly-CSharp::RoomEnemySpawnGroup
   enemySpawnEntries:
   - minEnemyCount: 3
-    maxEnemyCount: 4
+    maxEnemyCount: 3
     possibleEnemies:
-    - {fileID: 1306632113082845279, guid: 81f57a596d107044dae5a324cd2c857e, type: 3}
+    - {fileID: 1663525176817116758, guid: 1356eb13e7884f8498cc2bbd85700084, type: 3}
   - minEnemyCount: 0
     maxEnemyCount: 2
     possibleEnemies:

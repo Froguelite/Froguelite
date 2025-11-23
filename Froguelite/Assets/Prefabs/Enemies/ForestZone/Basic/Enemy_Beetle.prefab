@@ -8,9 +8,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 495440084114685464, guid: 962220a095147544ea006ebb71c0e700, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: efea8eef19c26da4092b53afe63b3b23, type: 3}
+    - target: {fileID: 830418482755487160, guid: 962220a095147544ea006ebb71c0e700, type: 3}
+      propertyPath: enemyId
+      value: Beetle
+      objectReference: {fileID: 0}
     - target: {fileID: 830418482755487160, guid: 962220a095147544ea006ebb71c0e700, type: 3}
       propertyPath: maxHealth
-      value: 20
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 1182758747096601557, guid: 962220a095147544ea006ebb71c0e700, type: 3}
       propertyPath: m_LocalScale.x
@@ -70,19 +78,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2278778753134761842, guid: 962220a095147544ea006ebb71c0e700, type: 3}
       propertyPath: m_Height
-      value: 0.86
+      value: 0.38
       objectReference: {fileID: 0}
     - target: {fileID: 2278778753134761842, guid: 962220a095147544ea006ebb71c0e700, type: 3}
       propertyPath: m_Radius
-      value: 0.32
+      value: 0.36
+      objectReference: {fileID: 0}
+    - target: {fileID: 2278778753134761842, guid: 962220a095147544ea006ebb71c0e700, type: 3}
+      propertyPath: m_BaseOffset
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 2961758124517202858, guid: 962220a095147544ea006ebb71c0e700, type: 3}
+      propertyPath: reverseFlip
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4210400531515010701, guid: 962220a095147544ea006ebb71c0e700, type: 3}
       propertyPath: chaseSettings.chaseSpeed
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 7602488050127721808, guid: 962220a095147544ea006ebb71c0e700, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.79
+      objectReference: {fileID: 0}
+    - target: {fileID: 7602488050127721808, guid: 962220a095147544ea006ebb71c0e700, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.96
+      objectReference: {fileID: 0}
+    - target: {fileID: 7602488050127721808, guid: 962220a095147544ea006ebb71c0e700, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.016
+      objectReference: {fileID: 0}
+    - target: {fileID: 7602488050127721808, guid: 962220a095147544ea006ebb71c0e700, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.134
+      objectReference: {fileID: 0}
     - target: {fileID: 8257941191822481545, guid: 962220a095147544ea006ebb71c0e700, type: 3}
       propertyPath: m_Name
-      value: Enemy_Lizard
+      value: Enemy_Beetle
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
