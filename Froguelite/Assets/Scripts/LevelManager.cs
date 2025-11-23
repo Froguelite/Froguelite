@@ -179,6 +179,13 @@ public class LevelManager : MonoBehaviour
                 break;
         }
 
+        // Restart ambiant particles, if pertinent
+        AmbiantParticleHandler ambiantParticleHandler = FindAnyObjectByType<AmbiantParticleHandler>();
+        if (ambiantParticleHandler != null)
+        {
+            ambiantParticleHandler.ResetAmbiantParticles(sceneName == Scenes.MainScene, currentZone);
+        }
+
         // Hide any loading effects
         if (loadEffect == LoadEffect.Portal)
         {

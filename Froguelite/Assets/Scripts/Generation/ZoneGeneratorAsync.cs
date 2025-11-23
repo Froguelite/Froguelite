@@ -170,6 +170,11 @@ public class ZoneGeneratorAsync : MonoBehaviour
         isGenerating = false;
 
         Debug.Log("Successfully finished generating");
+
+        if (generateZoneOnStart)
+        {
+            FindAnyObjectByType<AmbiantParticleHandler>()?.ResetAmbiantParticles(true, zone);
+        }
         
         onComplete?.Invoke();
     }
