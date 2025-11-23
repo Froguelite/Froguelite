@@ -91,9 +91,9 @@ public class RoomFactory : MonoBehaviour
             noiseSettings: noiseSettings
         );
 
-        if (roomData.roomType == Room.RoomType.Starter)
+        if (roomData.roomType != Room.RoomType.Normal)
         {
-            // Ensure the starter room has a large central landmass
+            // Ensure non-normal rooms have a central landmass
             newRoomLayout = RoomTileHelper.AddCentralLandmass(newRoomLayout, roomLength, roomLength);
         }
 

@@ -123,7 +123,8 @@ public class EnemyFactory : MonoBehaviour
             {
                 // Choose a random enemy type from the possible enemies
                 EnemyBase enemyType = entry.possibleEnemies[Random.Range(0, entry.possibleEnemies.Count)];
-                Vector2 spawnPosition = room.GetRandomEnemySpawnPosition();
+                // Spawn single boss enemy in center, otherwise use random position
+                Vector2 spawnPosition = (enemyCount == 1) ? room.roomData.GetRoomCenterWorldPosition() : room.GetRandomEnemySpawnPosition();
                 EnemyBase newEnemy = Instantiate(enemyType, spawnPosition, Quaternion.identity, room.transform);
                 newEnemy.InitializeEnemy(room);
                 spawnedEnemies.Add(newEnemy);

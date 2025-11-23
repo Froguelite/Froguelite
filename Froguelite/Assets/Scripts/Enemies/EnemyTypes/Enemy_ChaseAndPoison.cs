@@ -39,6 +39,7 @@ public class Enemy_ChaseAndPoison : EnemyBase
     
     private bool isPoisonActive = false;
     private Vector3 originalSpriteLocalPosition;
+    private float currentHoverAngle = 0f;
 
 
     #endregion
@@ -158,15 +159,42 @@ public class Enemy_ChaseAndPoison : EnemyBase
         // Cancel any existing tweens on the sprite
         LeanTween.cancel(spriteTransform.gameObject);
         
-        // Generate a random starting offset for varied movement
-        float randomOffset = Random.Range(0f, Mathf.PI * 2f);
+        // Calculate current angle based on sprite's actual position to avoid snapping
+        Vector3 currentOffset = spriteTransform.localPosition - originalSpriteLocalPosition;
+        
+        // If sprite is at or near original position, use current stored angle or random
+        if (currentOffset.magnitude < 0.01f)
+        {
+            // First time or reset - use random or stored angle
+            if (currentHoverAngle == 0f)
+            {
+                currentHoverAngle = Random.Range(0f, Mathf.PI * 2f);
+            }
+        }
+        else
+        {
+            // Calculate angle from current position to continue smoothly
+            // For X component: offsetX = Sin(angle) * hoverRangeX
+            // So: angle = arcsin(offsetX / hoverRangeX)
+            float normalizedX = Mathf.Clamp(currentOffset.x / hoverRangeX, -1f, 1f);
+            currentHoverAngle = Mathf.Asin(normalizedX);
+            
+            // Determine correct quadrant based on Y offset
+            float expectedY = Mathf.Sin(currentHoverAngle * 2f) * hoverRangeY;
+            if (Mathf.Abs(currentOffset.y - expectedY) > 0.01f)
+            {
+                // We're in the other half of the sine wave
+                currentHoverAngle = Mathf.PI - currentHoverAngle;
+            }
+        }
         
         // Create a looping figure-8 or circular hovering motion
         // Using LeanTween with a custom update function for smooth 2D hovering
-        LeanTween.value(spriteTransform.gameObject, randomOffset, randomOffset + (Mathf.PI * 2f), hoverSpeed)
+        LeanTween.value(spriteTransform.gameObject, currentHoverAngle, currentHoverAngle + (Mathf.PI * 2f), hoverSpeed)
             .setOnUpdate((float angle) => {
                 if (spriteTransform != null)
                 {
+                    currentHoverAngle = angle;
                     float offsetX = Mathf.Sin(angle) * hoverRangeX;
                     float offsetY = Mathf.Sin(angle * 2f) * hoverRangeY; // Double frequency for figure-8 pattern
                     spriteTransform.localPosition = originalSpriteLocalPosition + new Vector3(offsetX, offsetY, 0f);
