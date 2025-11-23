@@ -204,9 +204,17 @@ MonoBehaviour:
   connectionTypeTransform: {fileID: 3822578586676511915}
   connectionUnexploredColor: {r: 0.291, g: 0.291, b: 0.291, a: 1}
   connectionExploredColor: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
+  connectionFinalColor: {r: 0.33280408, g: 0.35752642, b: 0.9838275, a: 1}
+  standardConnectionSprite: {fileID: 21300000, guid: 0b6b6cf41de6ce2469d0ee1f1cb26565, type: 3}
+  finalConnectionSprite: {fileID: 4469096299675168856, guid: 57edd8717764c894dba2ec30d4c23f27, type: 3}
   connectionTypeActiveSprite: {fileID: 7224781017051066338, guid: 074bf463e5f117f45a9018c230adeacb, type: 3}
   connectionTypeInactiveSprite: {fileID: 8623099952358286693, guid: 64a5004492e53d44293e72465123eb0b, type: 3}
   connectionTypeLockedSprite: {fileID: -9053687546620643082, guid: 2263476b44cfeee49b13d2f621a669da, type: 3}
+  connectionTypeFinalSprite: {fileID: 21300000, guid: 9e0e25b1cc7834f4dbc92c49bfa9f4f7, type: 3}
+  forestConnectionTypeActiveSprite: {fileID: 21300000, guid: 9f8e34225e26e564c82db67f5fd902bb, type: 3}
+  forestConnectionTypeInactiveSprite: {fileID: 21300000, guid: b63528e3433e03847a6fa18a2d4fbc2e, type: 3}
+  forestConnectionTypeLockedSprite: {fileID: 21300000, guid: b522c29d5aa57634b8f5b25f244f6960, type: 3}
+  forestConnectionTypeFinalSprite: {fileID: 21300000, guid: aa5f22dceee5809438f115908a93a1d0, type: 3}
   connectionTypeImgActive: {fileID: 7407880941551548595}
   connectionTypeImgInactive: {fileID: 4646200728776010473}
   transferAnimationDuration: 2

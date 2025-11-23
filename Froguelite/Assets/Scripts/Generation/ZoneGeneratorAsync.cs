@@ -63,7 +63,10 @@ public class ZoneGeneratorAsync : MonoBehaviour
     void Start()
     {
         if (generateZoneOnStart)
+        {
+            LevelManager.Instance.ManuallySetCurrentZone(generateZoneOnStartZone);
             StartCoroutine(GenerateZoneAsync(generateZoneOnStartZone, generateZoneOnStartSubZone));
+        }
     }
 
     #endregion

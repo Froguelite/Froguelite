@@ -356,7 +356,11 @@ public class Door : MonoBehaviour
         {
             if (doorData.isLocked)
             {
-                if (InventoryManager.Instance.woodpeckers <= 0) return;
+                if (InventoryManager.Instance.woodpeckers <= 0) 
+                {
+                    PlayerAttack.Instance.StopTongueExtension();
+                    return;
+                }
 
                 InventoryManager.Instance.RemoveWoodpeckers(1);
                 UnlockDoor();

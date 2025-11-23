@@ -25,9 +25,17 @@ public class MinimapRoomConnection : MonoBehaviour
     [Header("Sprites and Colors")]
     [SerializeField] private Color connectionUnexploredColor;
     [SerializeField] private Color connectionExploredColor;
+    [SerializeField] private Color connectionFinalColor;
+    [SerializeField] private Sprite standardConnectionSprite;
+    [SerializeField] private Sprite finalConnectionSprite;
     [SerializeField] private Sprite connectionTypeActiveSprite;
     [SerializeField] private Sprite connectionTypeInactiveSprite;
     [SerializeField] private Sprite connectionTypeLockedSprite;
+    [SerializeField] private Sprite connectionTypeFinalSprite;
+    [SerializeField] private Sprite forestConnectionTypeActiveSprite;
+    [SerializeField] private Sprite forestConnectionTypeInactiveSprite;
+    [SerializeField] private Sprite forestConnectionTypeLockedSprite;
+    [SerializeField] private Sprite forestConnectionTypeFinalSprite;
     [SerializeField] private Image connectionTypeImgActive;
     [SerializeField] private Image connectionTypeImgInactive;
 
@@ -36,6 +44,7 @@ public class MinimapRoomConnection : MonoBehaviour
 
     private bool isExplored = false;
     private bool isLocked = false;
+    private int zone = 0;
 
 
     #endregion
@@ -45,9 +54,10 @@ public class MinimapRoomConnection : MonoBehaviour
 
 
     // Sets up the connection appearance based on orientation
-    public void SetupConnection(ConnectionOrientation orientation, bool isLocked)
+    public void SetupConnection(ConnectionOrientation orientation, bool isLocked, int zone, bool isFinalConnection = false)
     {
         this.isLocked = isLocked;
+        this.zone = zone;
 
         if (orientation == ConnectionOrientation.Horizontal)
         {
@@ -58,24 +68,51 @@ public class MinimapRoomConnection : MonoBehaviour
             connectionImg.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
         }
 
-        if (isLocked)
+        // Handle final connection setup
+        if (isFinalConnection)
         {
-            connectionTypeImgInactive.sprite = connectionTypeLockedSprite;
+            // Set final connection sprites and color
+            connectionImg.sprite = finalConnectionSprite;
+            connectionImg.color = connectionFinalColor;
+            
+            Sprite finalSprite = zone == 1 ? forestConnectionTypeFinalSprite : connectionTypeFinalSprite;
+            connectionTypeImgInactive.sprite = finalSprite;
+            connectionTypeImgActive.sprite = finalSprite;
+            
+            // Final connections are always explored
+            isExplored = true;
+            connectionTypeImgInactive.color = new Color(1f, 1f, 1f, 0f);
         }
         else
         {
-            connectionTypeImgInactive.sprite = connectionTypeInactiveSprite;
-        }
+            // Set standard connection sprite
+            connectionImg.sprite = standardConnectionSprite;
+            connectionImg.color = connectionUnexploredColor;
+            
+            // Select sprites based on zone
+            Sprite activeSprite = zone == 1 ? forestConnectionTypeActiveSprite : connectionTypeActiveSprite;
+            Sprite inactiveSprite = zone == 1 ? forestConnectionTypeInactiveSprite : connectionTypeInactiveSprite;
+            Sprite lockedSprite = zone == 1 ? forestConnectionTypeLockedSprite : connectionTypeLockedSprite;
 
-        connectionTypeImgActive.sprite = connectionTypeActiveSprite;
-        connectionImg.color = connectionUnexploredColor;
+            if (isLocked)
+            {
+                connectionTypeImgInactive.sprite = lockedSprite;
+            }
+            else
+            {
+                connectionTypeImgInactive.sprite = inactiveSprite;
+            }
+
+            connectionTypeImgActive.sprite = activeSprite;
+        }
     }
 
 
     public void UnlockConnection()
     {
         isLocked = false;
-        connectionTypeImgInactive.sprite = connectionTypeInactiveSprite;
+        Sprite inactiveSprite = zone == 1 ? forestConnectionTypeInactiveSprite : connectionTypeInactiveSprite;
+        connectionTypeImgInactive.sprite = inactiveSprite;
     }
 
 

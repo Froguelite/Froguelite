@@ -29,6 +29,7 @@ public class Room : MonoBehaviour
     public List<IEnemy> enemies { get; private set; } = new List<IEnemy>();
 
     private SubZoneFinalDoor subZoneFinalDoor;
+    public SubZoneFinalDoor SubZoneFinalDoor => subZoneFinalDoor;
 
     public bool isExplored { get; private set; } = false;
 
@@ -306,6 +307,15 @@ public class Room : MonoBehaviour
         Vector3 adjacentRoomCenter = GetAdjacentRoom(direction)?.roomData.GetRoomCenterWorldPosition() ?? roomCenter;
 
         return (roomCenter + adjacentRoomCenter) / 2f;
+    }
+
+    // Gets the world space position of the final door connection (position of the final door itself)
+    public Vector3 GetFinalDoorConnectionPosition()
+    {
+        if (subZoneFinalDoor == null)
+            return Vector3.zero;
+
+        return subZoneFinalDoor.transform.position;
     }
 
     // Registers a totem that controls this room's wave flow

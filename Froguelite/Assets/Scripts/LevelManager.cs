@@ -17,8 +17,8 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private Image progressBar;
 
-    private int currentZone = 0;
-    private int currentSubZone = -1;
+    public int currentZone {get; private set;} = 0;
+    public int currentSubZone {get; private set;} = -1;
 
     public enum Scenes
     {
@@ -65,6 +65,12 @@ public class LevelManager : MonoBehaviour
     {
         
     }
+
+    public void ManuallySetCurrentZone(int zone)
+    {
+        currentZone = zone;
+    }
+
     #endregion
 
     public async void LoadScene(Scenes sceneName, LoadEffect loadEffect)
