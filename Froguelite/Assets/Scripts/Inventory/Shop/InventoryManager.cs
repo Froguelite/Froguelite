@@ -84,6 +84,9 @@ public class InventoryManager : MonoBehaviour
         SaveManager.LoadData += LoadLotuses;
         SaveManager.LoadData += LoadWoodpeckers;
         SaveManager.LoadData += LoadCollectedPowerFlies;
+
+        //Subscribe to reset game
+        GameManager.ResetPlayerState += ResetInventory;
     }
 
     public void OnDestroy()
@@ -96,6 +99,9 @@ public class InventoryManager : MonoBehaviour
         SaveManager.LoadData -= LoadLotuses;
         SaveManager.LoadData -= LoadWoodpeckers;
         SaveManager.LoadData -= LoadCollectedPowerFlies;
+
+        //Unsubscribe to reset game
+        GameManager.ResetPlayerState -= ResetInventory;
     }
 
     // Loads all power fly data from resources
@@ -255,6 +261,26 @@ public class InventoryManager : MonoBehaviour
 
     #endregion
 
+    #region RESET INVENTORY
+
+    private void ResetInventory()
+    {
+        //Reset Lotuses
+        RemoveLotuses(lotuses);
+
+        //Reset Woodpecker
+        RemoveWoodpeckers(woodpeckers);
+
+        //Reset Powerflies
+        int powerflyCount = collectedPowerFlies.Count;
+        collectedPowerFlies.Clear();
+        OnPowerFlyCountChanged?.Invoke(collectedPowerFlies.Count);
+        if (powerFlyDef) AddItem(powerFlyDef, powerflyCount);
+        OnInventoryChanged?.Invoke();
+    }
+
+    #endregion
+
     #region LOTUS AND WOODPECKER MANAGEMENT
 
 
@@ -378,7 +404,6 @@ public class InventoryManager : MonoBehaviour
 
     #endregion
 
-
     #region POWER FLY MANAGEMENT
 
 
@@ -397,7 +422,6 @@ public class InventoryManager : MonoBehaviour
 
 
     #endregion
-
 
     #region DYNAMIC INVENTORY
 

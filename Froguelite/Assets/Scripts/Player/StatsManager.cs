@@ -55,7 +55,7 @@ public class StatsManager : MonoBehaviour
     public PlayerHealth playerHealth;
     private int defaultCurrentHealth = -1;
     private int defaultMaxHealth = -1;
-    private const int HealthLevel = 20;
+    private int HealthLevel = 6;
     public Stat playerDamage { get; private set; }
     public Stat playerSpeed { get; private set; }
     public Stat playerRange { get; private set; }
@@ -84,24 +84,41 @@ public class StatsManager : MonoBehaviour
 
         if (godmode)
         {
+            HealthLevel = 20;
             SetStatsToGodmode();
+            Debug.Log("[StatsManager] In God Mode");
         }
         else
         {
             //SetStatsToDefault();
-            SetStatsToGodmode(); //For now
-            SaveManager.SaveData += SaveHealth;
-            SaveManager.LoadData += LoadHealth; //Load funtion will call set stats
+            HealthLevel = 6;
+            SetStatsToDefault(); //For now
+            //SaveManager.SaveData += SaveHealth;
+            //SaveManager.LoadData += LoadHealth; //Load funtion will call set stats
         }
+
+        SaveManager.SaveData += SaveHealth;
+        SaveManager.LoadData += LoadHealth; //Load funtion will call set stats
+
+        //Subscribe to reset player on win or death
+        GameManager.ResetPlayerState += SetHealthToDefault;
+        GameManager.ResetPlayerState += SetStatsToDefault;
     }
 
     private void OnDestroy()
     {
-        if (!godmode)
-        {
-            SaveManager.SaveData -= SaveHealth;
-            SaveManager.LoadData -= LoadHealth;
-        }
+        //if (!godmode)
+        //{
+        //    SaveManager.SaveData -= SaveHealth;
+        //    SaveManager.LoadData -= LoadHealth;
+        //}
+
+        SaveManager.SaveData -= SaveHealth;
+        SaveManager.LoadData -= LoadHealth;
+
+        //Unsubscribe to reset player on win or death
+        GameManager.ResetPlayerState -= SetHealthToDefault;
+        GameManager.ResetPlayerState -= SetStatsToDefault;
     }
 
 
@@ -109,6 +126,12 @@ public class StatsManager : MonoBehaviour
     public void SetStatsToDefault()
     {
         playerLevel = 1;
+
+        if (godmode) {
+            SetStatsToGodmode();
+            Debug.Log("[StatsManager] In God Mode");
+            return;
+        }
 
         ////Edited value to be set from a number to a variable
         //if (defaultMaxHealth == -1 || defaultCurrentHealth == -1)
@@ -129,12 +152,15 @@ public class StatsManager : MonoBehaviour
     public void SetHealthToDefault()
     {
         //Edited value to be set from a number to a variable
-        if (defaultMaxHealth == -1 || defaultCurrentHealth == -1)
-        {
-            Debug.LogError("[StatsManager] has not loaded player max and current health before setting player stats");
-        }
-        playerHealth.SetMaxHealth(defaultMaxHealth, false);
-        playerHealth.SetCurrentHealth(defaultCurrentHealth, false);
+        //if (defaultMaxHealth == -1 || defaultCurrentHealth == -1)
+        //{
+        //    Debug.LogError("[StatsManager] has not loaded player max and current health before setting player stats");
+        //}
+        //playerHealth.SetMaxHealth(defaultMaxHealth, false);
+        //playerHealth.SetCurrentHealth(defaultCurrentHealth, false);
+        playerHealth.SetMaxHealth(HealthLevel, true);
+        playerHealth.SetCurrentHealth(HealthLevel, true);
+        Debug.Log($"[StatManager] Health set to default. Current: {HealthLevel}, Max: {HealthLevel}");
     }
 
     // Sets all stats to godmode values
@@ -142,8 +168,8 @@ public class StatsManager : MonoBehaviour
     {
         playerLevel = 1;
 
-        playerHealth.SetMaxHealth(20, false);
-        playerHealth.SetCurrentHealth(20, false);
+        //playerHealth.SetMaxHealth(20, false);
+        //playerHealth.SetCurrentHealth(20, false);
 
         playerDamage = new Stat(100f, 1f);
         playerSpeed = new Stat(10f, 1f);
@@ -207,7 +233,9 @@ public class StatsManager : MonoBehaviour
         }
 
         //Update player health
-        SetHealthToDefault();
+        //SetHealthToDefault();
+        playerHealth.SetMaxHealth(defaultMaxHealth, false);
+        playerHealth.SetCurrentHealth(defaultCurrentHealth, false);
     }
 
     #endregion

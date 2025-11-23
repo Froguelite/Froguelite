@@ -189,7 +189,7 @@ public class SaveManager : MonoBehaviour
     {
         CheckInstance();
 
-        //activeProfile = profileNumber;
+        activeProfile = profileNumber;
 
         // Setup file path for profile
         //Instance.folderPath = Application.persistentDataPath;

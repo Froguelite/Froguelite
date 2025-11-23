@@ -135,10 +135,11 @@ public class LevelManager : MonoBehaviour
                     IncrementZoneProgression();
                 }
                 //change start scene from stump to main if 1 sub zone completed
-                if(currentZone == 0 && currentSubZone == 1)
+                if(currentZone == 0 && currentSubZone == 0)
                 {
                     int profileNumber = SaveManager.activeProfile;
                     ProfileUIManager.Instance.UpdateSceneToLoadForProfile(profileNumber, Scenes.MainScene);
+                    Debug.Log("Changed load scene to MainScene");
                 }
 
                 await GenerateZoneAndSetup(currentZone, currentSubZone);
@@ -194,6 +195,8 @@ public class LevelManager : MonoBehaviour
                 {
                     GoldenFlyHUD.Instance.ForceShow();
                 }
+
+                StatsManager.Instance.playerHealth.SetPlayerAlive(); //For avoiding taking damage after player died
                 break;
             default:
                 FrogueliteCam.Instance.UnconfineCamera();

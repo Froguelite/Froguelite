@@ -18,6 +18,7 @@ public class ProfileCard : MonoBehaviour
 
     [SerializeField] private GameObject profileNameInputField;
     [SerializeField] private GameObject profileNameTMP;
+    [SerializeField] private GameObject playButton;
 
     #endregion
 
@@ -37,10 +38,10 @@ public class ProfileCard : MonoBehaviour
         if (profileData.name != null)
         {
             profileNameTMP.GetComponent<TextMeshProUGUI>().text = profileData.name;
-            ShowNameTMP();
+            SavedState();
         } else
         {
-            ShowNameInputField();
+            EditState();
         }
     }
 
@@ -81,7 +82,7 @@ public class ProfileCard : MonoBehaviour
 
         //Unsubscribe from event and hide input field
         profileNameInputField.GetComponent<InputFieldGrabber>().OnInputGrabbed -= UpdateProfileName;
-        ShowNameTMP();
+        SavedState();
 
         //Save changes to file
         ProfileUIManager.Instance.SaveProfileCardsData();
@@ -90,19 +91,21 @@ public class ProfileCard : MonoBehaviour
     #endregion
 
     #region HELPER FUNCTIONS
-    private void ShowNameInputField()
+    private void EditState()
     {
         //Show input field and subscribe to event
         profileNameInputField.SetActive(true);
         profileNameInputField.GetComponent<InputFieldGrabber>().OnInputGrabbed += UpdateProfileName;
         profileNameTMP.SetActive(false);
+        playButton.SetActive(false);
     }
 
-    private void ShowNameTMP()
+    private void SavedState()
     {
         //Hide input fild and show TMP
         profileNameInputField.SetActive(false);
         profileNameTMP.SetActive(true);
+        playButton.SetActive(true);
     }
 
     #endregion

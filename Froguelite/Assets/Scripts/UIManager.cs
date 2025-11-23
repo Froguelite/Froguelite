@@ -321,7 +321,8 @@ public enum UIPanels
     LoadingScreen,
     DeathScreen,
     WinScreen,
-    SettingsScreen
+    SettingsScreen,
+    PopUpScreen
     //InGameHUD,
     //PauseMenu
 }

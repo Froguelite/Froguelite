@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -25,7 +26,7 @@ public class GameManager : MonoBehaviour
 
     public PlayerState currentPlayerState { get; private set; } = PlayerState.Exploring;
 
-
+    public static event Action ResetPlayerState;
     #endregion
 
 
@@ -65,10 +66,12 @@ public class GameManager : MonoBehaviour
 
         PlayerMovement.Instance.SetCanMove(false);
         PlayerAttack.Instance.SetCanAttack(false);
+        ResetPlayerState?.Invoke();
     }
 
     public void OnWin()
     {
+        ResetPlayerState?.Invoke();
         StartCoroutine(WinRoutine());
     }
     
