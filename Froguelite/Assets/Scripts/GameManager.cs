@@ -59,6 +59,11 @@ public class GameManager : MonoBehaviour
         currentPlayerState = newState;
     }
 
+    public void InvokeReset()
+    {
+        ResetPlayerState?.Invoke();
+    }
+
     public void OnDeath()
     {
         SetPlayerState(PlayerState.Dead);

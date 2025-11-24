@@ -200,6 +200,8 @@ public class LevelManager : MonoBehaviour
             case Scenes.StumpScene:
                 ResetZoneProgression();
                 FindAnyObjectByType<StumpManager>().LoadStump();
+                GameManager.Instance.InvokeReset();
+                SaveManager.WriteToFile(); //Save when entering stump scene
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
 
                 useLoadedVal = false; //if start of profile play
