@@ -340,6 +340,9 @@ MonoBehaviour:
   lockedSpriteLeft: {fileID: -3088987500047345559, guid: 526913af65c7df2479bb781a831b3c3c, type: 3}
   unlockedSpriteRight: {fileID: -6449208853724387198, guid: a452a6a5031642347affea0c4fc80fae, type: 3}
   lockedSpriteRight: {fileID: -3088987500047345559, guid: 526913af65c7df2479bb781a831b3c3c, type: 3}
+  signPrefab: {fileID: 3461941862502400734, guid: 38539a0b7e0575c4ba326a7929c8ed76, type: 3}
+  dangerousSignSprite: {fileID: 21300000, guid: 3db465dac181eb24d8e95b83f9b9c1ab, type: 3}
+  woodpeckerSignSprite: {fileID: 21300000, guid: 10f76f9556504df4a9753ac528a81f54, type: 3}
 --- !u!58 &8522788854717681034
 CircleCollider2D:
   m_ObjectHideFlags: 0

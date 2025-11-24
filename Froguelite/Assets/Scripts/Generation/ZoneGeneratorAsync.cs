@@ -136,6 +136,46 @@ public class ZoneGeneratorAsync : MonoBehaviour
 
         Debug.Log("Step 5: RoomManager successfully initialized.");
 
+        // Get the sub-zone boss room. If there is one, spawn the danger sign on its entrance door
+        foreach (var roomEntry in spawnedRooms)
+        {
+            Room room = roomEntry.Value;
+            if (room.roomData.roomType == Room.RoomType.SubZoneBoss)
+            {
+                // Find the single door in this room (should only have one)
+                DoorData singleDoor = null;
+                Door.DoorDirection entranceDoorDirection = Door.DoorDirection.Up;
+
+                foreach (var doorEntry in room.roomData.doors)
+                {
+                    if (!doorEntry.Value.isImpassable)
+                    {
+                        singleDoor = doorEntry.Value;
+                        entranceDoorDirection = doorEntry.Key;
+                        break;
+                    }
+                }
+
+                // Get the connected room
+                Room connectedRoom = room.GetAdjacentRoom(entranceDoorDirection);
+                if (connectedRoom != null)
+                {
+                    Debug.Log("Connected room's doors: " + connectedRoom.doors.Count);
+                    // Find the door in the connected room that leads to this room
+                    foreach (Door connectedDoor in connectedRoom.doors)
+                    {
+                        Door.DoorDirection doorDir = connectedDoor.doorData.direction;
+                        if (doorDir == Door.GetOppositeDirection(entranceDoorDirection))
+                        {
+                            // Found the connecting door, spawn danger sign
+                            connectedDoor.SpawnSign(connectedDoor.dangerousSignSprite);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         // Step 6: Set player to starter room
         OnGenerationProgress?.Invoke(0.85f);
         if (teleportPlayerToStarterRoom)

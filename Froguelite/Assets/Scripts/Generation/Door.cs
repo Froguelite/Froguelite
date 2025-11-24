@@ -44,6 +44,11 @@ public class Door : MonoBehaviour
     [SerializeField] private Sprite unlockedSpriteRight;
     [SerializeField] private Sprite lockedSpriteRight;
 
+    [SerializeField] private Sign signPrefab;
+    public Sprite dangerousSignSprite;
+    public Sprite woodpeckerSignSprite;
+    private bool spawnedSign = false;
+
     // Floating animation variables
     private Vector3 frogRendShownPos;
     private Vector3 frogRendHiddenPos;
@@ -56,6 +61,7 @@ public class Door : MonoBehaviour
     private bool isBobbingDuringTravel = false;
     private Coroutine bobbingCoroutine;
     private Vector3 bobbingTransformOriginalPos;
+    private bool spawnedDangerousSign = false;
 
 
     #endregion
@@ -145,6 +151,7 @@ public class Door : MonoBehaviour
                     frogRenderer.sprite = invertSpriteDirection ? lockedSpriteRight : lockedSpriteLeft;
                     break;
             }
+            SpawnSign(woodpeckerSignSprite);
         }
         else
         {
@@ -264,6 +271,36 @@ public class Door : MonoBehaviour
             {
                 ps.Stop();
             }
+        }
+    }
+
+    public void SpawnSign(Sprite signSprite)
+    {
+        if (spawnedSign) return;
+        spawnedSign = true;
+
+        if (signPrefab != null)
+        {
+            Vector3 offset = Vector3.zero;
+            
+            switch (doorData.direction)
+            {
+                case DoorDirection.Up:
+                    offset = new Vector3(-2f, 0, 0); // Left of door
+                    break;
+                case DoorDirection.Down:
+                    offset = new Vector3(-2f, 0, 0); // Left of door
+                    break;
+                case DoorDirection.Left:
+                    offset = new Vector3(0, 2f, 0); // Above door
+                    break;
+                case DoorDirection.Right:
+                    offset = new Vector3(0, 2f, 0); // Above door
+                    break;
+            }
+            
+            Sign signInstance = Instantiate(signPrefab, transform.position + offset, Quaternion.identity);
+            signInstance.SetupSign(signSprite, true);
         }
     }
 

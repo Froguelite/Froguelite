@@ -156,7 +156,7 @@ public class RoomFactory : MonoBehaviour
             // Find the single door in this room (should only have one)
             DoorData singleDoor = null;
             Door.DoorDirection entranceDoorDirection = Door.DoorDirection.Up;
-            
+
             foreach (var doorEntry in roomData.doors)
             {
                 if (!doorEntry.Value.isImpassable)
@@ -171,7 +171,7 @@ public class RoomFactory : MonoBehaviour
             {
                 // Get the opposite direction for the final door
                 Door.DoorDirection finalDoorDirection = Door.GetOppositeDirection(entranceDoorDirection);
-                
+
                 // Calculate the position where the final door should spawn
                 // This is the launch position for a door in the opposite direction
                 Vector2Int doorLaunchPos = RoomTileHelper.GetDoorLocation(roomData.tileLayout, finalDoorDirection, true);
@@ -188,7 +188,7 @@ public class RoomFactory : MonoBehaviour
 
                 // Initialize the door with the opposite direction
                 finalDoorInstance.InitializeDoor(finalDoorDirection);
-                
+
                 // Initialize the room with this final door reference
                 roomComponent.SetSubZoneFinalDoor(finalDoorInstance);
             }

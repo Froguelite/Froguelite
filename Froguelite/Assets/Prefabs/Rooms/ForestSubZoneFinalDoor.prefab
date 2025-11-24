@@ -18,7 +18,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2304152424438521192, guid: 690a1b2693dc41c4f9022a4f11c1a4a7, type: 3}
       propertyPath: m_SortingLayer
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2304152424438521192, guid: 690a1b2693dc41c4f9022a4f11c1a4a7, type: 3}
       propertyPath: m_SortingLayerID
@@ -183,6 +183,10 @@ PrefabInstance:
       propertyPath: useWaterSway
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2993340084417876695, guid: 562a565c4d4134e48a27b0149b7600f4, type: 3}
+      propertyPath: subZoneSignSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 04ab266a996630e4794f3aef1a65d351, type: 3}
     - target: {fileID: 2993340084417876695, guid: 562a565c4d4134e48a27b0149b7600f4, type: 3}
       propertyPath: leafTrailParticles.Array.size
       value: 1

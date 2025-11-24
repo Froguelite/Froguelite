@@ -26,6 +26,9 @@ public class SubZoneFinalDoor : MonoBehaviour
     [SerializeField] private Sprite spriteLeft;
     [SerializeField] private Sprite spriteRight;
 
+    [SerializeField] private Sign signPrefab;
+    [SerializeField] private Sprite subZoneSignSprite;
+
     // Floating animation variables
     private Vector3 frogRendShownPos;
     private Vector3 frogRendHiddenPos;
@@ -66,7 +69,31 @@ public class SubZoneFinalDoor : MonoBehaviour
         frogRendHiddenPos = frogRendShownPos - new Vector3(0, 1, 0);
         timeOffset = Random.Range(0f, 2f * Mathf.PI); // Random starting phase for variety
 
+        // Spawn sign 2 units in the opposite direction
+        Vector3 signOffset = GetOppositeDirectionOffset(direction);
+        Vector3 signPosition = transform.position + signOffset * 2f;
+        Sign spawnedSign = Instantiate(signPrefab, signPosition, Quaternion.identity);
+        spawnedSign.SetupSign(subZoneSignSprite, true);
+
         UpdateDoorVisuals(false);
+    }
+
+    // Returns the offset vector for the opposite direction of the door
+    private Vector3 GetOppositeDirectionOffset(Door.DoorDirection direction)
+    {
+        switch (direction)
+        {
+            case Door.DoorDirection.Up:
+                return Vector3.left;
+            case Door.DoorDirection.Down:
+                return Vector3.left;
+            case Door.DoorDirection.Left:
+                return Vector3.up;
+            case Door.DoorDirection.Right:
+                return Vector3.up;
+            default:
+                return Vector3.zero;
+        }
     }
 
 
