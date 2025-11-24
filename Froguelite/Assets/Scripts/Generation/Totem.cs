@@ -425,7 +425,7 @@ public class Totem : MonoBehaviour
             // Keep rolling until we get a different fly
             do
             {
-                newFly = PowerFlyFactory.Instance.RollFlyForFlyRoom();
+                newFly = PowerFlyFactory.Instance.RollFlyUnweighted();
                 attempts++;
                 
                 // If we've tried too many times, just use what we got

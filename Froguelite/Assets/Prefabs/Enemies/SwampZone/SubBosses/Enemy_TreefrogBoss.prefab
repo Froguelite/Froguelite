@@ -203,11 +203,15 @@ MonoBehaviour:
   maxHealth: 60
   navAgent: {fileID: 174221802636514272}
   movementType: 0
+  isMiniboss: 1
   rb: {fileID: 6789368428265003585}
   useKnockback: 0
   knockbackDuration: 0.1
   spriteRenderer: {fileID: 1951471356628187786}
   defeatSmokeAnimator: {fileID: 7302693241191827558}
+  onDeathEvent:
+    m_PersistentCalls:
+      m_Calls: []
   spittingSprite: {fileID: 21300000, guid: de6d07bdb843d25479893a5d34eb5610, type: 3}
   defaultSprite: {fileID: 21300000, guid: e7c03148a2fdda84f80c3895cc336d22, type: 3}
   jumpingSprite: {fileID: 21300000, guid: e7c03148a2fdda84f80c3895cc336d22, type: 3}

@@ -18,6 +18,9 @@ EditorBuildSettings:
     path: Assets/Scenes/MainScenes/StumpScene.unity
     guid: 2a7e1dc52ea573044afc5deb00916fe6
   - enabled: 1
+    path: Assets/Scenes/MainScenes/MinibossRushScene.unity
+    guid: 5319e1e3802d3744f8528aededb49bcb
+  - enabled: 1
     path: Assets/Scenes/TestScenes-AA/TestMenuScene-AA.unity
     guid: 45caab2c3bfc58342b71ddc74d730ebb
   - enabled: 1

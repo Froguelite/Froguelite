@@ -126,7 +126,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5882462761335553892, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
       propertyPath: m_Name
-      value: Enemy_Lizard_Boss
+      value: Enemy_LizardBoss
       objectReference: {fileID: 0}
     - target: {fileID: 7807336152895815857, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
       propertyPath: associatedEnemy
@@ -236,10 +236,15 @@ MonoBehaviour:
   maxHealth: 50
   navAgent: {fileID: 2278778753134761842}
   movementType: 0
+  isMiniboss: 1
   rb: {fileID: 4885704521809256147}
+  useKnockback: 1
   knockbackDuration: 0.1
   spriteRenderer: {fileID: 495440084114685464}
   defeatSmokeAnimator: {fileID: 8695690234847530228}
+  onDeathEvent:
+    m_PersistentCalls:
+      m_Calls: []
   chaseBehavior: {fileID: 4210400531515010701}
 --- !u!114 &4210400531515010701
 MonoBehaviour:

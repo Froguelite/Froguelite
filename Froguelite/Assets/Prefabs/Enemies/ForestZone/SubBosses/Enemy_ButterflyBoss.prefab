@@ -180,11 +180,15 @@ MonoBehaviour:
   maxHealth: 60
   navAgent: {fileID: 8013105863900809721}
   movementType: 1
+  isMiniboss: 1
   rb: {fileID: 3703680731605860440}
   useKnockback: 0
   knockbackDuration: 0.1
   spriteRenderer: {fileID: 8524104913377255571}
   defeatSmokeAnimator: {fileID: 578378653974254207}
+  onDeathEvent:
+    m_PersistentCalls:
+      m_Calls: []
   chaseBehavior: {fileID: 1603649770521579319}
   warningSpriteRenderer: {fileID: 2375122417635023288}
   poisonParticles: {fileID: 8794845145591339274}

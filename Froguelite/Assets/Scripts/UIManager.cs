@@ -250,7 +250,7 @@ public class UIManager : MonoBehaviour
         LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, LevelManager.LoadEffect.LoadingScreen);
     }
 
-    private IEnumerator WinScreenCo()
+    public IEnumerator WinScreenCo()
     {
         float winTextBigScale = 1.3f;
 
@@ -275,7 +275,7 @@ public class UIManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
-        ResetGame();
+        //ResetGame();
     }
 
     #endregion

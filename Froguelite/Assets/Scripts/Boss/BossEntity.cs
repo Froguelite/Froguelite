@@ -13,6 +13,7 @@ public class BossEntity : MonoBehaviour
 
     [SerializeField] private BossController bossController;
     [SerializeField] private SpriteRenderer bossRenderer;
+    [SerializeField] private SpriteRenderer shadowSprite;
     [SerializeField] private Color flashColor = Color.red; // Color to flash when hit
     private Color originalColor; // Store the original sprite color
     [SerializeField] private float flashDuration = 0.2f; // How long
@@ -105,6 +106,12 @@ public class BossEntity : MonoBehaviour
         Debug.Log($"{stats.bossName} has been defeated.");
 
         healthBar.HideHealthBar();
+
+        // Fade out shadow sprite if it exists
+        if (shadowSprite != null)
+        {
+            LeanTween.alpha(shadowSprite.gameObject, 0f, 2f);
+        }
 
         // Disable all colliders on the boss
         DisableAllColliders();

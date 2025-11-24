@@ -64,7 +64,7 @@ public class Room : MonoBehaviour
                 // TODO: Spawn shopkeeper and shop items
                 break;
             case RoomType.Fly:
-                PowerFlyData rolledFly = PowerFlyFactory.Instance.RollFlyForFlyRoom();
+                PowerFlyData rolledFly = PowerFlyFactory.Instance.RollFlyUnweighted();
                 if (rolledFly != null)
                 {
                     Vector3 flyPosition = roomData.GetRoomCenterWorldPosition();

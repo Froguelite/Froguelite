@@ -133,11 +133,15 @@ MonoBehaviour:
   maxHealth: 15
   navAgent: {fileID: 1980914540849464392}
   movementType: 1
+  isMiniboss: 1
   rb: {fileID: 5129534094065454569}
   useKnockback: 1
   knockbackDuration: 0.1
   spriteRenderer: {fileID: 144799453320457506}
   defeatSmokeAnimator: {fileID: 8957389480216010702}
+  onDeathEvent:
+    m_PersistentCalls:
+      m_Calls: []
   swarmBehavior: {fileID: 6459276806488802660}
   chargeupSprite: {fileID: -7758905640523202750, guid: 6b52ddda2e39df045932babe1cfff1ae, type: 3}
   defaultSprite: {fileID: 7939039619528793279, guid: 3b14ea5430cbe5041a6579908592235f, type: 3}

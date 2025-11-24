@@ -51,23 +51,27 @@ public static class RoomGraphGenerator
 
         // STEP 4: Replace a random leaf room with a shop, another with a fly, another with a totem.
         //-----------------------------------------//
-        Vector2Int shopRoomPos = GetRandomLeaf(roomGraph);
+        List<Vector2Int> excludedPositions = new List<Vector2Int>();
+
+        Vector2Int shopRoomPos = GetRandomLeafExcluding(roomGraph, excludedPositions);
         if (shopRoomPos == Vector2Int.zero)
         {
             AddNormalLeafRoom(zone, roomGraph, out roomGraph, out Vector2Int newRoomPosOut);
             shopRoomPos = newRoomPosOut;
         }
         roomGraph[shopRoomPos.x, shopRoomPos.y].roomType = Room.RoomType.Shop;
+        excludedPositions.Add(shopRoomPos);
 
-        Vector2Int flyRoomPos = GetRandomLeaf(roomGraph);
+        Vector2Int flyRoomPos = GetRandomLeafExcluding(roomGraph, excludedPositions);
         if (flyRoomPos == Vector2Int.zero)
         {
             AddNormalLeafRoom(zone, roomGraph, out roomGraph, out Vector2Int newRoomPosOut);
             flyRoomPos = newRoomPosOut;
         }
         roomGraph[flyRoomPos.x, flyRoomPos.y].roomType = Room.RoomType.Fly;
+        excludedPositions.Add(flyRoomPos);
 
-        Vector2Int totemRoomPos = GetRandomLeaf(roomGraph);
+        Vector2Int totemRoomPos = GetRandomLeafExcluding(roomGraph, excludedPositions);
         if (totemRoomPos == Vector2Int.zero)
         {
             AddNormalLeafRoom(zone, roomGraph, out roomGraph, out Vector2Int newRoomPosOut);
@@ -227,6 +231,36 @@ public static class RoomGraphGenerator
         if (leafRooms.Count == 0)
         {
             Debug.LogError("[RoomGraphGenerator] GetRandomLeaf: No leaf rooms found in graph. Generation will likely be broken.");
+            return Vector2Int.zero;
+        }
+
+        // Select a random leaf room
+        int randIndex = Random.Range(0, leafRooms.Count);
+        return leafRooms[randIndex].roomCoordinate;
+    }
+
+
+    // Gets a random leaf room from the graph, excluding specified positions
+    private static Vector2Int GetRandomLeafExcluding(RoomData[,] graph, List<Vector2Int> excludedPositions)
+    {
+        List<RoomData> leafRooms = new List<RoomData>();
+
+        // Gather all leaf rooms that are not in the excluded list
+        for (int x = 0; x < graph.GetLength(0); x++)
+        {
+            for (int y = 0; y < graph.GetLength(1); y++)
+            {
+                RoomData room = graph[x, y];
+                if (room != null && room.isLeaf && !excludedPositions.Contains(room.roomCoordinate))
+                {
+                    leafRooms.Add(room);
+                }
+            }
+        }
+
+        if (leafRooms.Count == 0)
+        {
+            Debug.LogWarning("[RoomGraphGenerator] GetRandomLeafExcluding: No available leaf rooms found (all excluded).");
             return Vector2Int.zero;
         }
 
@@ -454,9 +488,9 @@ public static class RoomGraphGenerator
             for (int y = 0; y < graph.GetLength(1); y++)
             {
                 RoomData room = graph[x, y];
-                if (room != null && room.roomType != Room.RoomType.BossPortal && room.roomType != Room.RoomType.SubZoneBoss && room.isLeaf)
+                if (room != null && (room.roomType == Room.RoomType.Fly || room.roomType == Room.RoomType.Totem || room.roomType == Room.RoomType.Shop) && room.isLeaf)
                 {
-                    // This room is not the boss room, and it is a leaf room. Lock it at 50% chance.
+                    // This room is not the boss room or a normal room, and it is a leaf room. Lock it at 50% chance.
 
                     if (Random.value < 0.5f) // 50% chance to lock a door in this leaf room
                     {

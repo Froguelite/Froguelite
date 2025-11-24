@@ -26,6 +26,7 @@ public class LevelManager : MonoBehaviour
         MenuScene,
         BossScene,
         StumpScene,
+        MinibossRushScene
     }
 
     public enum LoadEffect
@@ -37,7 +38,7 @@ public class LevelManager : MonoBehaviour
         Leaves
     }
 
-    private string[] sceneNames = { "MainScene", "MenuScene", "BossScene", "StumpScene" };
+    private string[] sceneNames = { "MainScene", "MenuScene", "BossScene", "StumpScene", "MinibossRushScene" };
 
     #endregion
 
@@ -173,6 +174,27 @@ public class LevelManager : MonoBehaviour
                     GoldenFlyHUD.Instance.ForceShow();
                 }
                 break;
+            case Scenes.MinibossRushScene:
+                FrogueliteCam.Instance.UnconfineCamera();
+                PlayerMovement.Instance.transform.position = new Vector3(14.48f, 11.66f, 0);
+                MinimapManager.Instance.HideMinimap();
+
+                // Find and update all active CinemachineCamera components
+                CinemachineCamera[] camera = FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
+                foreach (CinemachineCamera cam in camera)
+                {
+                    if (cam.isActiveAndEnabled)
+                    {
+                        // Force the camera to update its position immediately
+                        cam.ForceCameraPosition(PlayerMovement.Instance.transform.position, Quaternion.identity);
+                        
+                        // Manually update the camera's internal state
+                        cam.UpdateCameraState(Vector3.up, Time.deltaTime);
+                    }
+                }
+                FindAnyObjectByType<MinibossRushHandler>().StartMinibossRush();
+                UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
+                break;
             default:
                 FrogueliteCam.Instance.UnconfineCamera();
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
@@ -183,7 +205,7 @@ public class LevelManager : MonoBehaviour
         AmbiantParticleHandler ambiantParticleHandler = FindAnyObjectByType<AmbiantParticleHandler>();
         if (ambiantParticleHandler != null)
         {
-            ambiantParticleHandler.ResetAmbiantParticles(sceneName == Scenes.MainScene, currentZone);
+            ambiantParticleHandler.ResetAmbiantParticles(sceneName == Scenes.MainScene || sceneName == Scenes.MinibossRushScene, currentZone);
         }
 
         // Hide any loading effects
