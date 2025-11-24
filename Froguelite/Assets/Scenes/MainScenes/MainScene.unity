@@ -795,7 +795,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5981309382374857493, guid: 1f22e60e09677994bb7ad739eb8171eb, type: 3}
       propertyPath: generateZoneOnStart
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5981309382374857493, guid: 1f22e60e09677994bb7ad739eb8171eb, type: 3}
       propertyPath: generateZoneOnStartZone
