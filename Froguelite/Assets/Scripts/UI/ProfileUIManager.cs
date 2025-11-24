@@ -27,6 +27,7 @@ public class ProfileUIManager : MonoBehaviour
 
     private readonly string profileCardsFileName = "profile_cards.json";
 
+    private ProfileCardData profileToDelete;
     #endregion
 
     #region SETUP
@@ -194,18 +195,51 @@ public class ProfileUIManager : MonoBehaviour
 
     public void DeleteProfile(ProfileCardData cardData)
     {
+        ////Destroy Profile Card
+        //Destroy(profileCards[cardData.profileNumber]);
+        //profileCards[cardData.profileNumber] = null;
+
+        ////Enable Add Slot for profile number
+        //addSlots[cardData.profileNumber].GetComponent<Button>().interactable = true;
+
+        ////Remove from profileCardDataList
+        //profileCardDataList.profiles.Remove(cardData);
+
+        ////Delete save file
+        //SaveManager.DeleteProfile(cardData.profileNumber);
+
+        //Show pop up to confirm profile delete
+        profileToDelete = cardData;
+        UIManager.Instance.ShowPopUpPanel();
+    }
+
+    public void ConfirmDelete()
+    {
         //Destroy Profile Card
-        Destroy(profileCards[cardData.profileNumber]);
-        profileCards[cardData.profileNumber] = null;
+        Destroy(profileCards[profileToDelete.profileNumber]);
+        profileCards[profileToDelete.profileNumber] = null;
 
         //Enable Add Slot for profile number
-        addSlots[cardData.profileNumber].GetComponent<Button>().interactable = true;
+        addSlots[profileToDelete.profileNumber].GetComponent<Button>().interactable = true;
 
         //Remove from profileCardDataList
-        profileCardDataList.profiles.Remove(cardData);
+        profileCardDataList.profiles.Remove(profileToDelete);
 
         //Delete save file
-        SaveManager.DeleteProfile(cardData.profileNumber);
+        SaveManager.DeleteProfile(profileToDelete.profileNumber);
+
+        //Profile Deleted, remove it
+        profileToDelete = null;
+
+        UIManager.Instance.ClosePopUpPanel();
+    }
+
+    public void CancelDelete()
+    {
+        //Profile not to deleted, remove it
+        profileToDelete = null;
+
+        UIManager.Instance.ClosePopUpPanel();
     }
 
     #endregion

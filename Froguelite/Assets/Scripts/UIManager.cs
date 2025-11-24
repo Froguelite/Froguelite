@@ -286,6 +286,21 @@ public class UIManager : MonoBehaviour
 
     #endregion
 
+    #region POP-UP METHODS
+    public void ShowPopUpPanel()
+    {
+        if(uiPanels[(int)UIPanels.PopUpScreen].panelObject != null)
+            uiPanels[(int) UIPanels.PopUpScreen].panelObject.SetActive(true);
+    }
+
+    public void ClosePopUpPanel()
+    {
+        if (uiPanels[(int)UIPanels.PopUpScreen].panelObject != null)
+            uiPanels[(int)UIPanels.PopUpScreen].panelObject.SetActive(false);
+    }
+
+    #endregion
+
     #region HELPER METHODS
     public void PanelSwitch(UIPanels next)
     {

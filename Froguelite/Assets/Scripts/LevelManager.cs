@@ -196,6 +196,10 @@ public class LevelManager : MonoBehaviour
                     GoldenFlyHUD.Instance.ForceShow();
                 }
 
+                int profileNum = SaveManager.activeProfile;
+                ProfileUIManager.Instance.UpdateSceneToLoadForProfile(profileNum, Scenes.StumpScene);
+                Debug.Log("Changed load scene to StumpScene");
+
                 StatsManager.Instance.playerHealth.SetPlayerAlive(); //For avoiding taking damage after player died
                 break;
             default:
