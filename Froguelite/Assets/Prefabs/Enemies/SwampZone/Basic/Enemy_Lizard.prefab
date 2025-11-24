@@ -68,6 +68,14 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2278778753134761842, guid: 962220a095147544ea006ebb71c0e700, type: 3}
+      propertyPath: m_Height
+      value: 0.86
+      objectReference: {fileID: 0}
+    - target: {fileID: 2278778753134761842, guid: 962220a095147544ea006ebb71c0e700, type: 3}
+      propertyPath: m_Radius
+      value: 0.32
+      objectReference: {fileID: 0}
     - target: {fileID: 4210400531515010701, guid: 962220a095147544ea006ebb71c0e700, type: 3}
       propertyPath: chaseSettings.chaseSpeed
       value: 3

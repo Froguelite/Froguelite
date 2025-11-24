@@ -1,0 +1,222 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8076812290337320593
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4646203273129434635}
+  m_Layer: 0
+  m_Name: SpitSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4646203273129434635
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8076812290337320593}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.35, y: 0.255, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5797313264300753979}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &4970979028607452372
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 144799453320457506, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 12cd1cbcbcdd5c74ebb5e5dcb265b04a, type: 3}
+    - target: {fileID: 1002974770924024167, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: chaseOnStart
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479510148188651759, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479510148188651759, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479510148188651759, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479510148188651759, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 20.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479510148188651759, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.64
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479510148188651759, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479510148188651759, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479510148188651759, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479510148188651759, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479510148188651759, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479510148188651759, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479510148188651759, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479510148188651759, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479510148188651759, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5441423526137689190, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: associatedEnemy
+      value: 
+      objectReference: {fileID: 6106056513851520351}
+    - target: {fileID: 6459276806488802660, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: enemyBase
+      value: 
+      objectReference: {fileID: 6106056513851520351}
+    - target: {fileID: 6459276806488802660, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: swarmInfo.swarmName
+      value: MosquitoSpitter
+      objectReference: {fileID: 0}
+    - target: {fileID: 6459276806488802660, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: swarmInfo.minTimeBetweenSwarmActions
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8536678332011776947, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_Name
+      value: Enemy_MosSpitterBoss
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 1002974770924024167, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 1479510148188651759, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4646203273129434635}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8536678332011776947, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6106056513851520351}
+  m_SourcePrefab: {fileID: 100100000, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+--- !u!50 &275760823741614397 stripped
+Rigidbody2D:
+  m_CorrespondingSourceObject: {fileID: 5129534094065454569, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+  m_PrefabInstance: {fileID: 4970979028607452372}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2116552318802395568 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6459276806488802660, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+  m_PrefabInstance: {fileID: 4970979028607452372}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3640079068214742887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b602e47dec74b4da40a39d57eb9e2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyBehavior_Swarm
+--- !u!1 &3640079068214742887 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8536678332011776947, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+  m_PrefabInstance: {fileID: 4970979028607452372}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6106056513851520351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3640079068214742887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf3b66d876ba3154f992c9e3dd46e610, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy_SwarmAndSpit
+  chaseOnStart: 0
+  enemyId: MosquitoSpitter
+  maxHealth: 15
+  navAgent: {fileID: 6882037141324251292}
+  movementType: 1
+  isMiniboss: 1
+  rb: {fileID: 275760823741614397}
+  useKnockback: 1
+  knockbackDuration: 0.1
+  spriteRenderer: {fileID: 5115554003245492726}
+  defeatSmokeAnimator: {fileID: 4085747073549916954}
+  onDeathEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  swarmBehavior: {fileID: 2116552318802395568}
+  spittingSprite: {fileID: 21300000, guid: 51980749904e40a4c8548352de64f50f, type: 3}
+  defaultSprite: {fileID: 21300000, guid: 12cd1cbcbcdd5c74ebb5e5dcb265b04a, type: 3}
+  projectilePrefab: {fileID: 7773816935811999561, guid: 81e18f56849a3654b805e30b38484958, type: 3}
+  spitProjectileData:
+    speed: 8
+    lifetime: 3
+    rotationSpeed: 2
+    projectileSprite: {fileID: 21300000, guid: d50af141154029246a6c52bc0c92f48c, type: 3}
+    dissipationColor: {r: 0.7058824, g: 1, b: 0.5137255, a: 1}
+    scale: 4
+  spitSpawnTransform: {fileID: 4646203273129434635}
+--- !u!114 &4085747073549916954 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8957389480216010702, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+  m_PrefabInstance: {fileID: 4970979028607452372}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9067adbf4b1871a42833b06359e708a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlipbookAnimator
+--- !u!212 &5115554003245492726 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 144799453320457506, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+  m_PrefabInstance: {fileID: 4970979028607452372}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5797313264300753979 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1479510148188651759, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+  m_PrefabInstance: {fileID: 4970979028607452372}
+  m_PrefabAsset: {fileID: 0}
+--- !u!195 &6882037141324251292 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 1980914540849464392, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+  m_PrefabInstance: {fileID: 4970979028607452372}
+  m_PrefabAsset: {fileID: 0}

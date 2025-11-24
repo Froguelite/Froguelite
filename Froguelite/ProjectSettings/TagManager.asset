@@ -53,6 +53,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Totem
+    uniqueID: 2346373511
+    locked: 0
   - name: Foregrounds
     uniqueID: 4225662219
     locked: 0

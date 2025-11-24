@@ -14,6 +14,7 @@ public class BubbleLoadingEffect : MonoBehaviour
     [SerializeField] private Image bubblePrefab; // The bubble image prefab to spawn
     [SerializeField] private RectTransform bubbleContainer; // Parent container for spawned bubbles
     [SerializeField] private CanvasGroup backgroundBlockerCanvGroup;
+    [SerializeField] private Image background; // Background image to tint
 
     [Header("Spawn Settings")]
     [SerializeField] private float bubblesPerSecond = 60f; // Rate of bubble spawning
@@ -35,6 +36,12 @@ public class BubbleLoadingEffect : MonoBehaviour
     private List<BubbleData> activeBubbles = new List<BubbleData>();
     private bool isEffectActive = false;
     private float spawnTimer = 0f;
+
+    private bool usingLeaves = false;
+    [SerializeField] private Sprite bubbleSprite;
+    [SerializeField] private Color bubbleBgColor;
+    [SerializeField] private Sprite leafSprite;
+    [SerializeField] private Color leafBgColor;
 
     private class BubbleData
     {
@@ -104,8 +111,18 @@ public class BubbleLoadingEffect : MonoBehaviour
 
     #region START / STOP
 
-    public void StartEffect()
+    public void StartEffect(bool useLeaves)
     {
+        usingLeaves = useLeaves;
+        if (useLeaves)
+        {
+            background.color = leafBgColor;
+        }
+        else
+        {
+            background.color = bubbleBgColor;
+        }
+
         isEffectActive = true;
         spawnTimer = 0f;
         
@@ -155,6 +172,14 @@ public class BubbleLoadingEffect : MonoBehaviour
         // Create bubble instance
         Image bubble = Instantiate(bubblePrefab, bubbleContainer);
         RectTransform rectTransform = bubble.rectTransform;
+        if (usingLeaves)
+        {
+            bubble.sprite = leafSprite;
+        }
+        else
+        {
+            bubble.sprite = bubbleSprite;
+        }
 
         // Random size
         float size = Random.Range(minBubbleSize, maxBubbleSize);

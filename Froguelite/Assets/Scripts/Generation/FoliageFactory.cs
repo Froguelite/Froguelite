@@ -37,7 +37,8 @@ public class FoliageFactory : MonoBehaviour
     }
 
     // List of foliage prefab groups - each group has its own sampling parameters
-    [SerializeField] private FoliageSpawnGroup[] foliageGroups;
+    [SerializeField] private FoliageSpawnGroup[] swampFoliageGroups;
+    [SerializeField] private FoliageSpawnGroup[] forestFoliageGroups;
 
 
     #endregion
@@ -47,7 +48,7 @@ public class FoliageFactory : MonoBehaviour
 
 
     // Generates foliage for the given room using Poisson-disc sampling
-    public void GenerateFoliageForRoom(Room room, float landFoliageDensityScale)
+    public void GenerateFoliageForRoom(int zone, Room room, float landFoliageDensityScale)
     {
         // Get room bounds in world coordinates
         Vector3 roomWorldPos = new Vector3(
@@ -58,7 +59,8 @@ public class FoliageFactory : MonoBehaviour
         float roomSize = room.roomData.roomLength;
 
         // Generate foliage for each group separately with their own sampling parameters
-        foreach (FoliageSpawnGroup group in foliageGroups)
+        FoliageSpawnGroup[] zoneFoliageGroups = zone == 0 ? swampFoliageGroups : forestFoliageGroups;
+        foreach (FoliageSpawnGroup group in zoneFoliageGroups)
         {
             if (group.foliageSpawnParams == null || group.foliageSpawnParams.Length == 0)
                 continue;

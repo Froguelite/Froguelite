@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51c14629a9410b48a3ac36cd58696f3, type: 3}
+  m_Name: SnakeRoom
+  m_EditorClassIdentifier: Assembly-CSharp::RoomEnemySpawnGroup
+  enemySpawnEntries:
+  - minEnemyCount: 2
+    maxEnemyCount: 2
+    possibleEnemies:
+    - {fileID: 4000690402368564773, guid: 5919287d2a1359f488653b59bb99e7f0, type: 3}
+  - minEnemyCount: 0
+    maxEnemyCount: 3
+    possibleEnemies:
+    - {fileID: 219424671850456708, guid: 8dce0d954e091a94b898cbe08dbeb510, type: 3}

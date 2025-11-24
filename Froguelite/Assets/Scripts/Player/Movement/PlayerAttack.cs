@@ -190,6 +190,33 @@ public class PlayerAttack : MonoBehaviour
     }
 
 
+    // Immediately retracts the tongue without animation (used when dash interrupts attack)
+    public void ImmediateRetract()
+    {
+        // Stop any active attack states
+        isExtending = false;
+        isRetracting = false;
+
+        // Reset tongue position immediately
+        tongue.localPosition = tongueStartOffset;
+
+        // Re-enable player movement
+        PlayerMovement.Instance.SetAttackingOverride(false);
+
+        // Hide tongue visual
+        if (tongueSprite != null)
+        {
+            tongueSprite.enabled = false;
+        }
+
+        // Start cooldown
+        if (!inCooldown)
+        {
+            StartCoroutine(TongueCooldownCoroutine());
+        }
+    }
+
+
     #endregion
 
 
