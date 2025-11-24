@@ -24,8 +24,16 @@ public class Door : MonoBehaviour
     private bool invertSpriteDirection = false;
 
     [SerializeField] private SpriteRenderer frogRenderer;
+    [SerializeField] private Transform bobbingTransform;
     [SerializeField] private SpriteMask frogMask;
+    [SerializeField] private bool useWaterSway = true;
+    [SerializeField] private bool useBobbingMove = false;
+    [SerializeField] private bool useRipples = true;
     [SerializeField] private ParticleSystem rippleParticles;
+    [SerializeField] private bool useLeafTrail = false;
+    [SerializeField] private ParticleSystem[] leafTrailParticles;
+
+    [SerializeField] private Transform attachTransform;
 
     [SerializeField] private Sprite unlockedSpriteUp;
     [SerializeField] private Sprite lockedSpriteUp;
@@ -36,6 +44,11 @@ public class Door : MonoBehaviour
     [SerializeField] private Sprite unlockedSpriteRight;
     [SerializeField] private Sprite lockedSpriteRight;
 
+    [SerializeField] private Sign signPrefab;
+    public Sprite dangerousSignSprite;
+    public Sprite woodpeckerSignSprite;
+    private bool spawnedSign = false;
+
     // Floating animation variables
     private Vector3 frogRendShownPos;
     private Vector3 frogRendHiddenPos;
@@ -44,15 +57,31 @@ public class Door : MonoBehaviour
     private float timeOffset;
     private bool inShownPosition = true;
 
+    // Bobbing animation variables
+    private bool isBobbingDuringTravel = false;
+    private Coroutine bobbingCoroutine;
+    private Vector3 bobbingTransformOriginalPos;
+    private bool spawnedDangerousSign = false;
+
 
     #endregion
 
 
     #region MONOBEHAVIOUR
 
+    void Awake()
+    {
+        if (!useRipples)
+        {
+            rippleParticles.Stop();
+        }
+
+        StopLeafTrailParticles();
+    }
+
     private void Update()
     {
-        if (frogMask != null)
+        if (frogMask != null && useWaterSway)
         {
             FloatFrog();
         }
@@ -73,6 +102,7 @@ public class Door : MonoBehaviour
         frogRendShownPos = frogRenderer.transform.localPosition;
         frogRendHiddenPos = frogRendShownPos - new Vector3(0, 1, 0);
         timeOffset = Random.Range(0f, 2f * Mathf.PI); // Random starting phase for variety
+        bobbingTransformOriginalPos = bobbingTransform.transform.localPosition;
 
         DoorManager.Instance.RegisterDoor(this);
 
@@ -121,6 +151,7 @@ public class Door : MonoBehaviour
                     frogRenderer.sprite = invertSpriteDirection ? lockedSpriteRight : lockedSpriteLeft;
                     break;
             }
+            SpawnSign(woodpeckerSignSprite);
         }
         else
         {
@@ -153,11 +184,20 @@ public class Door : MonoBehaviour
             LeanTween.cancel(frogRenderer.gameObject);
 
             frogRenderer.enabled = true;
-            rippleParticles.Play();
 
+            if (useRipples)
+                rippleParticles.Play();
+                
             if (animate)
             {
-                frogRenderer.transform.LeanMoveLocal(frogRendShownPos, 0.5f).setEaseOutSine();
+                if (useLeafTrail)
+                    StartLeafTrailParticles();
+
+                frogRenderer.transform.LeanMoveLocal(frogRendShownPos, 0.5f).setEaseOutSine().setOnComplete(() =>
+                {
+                    if (useLeafTrail)
+                        StopLeafTrailParticles();
+                });
             }
             else
             {
@@ -170,13 +210,19 @@ public class Door : MonoBehaviour
 
             inShownPosition = false;
             LeanTween.cancel(frogRenderer.gameObject);
-            rippleParticles.Stop();
+            if (useRipples)
+                rippleParticles.Stop();
 
             if (animate)
             {
+                if (useLeafTrail)
+                    StartLeafTrailParticles();
+
                 frogRenderer.transform.LeanMoveLocal(frogRendHiddenPos, 0.5f).setEaseInSine().setOnComplete(() =>
                 {
                     frogRenderer.enabled = false;
+                    if (useLeafTrail)
+                        StopLeafTrailParticles();
                 });
             }
             else
@@ -190,12 +236,72 @@ public class Door : MonoBehaviour
     // Makes the frog renderer float around its original position in the water
     private void FloatFrog()
     {
+        // Don't apply floating if we're bobbing during travel
+        if (isBobbingDuringTravel) return;
+
         // Create smooth floating motion using sine waves
         float x = Mathf.Sin((Time.time + timeOffset) * floatSpeed) * floatRange;
         float y = Mathf.Sin((Time.time + timeOffset) * floatSpeed * 1.3f) * floatRange * 0.7f;
 
         // Apply the floating offset as local position
         frogMask.transform.localPosition = new Vector3(x, y, 0);
+    }
+
+
+    private void StartLeafTrailParticles()
+    {
+        if (leafTrailParticles == null) return;
+
+        foreach (var ps in leafTrailParticles)
+        {
+            if (ps != null && !ps.isPlaying)
+            {
+                ps.Play();
+            }
+        }
+    }
+
+    private void StopLeafTrailParticles()
+    {
+        if (leafTrailParticles == null) return;
+
+        foreach (var ps in leafTrailParticles)
+        {
+            if (ps != null && ps.isPlaying)
+            {
+                ps.Stop();
+            }
+        }
+    }
+
+    public void SpawnSign(Sprite signSprite)
+    {
+        if (spawnedSign) return;
+        spawnedSign = true;
+
+        if (signPrefab != null)
+        {
+            Vector3 offset = Vector3.zero;
+            
+            switch (doorData.direction)
+            {
+                case DoorDirection.Up:
+                    offset = new Vector3(-2f, 0, 0); // Left of door
+                    break;
+                case DoorDirection.Down:
+                    offset = new Vector3(-2f, 0, 0); // Left of door
+                    break;
+                case DoorDirection.Left:
+                    offset = new Vector3(0, 2f, 0); // Above door
+                    break;
+                case DoorDirection.Right:
+                    offset = new Vector3(0, 2f, 0); // Above door
+                    break;
+            }
+            
+            Sign signInstance = Instantiate(signPrefab, transform.position + offset, Quaternion.identity);
+            signInstance.SetupSign(signSprite, true);
+        }
     }
 
 
@@ -287,7 +393,11 @@ public class Door : MonoBehaviour
         {
             if (doorData.isLocked)
             {
-                if (InventoryManager.Instance.woodpeckers <= 0) return;
+                if (InventoryManager.Instance.woodpeckers <= 0) 
+                {
+                    PlayerAttack.Instance.StopTongueExtension();
+                    return;
+                }
 
                 InventoryManager.Instance.RemoveWoodpeckers(1);
                 UnlockDoor();
@@ -311,11 +421,22 @@ public class Door : MonoBehaviour
             PlayerMovement.Instance.onReachManualMoveTarget.AddListener(() =>
             {
                 // Make sure the player is exactly inside the frog, and parent them to it so they move with it
-                PlayerMovement.Instance.transform.position = frogMask.transform.position;
-                PlayerMovement.Instance.transform.SetParent(frogMask.transform);
+                PlayerMovement.Instance.transform.position = attachTransform.transform.position;
+                PlayerMovement.Instance.transform.SetParent(attachTransform.transform);
 
                 invertSpriteDirection = true;
                 UpdateDoorVisuals();
+
+                // Start bobbing animation if enabled
+                if (useBobbingMove)
+                {
+                    if (bobbingCoroutine != null) StopCoroutine(bobbingCoroutine);
+                    bobbingCoroutine = StartCoroutine(BobbingDuringTravel(2f));
+                }
+
+                // Enable leaf trail particles during travel
+                if (useLeafTrail)
+                    StartLeafTrailParticles();
 
                 // Tween the frog from current position (launch position) to other island (landing position)
                 transform.LeanMove(doorData.otherRoomLaunchPosition, 2f).setEaseInOutSine().setOnComplete(() =>
@@ -330,6 +451,20 @@ public class Door : MonoBehaviour
 
                     transform.LeanMove(doorData.launchPosition, 2f).setEaseInOutSine().setOnComplete(() =>
                     {
+                        // Stop bobbing animation
+                        if (bobbingCoroutine != null)
+                        {
+                            StopCoroutine(bobbingCoroutine);
+                            bobbingCoroutine = null;
+                            isBobbingDuringTravel = false;
+                            LeanTween.cancel(bobbingTransform.gameObject);
+                            bobbingTransform.transform.LeanMoveLocal(bobbingTransformOriginalPos, 0.3f).setEaseOutSine();
+                        }
+
+                        // Stop leaf trail particles after travel
+                        if (useLeafTrail)
+                            StopLeafTrailParticles();
+
                         isTravelling = false;
                         UpdateDoorVisuals();
                         DoorManager.Instance.OnTravelEnded();
@@ -386,6 +521,33 @@ public class Door : MonoBehaviour
 
         // Notify that the launch phase is complete
         DoorManager.Instance.OnTravelLaunchComplete();
+    }
+
+
+    // Creates a bobbing animation during travel that matches the movement speed
+    private IEnumerator BobbingDuringTravel(float travelDuration)
+    {
+        isBobbingDuringTravel = true;
+        float elapsedTime = 0f;
+        float bobbingFrequency = 4f; // Number of bobs during the travel
+        float bobbingHeight = .10f; // Maximum height of each bob
+
+        while (elapsedTime < travelDuration)
+        {
+            float t = elapsedTime / travelDuration;
+
+            // Apply bobbing motion with speed-based frequency
+            float bobbingOffset = Mathf.Sin(elapsedTime * bobbingFrequency * 2f * Mathf.PI / travelDuration) * bobbingHeight;
+            bobbingTransform.transform.localPosition = new Vector3(0, bobbingOffset, 0);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Reset position at the end
+        LeanTween.cancel(bobbingTransform.gameObject);
+        bobbingTransform.transform.LeanMoveLocal(bobbingTransformOriginalPos, 0.3f).setEaseOutSine();
+        isBobbingDuringTravel = false;
     }
 
 

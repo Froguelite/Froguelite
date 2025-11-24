@@ -181,6 +181,13 @@ public class PowerFlyFactory : MonoBehaviour
     }
 
 
+    // Rolls randomly for a power fly with equal weights across all rarities
+    public PowerFlyData RollFlyUnweighted()
+    {
+        return RollFlyWithWeights(1f, 1f, 1f);
+    }
+
+
     // Rolls randomly for a power fly based on given weights
     private PowerFlyData RollFlyWithWeights(float commonWeight, float uncommonWeight, float rareWeight)
     {

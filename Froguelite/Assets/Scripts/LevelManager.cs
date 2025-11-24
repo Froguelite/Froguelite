@@ -17,8 +17,8 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private Image progressBar;
 
-    private int currentZone = 0;
-    private int currentSubZone = -1;
+    public int currentZone {get; private set;} = 1;
+    public int currentSubZone {get; private set;} = -1;
     public bool useLoadedVal = true;
 
     public enum Scenes
@@ -27,6 +27,7 @@ public class LevelManager : MonoBehaviour
         MenuScene,
         BossScene,
         StumpScene,
+        MinibossRushScene
     }
 
     public enum LoadEffect
@@ -34,10 +35,11 @@ public class LevelManager : MonoBehaviour
         None,
         LoadingScreen,
         Portal,
-        Bubble
+        Bubble,
+        Leaves
     }
 
-    private string[] sceneNames = { "MainScene", "MenuScene", "BossScene", "StumpScene" };
+    private string[] sceneNames = { "MainScene", "MenuScene", "BossScene", "StumpScene", "MinibossRushScene" };
 
     #endregion
 
@@ -76,6 +78,12 @@ public class LevelManager : MonoBehaviour
     {
         
     }
+
+    public void ManuallySetCurrentZone(int zone)
+    {
+        currentZone = zone;
+    }
+
     #endregion
 
     public async Task LoadScene(Scenes sceneName, LoadEffect loadEffect)
@@ -104,7 +112,13 @@ public class LevelManager : MonoBehaviour
 
         if (loadEffect == LoadEffect.Bubble)
         {
-            bubbleLoadingEffect.StartEffect();
+            bubbleLoadingEffect.StartEffect(false);
+            await Task.Delay(2000); // Wait for bubble effect duration
+        }
+
+        if (loadEffect == LoadEffect.Leaves)
+        {
+            bubbleLoadingEffect.StartEffect(true);
             await Task.Delay(2000); // Wait for bubble effect duration
         }
 
@@ -202,10 +216,38 @@ public class LevelManager : MonoBehaviour
 
                 StatsManager.Instance.playerHealth.SetPlayerAlive(); //For avoiding taking damage after player died
                 break;
+            case Scenes.MinibossRushScene:
+                FrogueliteCam.Instance.UnconfineCamera();
+                PlayerMovement.Instance.transform.position = new Vector3(14.48f, 11.66f, 0);
+                MinimapManager.Instance.HideMinimap();
+
+                // Find and update all active CinemachineCamera components
+                CinemachineCamera[] camera = FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
+                foreach (CinemachineCamera cam in camera)
+                {
+                    if (cam.isActiveAndEnabled)
+                    {
+                        // Force the camera to update its position immediately
+                        cam.ForceCameraPosition(PlayerMovement.Instance.transform.position, Quaternion.identity);
+                        
+                        // Manually update the camera's internal state
+                        cam.UpdateCameraState(Vector3.up, Time.deltaTime);
+                    }
+                }
+                FindAnyObjectByType<MinibossRushHandler>().StartMinibossRush();
+                UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
+                break;
             default:
                 FrogueliteCam.Instance.UnconfineCamera();
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
                 break;
+        }
+
+        // Restart ambiant particles, if pertinent
+        AmbiantParticleHandler ambiantParticleHandler = FindAnyObjectByType<AmbiantParticleHandler>();
+        if (ambiantParticleHandler != null)
+        {
+            ambiantParticleHandler.ResetAmbiantParticles(sceneName == Scenes.MainScene || sceneName == Scenes.MinibossRushScene, currentZone);
         }
 
         // Hide any loading effects
@@ -215,7 +257,7 @@ public class LevelManager : MonoBehaviour
             portalLoadingEffect.StopEffect();
         }
 
-        if (loadEffect == LoadEffect.Bubble)
+        if (loadEffect == LoadEffect.Bubble || loadEffect == LoadEffect.Leaves)
         {
             bubbleLoadingEffect.StopEffect();
         }
@@ -254,13 +296,13 @@ public class LevelManager : MonoBehaviour
         if (currentSubZone > 2)
         {
             currentSubZone = 0;
-            currentZone++;
+            currentZone--;
         }
     }
 
     private void ResetZoneProgression()
     {
-        currentZone = 0;
+        currentZone = 1;
         currentSubZone = -1;
     }
 

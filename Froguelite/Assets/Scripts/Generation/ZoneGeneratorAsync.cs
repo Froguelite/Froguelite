@@ -28,7 +28,8 @@ public class ZoneGeneratorAsync : MonoBehaviour
     [SerializeField] private AutoTileSet zone2AutoTileSet;
     [SerializeField] private Transform roomParent;
 
-    [SerializeField] private Door doorPrefab;
+    [SerializeField] private Door swampDoorPrefab;
+    [SerializeField] private Door forestDoorPrefab;
 
     // Progress tracking
     [SerializeField] private int maxRoomsPerFrame = 2; // Number of rooms to process per frame
@@ -62,7 +63,10 @@ public class ZoneGeneratorAsync : MonoBehaviour
     void Start()
     {
         if (generateZoneOnStart)
+        {
+            LevelManager.Instance.ManuallySetCurrentZone(generateZoneOnStartZone);
             StartCoroutine(GenerateZoneAsync(generateZoneOnStartZone, generateZoneOnStartSubZone));
+        }
     }
 
     #endregion
@@ -93,7 +97,7 @@ public class ZoneGeneratorAsync : MonoBehaviour
 
         // Step 1: Generate room graph (this is fast, can be done immediately)
         OnGenerationProgress?.Invoke(0.05f);
-        roomGraph = RoomGraphGenerator.GetRoomGraph(8, subZone);
+        roomGraph = RoomGraphGenerator.GetRoomGraph(zone, 8, subZone);
         yield return null; // Yield to prevent frame spike
 
         Debug.Log("Step 1: Room graph successfully generated.");
@@ -132,6 +136,46 @@ public class ZoneGeneratorAsync : MonoBehaviour
 
         Debug.Log("Step 5: RoomManager successfully initialized.");
 
+        // Get the sub-zone boss room. If there is one, spawn the danger sign on its entrance door
+        foreach (var roomEntry in spawnedRooms)
+        {
+            Room room = roomEntry.Value;
+            if (room.roomData.roomType == Room.RoomType.SubZoneBoss)
+            {
+                // Find the single door in this room (should only have one)
+                DoorData singleDoor = null;
+                Door.DoorDirection entranceDoorDirection = Door.DoorDirection.Up;
+
+                foreach (var doorEntry in room.roomData.doors)
+                {
+                    if (!doorEntry.Value.isImpassable)
+                    {
+                        singleDoor = doorEntry.Value;
+                        entranceDoorDirection = doorEntry.Key;
+                        break;
+                    }
+                }
+
+                // Get the connected room
+                Room connectedRoom = room.GetAdjacentRoom(entranceDoorDirection);
+                if (connectedRoom != null)
+                {
+                    Debug.Log("Connected room's doors: " + connectedRoom.doors.Count);
+                    // Find the door in the connected room that leads to this room
+                    foreach (Door connectedDoor in connectedRoom.doors)
+                    {
+                        Door.DoorDirection doorDir = connectedDoor.doorData.direction;
+                        if (doorDir == Door.GetOppositeDirection(entranceDoorDirection))
+                        {
+                            // Found the connecting door, spawn danger sign
+                            connectedDoor.SpawnSign(connectedDoor.dangerousSignSprite);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         // Step 6: Set player to starter room
         OnGenerationProgress?.Invoke(0.85f);
         if (teleportPlayerToStarterRoom)
@@ -166,6 +210,11 @@ public class ZoneGeneratorAsync : MonoBehaviour
         isGenerating = false;
 
         Debug.Log("Successfully finished generating");
+
+        if (generateZoneOnStart)
+        {
+            FindAnyObjectByType<AmbiantParticleHandler>()?.ResetAmbiantParticles(true, zone);
+        }
         
         onComplete?.Invoke();
     }
@@ -260,7 +309,7 @@ public class ZoneGeneratorAsync : MonoBehaviour
                 RoomData room = roomGraph[x, y];
                 if (room != null)
                 {
-                    SpawnDoorsForRoom(room, new Vector2Int(x, y));
+                    SpawnDoorsForRoom(zone, room, new Vector2Int(x, y));
                     
                     processedRooms++;
                     batchIndex++;
@@ -307,7 +356,7 @@ public class ZoneGeneratorAsync : MonoBehaviour
     private IEnumerator SpawnRoomAsync(int zone, RoomData roomData, Vector2Int gridPosition, int batchIndex)
     {
         AutoTileSet autoTileSet = (zone == 0) ? zone1AutoTileSet : zone2AutoTileSet;
-        Room spawnedRoom = roomFactory.SpawnRoom(roomsTilemap, autoTileSet, roomParent, roomData, 32);
+        Room spawnedRoom = roomFactory.SpawnRoom(zone, roomsTilemap, autoTileSet, roomParent, roomData, 32);
         spawnedRooms[gridPosition] = spawnedRoom;
 
         // Yield after room creation to prevent frame spikes
@@ -325,7 +374,7 @@ public class ZoneGeneratorAsync : MonoBehaviour
             foliageLandDensity = 5f; // Less foliage in special rooms
         }
 
-        foliageFactory.GenerateFoliageForRoom(spawnedRoom, foliageLandDensity);
+        foliageFactory.GenerateFoliageForRoom(zone, spawnedRoom, foliageLandDensity);
     }
 
     private void SpawnEmptyRoom(int zone, Vector2Int gridPosition)
@@ -377,7 +426,7 @@ public class ZoneGeneratorAsync : MonoBehaviour
         );
 
         // Create a RoomData for this water-only room for minimap and other systems
-        RoomData waterRoomData = new RoomData(Room.RoomType.Normal, gridPosition);
+        RoomData waterRoomData = new RoomData(Room.RoomType.Normal, gridPosition, zone);
         waterRoomData.tileLayout = waterLayout;
         waterRoomData.roomLength = roomLength;
 
@@ -395,14 +444,8 @@ public class ZoneGeneratorAsync : MonoBehaviour
 
     #region SPAWNING DOORS
 
-    private void SpawnDoorsForRoom(RoomData roomData, Vector2Int gridPosition)
+    private void SpawnDoorsForRoom(int zone, RoomData roomData, Vector2Int gridPosition)
     {
-        if (doorPrefab == null)
-        {
-            Debug.LogError("Door prefab is null - cannot spawn doors");
-            return;
-        }
-
         if (!spawnedRooms.ContainsKey(gridPosition))
         {
             Debug.LogError($"Room at {gridPosition} not found in spawned rooms");
@@ -416,13 +459,24 @@ public class ZoneGeneratorAsync : MonoBehaviour
 
             if (!doorData.isImpassable)
             {
-                SpawnDoor(roomData, direction, doorData, gridPosition);
+                SpawnDoor(zone, roomData, direction, doorData, gridPosition);
             }
         }
     }
 
-    private void SpawnDoor(RoomData roomData, Door.DoorDirection direction, DoorData doorData, Vector2Int roomGridPos)
+    private void SpawnDoor(int zone, RoomData roomData, Door.DoorDirection direction, DoorData doorData, Vector2Int roomGridPos)
     {
+        Door doorPrefab = null;
+        switch (zone)
+        {
+            case 0:
+                doorPrefab = swampDoorPrefab;
+                break;
+            case 1:
+                doorPrefab = forestDoorPrefab;
+                break;
+        }
+
         if (doorPrefab == null || roomData.tileLayout == null)
         {
             Debug.LogError("Door prefab or room tile layout is null");

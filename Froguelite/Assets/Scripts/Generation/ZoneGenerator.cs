@@ -17,6 +17,7 @@ public class ZoneGenerator : MonoBehaviour
     public bool zoneGenerated { get; private set; } = false;
 
     [SerializeField] private bool generateZoneOnStart = true;
+    [SerializeField] private int generateZoneOnStartZone = 0;
     [SerializeField] private int generateZoneOnStartSubZone = 0;
     [SerializeField] private bool teleportPlayerToStarterRoom = true;
     
@@ -55,7 +56,7 @@ public class ZoneGenerator : MonoBehaviour
     void Start()
     {
         if (generateZoneOnStart)
-            GenerateZone(generateZoneOnStartSubZone);
+            GenerateZone(generateZoneOnStartZone,generateZoneOnStartSubZone);
     }
 
 
@@ -96,7 +97,7 @@ public class ZoneGenerator : MonoBehaviour
 
 
     // Generates the zone by creating a room graph and spawning rooms and doors
-    public void GenerateZone(int subZone)
+    public void GenerateZone(int zone, int subZone)
     {
         // TODO: Temporary, chooses a random seed every time
         //Uses Loaded seed from profile only the first time, afterwards it will be randomly generated
@@ -111,8 +112,8 @@ public class ZoneGenerator : MonoBehaviour
             SaveManager.WriteToFile(); //Need to save the next seed for generation ?
         }
 
-        roomGraph = RoomGraphGenerator.GetRoomGraph(8, subZone);
-        combinedTileLayout = SpawnRoomsFromGraph();
+        roomGraph = RoomGraphGenerator.GetRoomGraph(zone, 8, subZone);
+        combinedTileLayout = SpawnRoomsFromGraph(zone);
         MinimapManager.Instance.InitializeMinimap(combinedTileLayout);
 
         // Initialize the RoomManager with the generated rooms
@@ -187,7 +188,7 @@ public class ZoneGenerator : MonoBehaviour
 
 
     // Spawns rooms and doors from the room graph
-    private char[,] SpawnRoomsFromGraph()
+    private char[,] SpawnRoomsFromGraph(int zone)
     {
         if (roomGraph == null)
         {
@@ -215,7 +216,7 @@ public class ZoneGenerator : MonoBehaviour
                 RoomData room = roomGraph[x, y];
                 if (room != null)
                 {
-                    SpawnRoom(room, new Vector2Int(x, y));
+                    SpawnRoom(zone, room, new Vector2Int(x, y));
                 }
                 else
                 {
@@ -249,9 +250,9 @@ public class ZoneGenerator : MonoBehaviour
 
 
     // Spawns a single room at the specified grid position
-    private void SpawnRoom(RoomData roomData, Vector2Int gridPosition)
+    private void SpawnRoom(int zone, RoomData roomData, Vector2Int gridPosition)
     {
-        Room spawnedRoom = roomFactory.SpawnRoom(roomsTilemap, zoneAutoTileSet, roomParent, roomData, 32);
+        Room spawnedRoom = roomFactory.SpawnRoom(zone, roomsTilemap, zoneAutoTileSet, roomParent, roomData, 32);
         spawnedRooms[gridPosition] = spawnedRoom;
 
         // Generate foliage for the room
@@ -262,7 +263,7 @@ public class ZoneGenerator : MonoBehaviour
             foliageLandDensity = 5f; // Less foliage in special rooms
         }
 
-        foliageFactory.GenerateFoliageForRoom(spawnedRoom, foliageLandDensity);
+        foliageFactory.GenerateFoliageForRoom(zone, spawnedRoom, foliageLandDensity);
     }
 
 

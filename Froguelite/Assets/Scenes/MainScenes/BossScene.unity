@@ -5379,6 +5379,10 @@ PrefabInstance:
       value: GameManager
       objectReference: {fileID: 0}
     - target: {fileID: 5673963059578216789, guid: 2211788457854674c985eaa25d336c6b, type: 3}
+      propertyPath: godmode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5673963059578216789, guid: 2211788457854674c985eaa25d336c6b, type: 3}
       propertyPath: playerHealth
       value: 
       objectReference: {fileID: 886668812}
@@ -20885,6 +20889,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 201069127540892176, guid: bedd397312b73724d915f9f18dee1997, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 219683370528606098, guid: bedd397312b73724d915f9f18dee1997, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 301338999469275965, guid: bedd397312b73724d915f9f18dee1997, type: 3}
       propertyPath: yMax
       value: 10.5
@@ -21100,6 +21112,10 @@ PrefabInstance:
     - target: {fileID: 1658659953997806287, guid: bedd397312b73724d915f9f18dee1997, type: 3}
       propertyPath: m_Name
       value: FrogBossRoot
+      objectReference: {fileID: 0}
+    - target: {fileID: 1678507191064879444, guid: bedd397312b73724d915f9f18dee1997, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5107905344184048771, guid: bedd397312b73724d915f9f18dee1997, type: 3}
       propertyPath: m_Enabled

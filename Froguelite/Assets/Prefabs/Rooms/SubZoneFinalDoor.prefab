@@ -128,8 +128,15 @@ MonoBehaviour:
   doorDirection: 0
   frogRenderer: {fileID: 5169555926613163003}
   frogMask: {fileID: 4456657336943150371}
+  useWaterSway: 1
+  useRipples: 1
   rippleParticles: {fileID: 4267106611679671920}
+  useLeafTrail: 0
+  leafTrailParticles: []
   spriteUp: {fileID: 21300000, guid: 89ddbb95753a36549addd923fdf68598, type: 3}
   spriteDown: {fileID: 21300000, guid: 9e0e25b1cc7834f4dbc92c49bfa9f4f7, type: 3}
   spriteLeft: {fileID: 21300000, guid: ca71afd6d168cb74583e07b726189ee6, type: 3}
   spriteRight: {fileID: 21300000, guid: 657bd5d1acd935c47aedf0657df2d34f, type: 3}
+  signPrefab: {fileID: 3461941862502400734, guid: 38539a0b7e0575c4ba326a7929c8ed76, type: 3}
+  subZoneSignSprite: {fileID: 21300000, guid: bb6aeb8b901f6aa45b5b1a6b890d0612, type: 3}
+  zone: 0

@@ -137,7 +137,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5673963059578216789, guid: 2211788457854674c985eaa25d336c6b, type: 3}
       propertyPath: godmode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5673963059578216789, guid: 2211788457854674c985eaa25d336c6b, type: 3}
       propertyPath: playerHealth
@@ -188,6 +188,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2211788457854674c985eaa25d336c6b, type: 3}
+--- !u!66 &199988326 stripped
+CompositeCollider2D:
+  m_CorrespondingSourceObject: {fileID: 8444322905721394349, guid: 1f22e60e09677994bb7ad739eb8171eb, type: 3}
+  m_PrefabInstance: {fileID: 5991254334608446865}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &380878481 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3826962417473394660, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
@@ -396,6 +401,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1118267905821194168, guid: 1984249a298d03e46819244fb37d1342, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7dc18b580bb3d9747974b86a444689ac, type: 2}
+    - target: {fileID: 2796575979421742144, guid: 1984249a298d03e46819244fb37d1342, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4072048698298858925, guid: 1984249a298d03e46819244fb37d1342, type: 3}
+      propertyPath: waterCollider
+      value: 
+      objectReference: {fileID: 199988326}
+    - target: {fileID: 4072048698298858925, guid: 1984249a298d03e46819244fb37d1342, type: 3}
+      propertyPath: transformToTest
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4656199015551796072, guid: 1984249a298d03e46819244fb37d1342, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4656199015551796072, guid: 1984249a298d03e46819244fb37d1342, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4656199015551796072, guid: 1984249a298d03e46819244fb37d1342, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -10
+      objectReference: {fileID: 0}
     - target: {fileID: 5889923958406996471, guid: 1984249a298d03e46819244fb37d1342, type: 3}
       propertyPath: m_LocalPosition.x
       value: 14.47963
@@ -764,9 +797,17 @@ PrefabInstance:
       propertyPath: generateZoneOnStart
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 9100879258194543538, guid: 1f22e60e09677994bb7ad739eb8171eb, type: 3}
-      propertyPath: generateZoneOnStart
-      value: 0
+    - target: {fileID: 5981309382374857493, guid: 1f22e60e09677994bb7ad739eb8171eb, type: 3}
+      propertyPath: generateZoneOnStartZone
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9184431413264298512, guid: 1f22e60e09677994bb7ad739eb8171eb, type: 3}
+      propertyPath: m_TileModifiers.Array.data[32].tile
+      value: 
+      objectReference: {fileID: 11400000, guid: 0ba79b960366fd04b8ca46b6b25c3c47, type: 2}
+    - target: {fileID: 9184431413264298512, guid: 1f22e60e09677994bb7ad739eb8171eb, type: 3}
+      propertyPath: m_TileModifiers.Array.data[32].overrideArea
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

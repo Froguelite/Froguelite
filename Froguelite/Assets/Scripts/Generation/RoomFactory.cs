@@ -13,7 +13,8 @@ public class RoomFactory : MonoBehaviour
     [SerializeField] private ShopAlternate shopAlternatePrefab;
     [SerializeField] private GameObject bossPortalPrefab;
     [SerializeField] private GameObject totemPrefab;
-    [SerializeField] private SubZoneFinalDoor subZoneFinalDoorPrefab;
+    [SerializeField] private SubZoneFinalDoor swampSubZoneFinalDoorPrefab;
+    [SerializeField] private SubZoneFinalDoor forestSubZoneFinalDoorPrefab;
 
 
     #endregion
@@ -25,7 +26,7 @@ public class RoomFactory : MonoBehaviour
     // Spawns a room at the given grid position with the given room data
     // Uses auto-tiling for tilemap generation
     // Sets the tiles, then returns the new Room component
-    public Room SpawnRoom(Tilemap roomsTilemap, AutoTileSet autoTileSet, Transform roomParent, RoomData roomData, int roomLength)
+    public Room SpawnRoom(int zone, Tilemap roomsTilemap, AutoTileSet autoTileSet, Transform roomParent, RoomData roomData, int roomLength)
     {
         // Get the offset of this room in tile coordinates
         Vector2Int tileOffset = new Vector2Int(
@@ -90,6 +91,12 @@ public class RoomFactory : MonoBehaviour
             noiseSettings: noiseSettings
         );
 
+        if (roomData.roomType != Room.RoomType.Normal)
+        {
+            // Ensure non-normal rooms have a central landmass
+            newRoomLayout = RoomTileHelper.AddCentralLandmass(newRoomLayout, roomLength, roomLength);
+        }
+
         // Post process to smooth and ensure connectivity
         newRoomLayout = RoomTileHelper.SmoothRoomLayout(newRoomLayout);
         newRoomLayout = RoomTileHelper.EnsureConnectivity(newRoomLayout);
@@ -124,6 +131,17 @@ public class RoomFactory : MonoBehaviour
             roomComponent.GenerateShop(shopAlternatePrefab);
         }
 
+        // If this is a totem room, spawn the totem
+        if (roomData.roomType == Room.RoomType.Totem)
+        {
+            Vector2 totemSpawnPos = roomData.GetRoomCenterWorldPosition();
+            GameObject totemObject = Instantiate(totemPrefab, totemSpawnPos, Quaternion.identity);
+            totemObject.transform.SetParent(roomObject.transform);
+            Totem totemComponent = totemObject.GetComponent<Totem>();
+            roomComponent.SetTotem(totemComponent);
+            totemComponent.SetParentRoom(roomComponent);
+        }
+
         // If this is a boss room, spawn the boss portal
         if (roomData.roomType == Room.RoomType.BossPortal)
         {
@@ -138,7 +156,7 @@ public class RoomFactory : MonoBehaviour
             // Find the single door in this room (should only have one)
             DoorData singleDoor = null;
             Door.DoorDirection entranceDoorDirection = Door.DoorDirection.Up;
-            
+
             foreach (var doorEntry in roomData.doors)
             {
                 if (!doorEntry.Value.isImpassable)
@@ -153,7 +171,7 @@ public class RoomFactory : MonoBehaviour
             {
                 // Get the opposite direction for the final door
                 Door.DoorDirection finalDoorDirection = Door.GetOppositeDirection(entranceDoorDirection);
-                
+
                 // Calculate the position where the final door should spawn
                 // This is the launch position for a door in the opposite direction
                 Vector2Int doorLaunchPos = RoomTileHelper.GetDoorLocation(roomData.tileLayout, finalDoorDirection, true);
@@ -164,12 +182,13 @@ public class RoomFactory : MonoBehaviour
                 );
 
                 // Spawn the SubZoneFinalDoor prefab
+                SubZoneFinalDoor subZoneFinalDoorPrefab = (zone == 0) ? swampSubZoneFinalDoorPrefab : forestSubZoneFinalDoorPrefab;
                 SubZoneFinalDoor finalDoorInstance = Instantiate(subZoneFinalDoorPrefab, finalDoorWorldPos, Quaternion.identity);
                 finalDoorInstance.transform.SetParent(roomObject.transform);
 
                 // Initialize the door with the opposite direction
                 finalDoorInstance.InitializeDoor(finalDoorDirection);
-                
+
                 // Initialize the room with this final door reference
                 roomComponent.SetSubZoneFinalDoor(finalDoorInstance);
             }

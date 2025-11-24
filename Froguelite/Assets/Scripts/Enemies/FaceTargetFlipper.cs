@@ -14,8 +14,10 @@ public class FaceTargetFlipper : MonoBehaviour
     [SerializeField] private bool reverseFlip = false;
     [SerializeField] private bool usePlayerAsTarget = true;
     [SerializeField] private bool faceTargetOnStart = true;
+    [SerializeField] private Transform[] transformsToFlip;
 
     private bool facingTarget = true;
+    private bool currentFlipState = false;
 
 
     #endregion
@@ -89,7 +91,25 @@ public class FaceTargetFlipper : MonoBehaviour
     {
         if (spriteRenderer != null)
         {
-            spriteRenderer.flipX = flipped;
+            // Check if flip state is actually changing
+            if (spriteRenderer.flipX != flipped)
+            {
+                spriteRenderer.flipX = flipped;
+                
+                // Flip all transforms in the array locally
+                if (transformsToFlip != null)
+                {
+                    foreach (Transform t in transformsToFlip)
+                    {
+                        if (t != null)
+                        {
+                            Vector3 localPos = t.localPosition;
+                            localPos.x = -localPos.x;
+                            t.localPosition = localPos;
+                        }
+                    }
+                }
+            }
         }
     }
 

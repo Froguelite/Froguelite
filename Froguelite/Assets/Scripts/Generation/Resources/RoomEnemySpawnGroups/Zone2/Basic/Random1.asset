@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51c14629a9410b48a3ac36cd58696f3, type: 3}
+  m_Name: Random1
+  m_EditorClassIdentifier: Assembly-CSharp::RoomEnemySpawnGroup
+  enemySpawnEntries:
+  - minEnemyCount: 1
+    maxEnemyCount: 1
+    possibleEnemies:
+    - {fileID: 4000690402368564773, guid: 5919287d2a1359f488653b59bb99e7f0, type: 3}
+  - minEnemyCount: 2
+    maxEnemyCount: 2
+    possibleEnemies:
+    - {fileID: 219424671850456708, guid: 8dce0d954e091a94b898cbe08dbeb510, type: 3}
+  - minEnemyCount: 1
+    maxEnemyCount: 1
+    possibleEnemies:
+    - {fileID: 1663525176817116758, guid: 1356eb13e7884f8498cc2bbd85700084, type: 3}
+  - minEnemyCount: 1
+    maxEnemyCount: 1
+    possibleEnemies:
+    - {fileID: 1306632113082845279, guid: 81f57a596d107044dae5a324cd2c857e, type: 3}

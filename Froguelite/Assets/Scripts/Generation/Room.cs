@@ -29,6 +29,7 @@ public class Room : MonoBehaviour
     public List<IEnemy> enemies { get; private set; } = new List<IEnemy>();
 
     private SubZoneFinalDoor subZoneFinalDoor;
+    public SubZoneFinalDoor SubZoneFinalDoor => subZoneFinalDoor;
 
     public bool isExplored { get; private set; } = false;
 
@@ -63,7 +64,7 @@ public class Room : MonoBehaviour
                 // TODO: Spawn shopkeeper and shop items
                 break;
             case RoomType.Fly:
-                PowerFlyData rolledFly = PowerFlyFactory.Instance.RollFlyForFlyRoom();
+                PowerFlyData rolledFly = PowerFlyFactory.Instance.RollFlyUnweighted();
                 if (rolledFly != null)
                 {
                     Vector3 flyPosition = roomData.GetRoomCenterWorldPosition();
@@ -76,21 +77,6 @@ public class Room : MonoBehaviour
                 break;
             case RoomType.Totem:
                 // Spawn a totem at the center
-                {
-                    Vector3 totemPosition = roomData.GetRoomCenterWorldPosition();
-                    GameObject totemGO = new GameObject("Totem");
-                    totemGO.transform.position = totemPosition;
-                    totemGO.transform.SetParent(transform);
-
-                    // Add Totem component and required collider/tag
-                    Totem totem = totemGO.AddComponent<Totem>();
-                    CircleCollider2D col = totemGO.AddComponent<CircleCollider2D>();
-                    col.isTrigger = true;
-                    totemGO.tag = "Totem";
-
-                    totem.SetParentRoom(this);
-                    RegisterTotem(totem);
-                }
                 break;
             case RoomType.Normal:
             default:
@@ -111,9 +97,9 @@ public class Room : MonoBehaviour
     public void GenerateEnemies()
     {
         if (roomData.roomType == RoomType.Normal)
-            enemies = EnemyFactory.Instance.SpawnEnemiesForRoom(this);
+            enemies = EnemyFactory.Instance.SpawnEnemiesForRoom(roomData.zone, this);
         else if (roomData.roomType == RoomType.SubZoneBoss)
-            enemies = EnemyFactory.Instance.SpawnSubZoneBossForRoom(this);
+            enemies = EnemyFactory.Instance.SpawnSubZoneBossForRoom(roomData.zone, this);
     }
 
 
@@ -216,7 +202,10 @@ public class Room : MonoBehaviour
             // During active totem waves, doors should not auto-open on room clear
             if (!isTotemActive)
             {
-                RoomManager.Instance.SpawnRoomClearItems(defeatedEnemy.transform.position);
+                if (roomData.roomType == RoomType.Normal)
+                    RoomManager.Instance.SpawnRoomClearItems(defeatedEnemy.transform.position, LevelManager.Instance.currentZone);
+                else if (roomData.roomType == RoomType.SubZoneBoss)
+                    RoomManager.Instance.SpawnSubZoneBossClearItems(defeatedEnemy.transform.position, LevelManager.Instance.currentZone);
                 OnRoomCleared();
             }
         }
@@ -308,8 +297,17 @@ public class Room : MonoBehaviour
         return (roomCenter + adjacentRoomCenter) / 2f;
     }
 
+    // Gets the world space position of the final door connection (position of the final door itself)
+    public Vector3 GetFinalDoorConnectionPosition()
+    {
+        if (subZoneFinalDoor == null)
+            return Vector3.zero;
+
+        return subZoneFinalDoor.transform.position;
+    }
+
     // Registers a totem that controls this room's wave flow
-    public void RegisterTotem(Totem totem)
+    public void SetTotem(Totem totem)
     {
         totemInstance = totem;
     }
@@ -357,6 +355,7 @@ public class RoomData
     public float genWeight = 1f; // Weight for random selection during generation (higher = more likely)
     public bool isLeaf = false; // Whether this room is a leaf node (dead end) in the graph
     public PerlinNoiseSettings originalNoiseSettings; // Original noise settings used for generating the room layout
+    public int zone = 0; // Zone this room belongs to (0 = swamp, 1 = forest, etc.)
 
 
     #endregion
@@ -366,10 +365,11 @@ public class RoomData
 
 
     // Constructor to initialize base RoomData with type and coordinates. Doors are set as empty.
-    public RoomData(Room.RoomType roomType, Vector2Int roomCoordinate)
+    public RoomData(Room.RoomType roomType, Vector2Int roomCoordinate, int zone)
     {
         this.roomType = roomType;
         this.roomCoordinate = roomCoordinate;
+        this.zone = zone;
         InitializeDoors();
     }
 

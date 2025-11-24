@@ -78,7 +78,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: c9b69e676c27c7a4c8180f4ae24d40ef, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -231,6 +231,7 @@ MonoBehaviour:
   navAgent: {fileID: 4370589815322013855}
   movementType: 1
   rb: {fileID: 6986542162239207742}
+  useKnockback: 1
   knockbackDuration: 0.1
   spriteRenderer: {fileID: 2727076177215642101}
   defeatSmokeAnimator: {fileID: 6599428521549949721}
@@ -300,6 +301,7 @@ MonoBehaviour:
   reverseFlip: 1
   usePlayerAsTarget: 1
   faceTargetOnStart: 0
+  transformsToFlip: []
 --- !u!114 &7724193631658490325
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -108,6 +108,30 @@ public static class RoomTileHelper
     #region POST PROCESSING
 
 
+    // Adds a large central landmass to the room layout (for starter rooms)
+    public static char[,] AddCentralLandmass(char[,] roomLayout, int width, int height)
+    {
+        int centerX = width / 2;
+        int centerY = height / 2;
+        int radius = 2; // This creates a 5x5 area (2 tiles in each direction from center)
+
+        // Set the central 5x5 area to land
+        for (int x = centerX - radius; x <= centerX + radius; x++)
+        {
+            for (int y = centerY - radius; y <= centerY + radius; y++)
+            {
+                // Check bounds to prevent out-of-range errors
+                if (x >= 0 && x < width && y >= 0 && y < height)
+                {
+                    roomLayout[x, y] = 'l';
+                }
+            }
+        }
+
+        return roomLayout;
+    }
+
+
     // Applies smoothing to given room layout
     public static char[,] SmoothRoomLayout(char[,] roomLayout, int iterations = 1)
     {
@@ -264,10 +288,10 @@ public static class RoomTileHelper
     // Helper method to set arrival tiles ('j') around a given position
     private static char[,] SetArrivalTilesAroundPosition(char[,] layout, Vector2Int centerPos, int width, int height)
     {
-        // Check all tiles in a 3x3 area around the center position (1-tile surrounding)
-        for (int offsetX = -1; offsetX <= 1; offsetX++)
+        // Check all tiles in a 5x5 area around the center position (2-tile surrounding)
+        for (int offsetX = -2; offsetX <= 2; offsetX++)
         {
-            for (int offsetY = -1; offsetY <= 1; offsetY++)
+            for (int offsetY = -2; offsetY <= 2; offsetY++)
             {
                 int tileX = centerPos.x + offsetX;
                 int tileY = centerPos.y + offsetY;
@@ -677,7 +701,7 @@ public static class RoomTileHelper
                 // Start at highest y, centered on x, and go down until we find land
                 for (int y = height - 1; y >= 0; y--)
                 {
-                    if (roomLayout[centerX, y] == 'l')
+                    if (roomLayout[centerX, y] == 'l' || roomLayout[centerX, y] == 'j')
                     {
                         // Go a bit further or less depending on launch state, so we are in the water or on land
                         return new Vector2Int(centerX, y + (launchLocation ? 2 : -2));
@@ -689,7 +713,7 @@ public static class RoomTileHelper
                 // Start at lowest y, centered on x, and go up until we find land
                 for (int y = 0; y < height; y++)
                 {
-                    if (roomLayout[centerX, y] == 'l')
+                    if (roomLayout[centerX, y] == 'l' || roomLayout[centerX, y] == 'j')
                     {
                         // Go a bit further or less depending on launch state, so we are in the water or on land
                         return new Vector2Int(centerX, y + (launchLocation ? -2 : 2));
@@ -701,7 +725,7 @@ public static class RoomTileHelper
                 // Start leftmost x, centered on y, and go right until we find land
                 for (int x = 0; x < width; x++)
                 {
-                    if (roomLayout[x, centerY] == 'l')
+                    if (roomLayout[x, centerY] == 'l' || roomLayout[x, centerY] == 'j')
                     {
                         // Go a bit further or less depending on launch state, so we are in the water or on land
                         return new Vector2Int(x + (launchLocation ? -2 : 2), centerY);
@@ -713,7 +737,7 @@ public static class RoomTileHelper
                 // Start rightmost x, centered on y, and go left until we find land
                 for (int x = width - 1; x >= 0; x--)
                 {
-                    if (roomLayout[x, centerY] == 'l')
+                    if (roomLayout[x, centerY] == 'l' || roomLayout[x, centerY] == 'j')
                     {
                         // Go a bit further or less depending on launch state, so we are in the water or on land
                         return new Vector2Int(x + (launchLocation ? 2 : -2), centerY);

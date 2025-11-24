@@ -3,6 +3,15 @@ using UnityEngine;
 
 public class RoomManager : MonoBehaviour
 {
+    // Enum for collectible item types
+    public enum CollectibleType
+    {
+        Random,
+        Lotus,
+        Woodpecker,
+        Heart,
+        Nothing
+    }
 
 
     #region VARIABLES
@@ -298,24 +307,83 @@ public class RoomManager : MonoBehaviour
 
 
     // Spawns room clear items (floating text, Lotus, Woodpecker, heart...) at the given position
-    public void SpawnRoomClearItems(Vector3 position)
+    public void SpawnRoomClearItems(Vector3 position, int zone)
     {
         // Show the room clear text
-        if (roomClearTextPrefab != null)
-        {
-            FloatingText clearText = Instantiate(roomClearTextPrefab, position, Quaternion.identity);
-            clearText.transform.position = new Vector3(clearText.transform.position.x, clearText.transform.position.y + 0.5f, -1f); // Ensure text is above other elements
-            clearText.SetText("ISLAND CLEAR!");
-            clearText.StartAnimation();
-        }
+        ShowRoomClearText(position, zone);
 
         // Spawn collectible items with luck-based probability
         SpawnCollectibleItem(position);
     }
 
+    // Spawns sub-zone boss clear items at the given position
+    public void SpawnSubZoneBossClearItems(Vector3 position, int zone)
+    {
+        // Show the room clear text
+        ShowRoomClearText(position, zone);
+
+        // Spawn a single heart collectable
+        SpawnCollectibleItem(position, CollectibleType.Heart);
+    }
+
+    // Shows floating text indicating room clear
+    private void ShowRoomClearText(Vector3 position, int zone)
+    {
+        if (roomClearTextPrefab != null)
+        {
+            FloatingText clearText = Instantiate(roomClearTextPrefab, position, Quaternion.identity);
+            clearText.transform.position = new Vector3(clearText.transform.position.x, clearText.transform.position.y + 0.5f, -1f); // Ensure text is above other elements
+            if (zone == 0)
+                clearText.SetText("ISLAND CLEAR!");
+            else
+                clearText.SetText("GLADE CLEAR!");
+            clearText.StartAnimation();
+        }
+    }
+
     // Spawns a collectible item based on probability and luck
     private void SpawnCollectibleItem(Vector3 position)
     {
+        SpawnCollectibleItem(position, CollectibleType.Random);
+    }
+
+    // Spawns a specific collectible item or uses random chance if CollectibleType.Random is specified
+    private void SpawnCollectibleItem(Vector3 position, CollectibleType itemType)
+    {
+        // If a specific item is requested, spawn it directly
+        if (itemType != CollectibleType.Random)
+        {
+            switch (itemType)
+            {
+                case CollectibleType.Lotus:
+                    if (lotusPrefab != null)
+                    {
+                        Instantiate(lotusPrefab, position, Quaternion.identity);
+                    }
+                    break;
+
+                case CollectibleType.Woodpecker:
+                    if (woodpeckerPrefab != null)
+                    {
+                        Instantiate(woodpeckerPrefab, position, Quaternion.identity);
+                    }
+                    break;
+
+                case CollectibleType.Heart:
+                    if (heartPrefab != null)
+                    {
+                        Instantiate(heartPrefab, position, Quaternion.identity);
+                    }
+                    break;
+
+                case CollectibleType.Nothing:
+                    // Intentionally spawn nothing
+                    break;
+            }
+            return;
+        }
+
+        // Random selection based on probability and luck
         // Base chances (excluding nothing)
         float baseLotusChance = 0.60f;      // 60%
         float baseWoodpeckerChance = 0.25f; // 25%
