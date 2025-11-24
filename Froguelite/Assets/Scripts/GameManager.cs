@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -25,7 +26,7 @@ public class GameManager : MonoBehaviour
 
     public PlayerState currentPlayerState { get; private set; } = PlayerState.Exploring;
 
-
+    public static event Action ResetPlayerState;
     #endregion
 
 
@@ -58,6 +59,11 @@ public class GameManager : MonoBehaviour
         currentPlayerState = newState;
     }
 
+    public void InvokeReset()
+    {
+        ResetPlayerState?.Invoke();
+    }
+
     public void OnDeath()
     {
         SetPlayerState(PlayerState.Dead);
@@ -65,10 +71,12 @@ public class GameManager : MonoBehaviour
 
         PlayerMovement.Instance.SetCanMove(false);
         PlayerAttack.Instance.SetCanAttack(false);
+        ResetPlayerState?.Invoke();
     }
 
     public void OnWin()
     {
+        ResetPlayerState?.Invoke();
         StartCoroutine(WinRoutine());
     }
     
@@ -76,7 +84,8 @@ public class GameManager : MonoBehaviour
     {
         // TEMPORARY: Load stump scene after win
         yield return new WaitForSeconds(10f);
-        LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, LevelManager.LoadEffect.Portal);
+        //Supress await _=
+        _ = LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, LevelManager.LoadEffect.Portal);
     }
 
 

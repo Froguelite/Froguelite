@@ -19,6 +19,7 @@ public class LevelManager : MonoBehaviour
 
     public int currentZone {get; private set;} = 1;
     public int currentSubZone {get; private set;} = -1;
+    public bool useLoadedVal = true;
 
     public enum Scenes
     {
@@ -53,6 +54,17 @@ public class LevelManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject); // persist across scenes
+
+        //Subscribe to save and load
+        SaveManager.SaveData += SaveZones;
+        SaveManager.LoadZone += LoadZones;
+    }
+
+    private void OnDestroy()
+    {
+        //Unsubscribe to save and load
+        SaveManager.SaveData -= SaveZones;
+        SaveManager.LoadZone -= LoadZones;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -74,7 +86,7 @@ public class LevelManager : MonoBehaviour
 
     #endregion
 
-    public async void LoadScene(Scenes sceneName, LoadEffect loadEffect)
+    public async Task LoadScene(Scenes sceneName, LoadEffect loadEffect)
     {
         // Release force show on golden fly HUD when leaving any scene
         if (GoldenFlyHUD.Instance != null)
@@ -110,12 +122,14 @@ public class LevelManager : MonoBehaviour
             await Task.Delay(2000); // Wait for bubble effect duration
         }
 
-        do
+        if(loadEffect == LoadEffect.LoadingScreen)
         {
-            await Task.Delay(100);
-            if (loadEffect == LoadEffect.LoadingScreen)
+            do
+            {
+                await Task.Delay(100);
                 progressBar.fillAmount = scene.progress;
-        } while (scene.progress < 0.9f);
+            } while (scene.progress < 0.9f);
+        }
 
         scene.allowSceneActivation = true;
 
@@ -130,8 +144,28 @@ public class LevelManager : MonoBehaviour
             case Scenes.MainScene:
                 FrogueliteCam.Instance.UnconfineCamera();
                 // TODO: Needs to load a value or something
-                IncrementZoneProgression();
+                if (!useLoadedVal)
+                {
+                    IncrementZoneProgression();
+                }
+                //change start scene from stump to main if 1 sub zone completed
+                if(currentZone == 0 && currentSubZone == 0)
+                {
+                    int profileNumber = SaveManager.activeProfile;
+                    ProfileUIManager.Instance.UpdateSceneToLoadForProfile(profileNumber, Scenes.MainScene);
+                    Debug.Log("Changed load scene to MainScene");
+                }
+
                 await GenerateZoneAndSetup(currentZone, currentSubZone);
+                if (!useLoadedVal)
+                {
+                    Debug.Log("Not using loaded value, save data at this stage instead");
+                    SaveManager.WriteToFile(); //Save when entering a game scene might conflict with loading
+                } else
+                {
+                    //Generation with loaded zone complete, return to normal
+                    useLoadedVal = false;
+                }
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
                 break;
             case Scenes.MenuScene:
@@ -166,13 +200,23 @@ public class LevelManager : MonoBehaviour
             case Scenes.StumpScene:
                 ResetZoneProgression();
                 FindAnyObjectByType<StumpManager>().LoadStump();
+                GameManager.Instance.InvokeReset();
+                SaveManager.WriteToFile(); //Save when entering stump scene
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
-                
+
+                useLoadedVal = false; //if start of profile play
+
                 // Force show the golden fly HUD in the stump scene
                 if (GoldenFlyHUD.Instance != null)
                 {
                     GoldenFlyHUD.Instance.ForceShow();
                 }
+
+                int profileNum = SaveManager.activeProfile;
+                ProfileUIManager.Instance.UpdateSceneToLoadForProfile(profileNum, Scenes.StumpScene);
+                Debug.Log("Changed load scene to StumpScene");
+
+                StatsManager.Instance.playerHealth.SetPlayerAlive(); //For avoiding taking damage after player died
                 break;
             case Scenes.MinibossRushScene:
                 FrogueliteCam.Instance.UnconfineCamera();
@@ -263,4 +307,56 @@ public class LevelManager : MonoBehaviour
         currentZone = 1;
         currentSubZone = -1;
     }
+
+    #region SAVE AND LOAD ZONES AND SUBZONES
+    //Get values from playerHealth script assuming it will be the most up to date
+    private void SaveZones()
+    {
+        SaveManager.SaveForProfile<int>(SaveVariable.CurrentZone, currentZone);
+        SaveManager.SaveForProfile<int>(SaveVariable.CurrentSubZone, currentSubZone);
+        Debug.Log($"Saved zone {currentZone}, subzone {currentSubZone}");
+    }
+
+    private void LoadZones()
+    {
+        //Load player's current zone
+        try
+        {
+            currentZone = SaveManager.LoadForProfile<int>(SaveVariable.CurrentZone);
+            Debug.Log($"[LevelManager] Loaded {currentZone} as player current zone from profile {SaveManager.activeProfile}");
+        }
+        catch (System.Collections.Generic.KeyNotFoundException)
+        {
+            // No saved data yet, use default value 0
+            currentZone = 0;
+            Debug.Log($"[LevelManager] No saved current zone found, defaulting to 0");
+        }
+        catch (System.Exception ex)
+        {
+            // Handle other exceptions (e.g., no active profile set)
+            Debug.LogWarning($"[LevelManager] Failed to load current zone: {ex.Message}");
+            currentZone = 0;
+        }
+
+        //Load player's current subzone
+        try
+        {
+            currentSubZone = SaveManager.LoadForProfile<int>(SaveVariable.CurrentSubZone);
+            Debug.Log($"[LevelManager] Loaded {currentSubZone} as player current subzone from profile {SaveManager.activeProfile}");
+        }
+        catch (System.Collections.Generic.KeyNotFoundException)
+        {
+            // No saved data yet, use default value 0
+            currentSubZone = 0;
+            Debug.Log($"[LevelManager] No saved current subzone found, defaulting to 0");
+        }
+        catch (System.Exception ex)
+        {
+            // Handle other exceptions (e.g., no active profile set)
+            Debug.LogWarning($"[LevelManager] Failed to load current subzone: {ex.Message}");
+            currentSubZone = 0;
+        }
+    }
+
+    #endregion
 }

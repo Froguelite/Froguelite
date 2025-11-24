@@ -94,7 +94,8 @@ public class UIManager : MonoBehaviour
     public void ResetGame()
     {
         PanelSwitch(UIPanels.LoadingScreen);
-        LevelManager.Instance.LoadScene(LevelManager.Scenes.MenuScene, LevelManager.LoadEffect.LoadingScreen);
+        //Suppress await warning _=
+        _= LevelManager.Instance.LoadScene(LevelManager.Scenes.MenuScene, LevelManager.LoadEffect.LoadingScreen);
     }
 
     public void OnStartGameClick()
@@ -134,7 +135,8 @@ public class UIManager : MonoBehaviour
 
     public void OnQuitClick()
     {
-        LevelManager.Instance.LoadScene(LevelManager.Scenes.MenuScene, LevelManager.LoadEffect.LoadingScreen);
+        //Suppress await warning _=
+        _= LevelManager.Instance.LoadScene(LevelManager.Scenes.MenuScene, LevelManager.LoadEffect.LoadingScreen);
     }
 
     public void OnSettingsClick()
@@ -151,11 +153,14 @@ public class UIManager : MonoBehaviour
     //}
 
     //Use enum instead string for setting scene to load
-    public void OnProfileStartClick(LevelManager.Scenes sceneToLoad)
+    public async void OnProfileStartClick(LevelManager.Scenes sceneToLoad)
     {
         //Switch to Loading Screen and call LevelManager to load scene
         PanelSwitch(UIPanels.LoadingScreen);
-        LevelManager.Instance.LoadScene(sceneToLoad, LevelManager.LoadEffect.LoadingScreen);
+        LevelManager.Instance.useLoadedVal = true;
+        SaveManager.LoadDataBeforeGeneration();
+        await LevelManager.Instance.LoadScene(sceneToLoad, LevelManager.LoadEffect.LoadingScreen);
+        SaveManager.LoadDataAfterGeneration(); //Load from save file after scene is loaded
     }
 
     public void OnSceneLoadReturn(UIPanels panelToReturnTo)
@@ -247,7 +252,8 @@ public class UIManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
-        LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, LevelManager.LoadEffect.LoadingScreen);
+        //Suppress await warning _=
+        _= LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, LevelManager.LoadEffect.LoadingScreen);
     }
 
     public IEnumerator WinScreenCo()
@@ -276,6 +282,21 @@ public class UIManager : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
 
         //ResetGame();
+    }
+
+    #endregion
+
+    #region POP-UP METHODS
+    public void ShowPopUpPanel()
+    {
+        if(uiPanels[(int)UIPanels.PopUpScreen].panelObject != null)
+            uiPanels[(int) UIPanels.PopUpScreen].panelObject.SetActive(true);
+    }
+
+    public void ClosePopUpPanel()
+    {
+        if (uiPanels[(int)UIPanels.PopUpScreen].panelObject != null)
+            uiPanels[(int)UIPanels.PopUpScreen].panelObject.SetActive(false);
     }
 
     #endregion
@@ -315,7 +336,8 @@ public enum UIPanels
     LoadingScreen,
     DeathScreen,
     WinScreen,
-    SettingsScreen
+    SettingsScreen,
+    PopUpScreen
     //InGameHUD,
     //PauseMenu
 }

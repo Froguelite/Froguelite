@@ -549,7 +549,7 @@ public class BossController : MonoBehaviour
     {
         yield return new WaitForSeconds(4f);
         yield return StartCoroutine(UIManager.Instance.WinScreenCo());
-        LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, LevelManager.LoadEffect.Portal);
+        _ = LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, LevelManager.LoadEffect.Portal);
     }
 
     public void ForceEnterDefense() => state = State.DefensePhase;

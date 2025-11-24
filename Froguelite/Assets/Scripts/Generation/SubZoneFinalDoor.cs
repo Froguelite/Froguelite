@@ -299,6 +299,7 @@ public class SubZoneFinalDoor : MonoBehaviour
         PlayerMovement.Instance.transform.SetParent(null);
         DontDestroyOnLoad(PlayerMovement.Instance.gameObject);
 
+        SaveManager.WriteToFile(); //Save while bubble transition and after completing a sub-zone
         if (zone == 0)
             LevelManager.Instance.LoadScene(LevelManager.Scenes.MainScene, LevelManager.LoadEffect.Bubble);
         else

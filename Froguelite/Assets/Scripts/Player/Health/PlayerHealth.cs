@@ -10,8 +10,8 @@ public class PlayerHealth : MonoBehaviour
     #region VARIABLES
 
 
-    public int currentHealth { get; private set; }
-    public int maxHealth { get; private set; }
+    [SerializeField] public int currentHealth;// { get; private set; }
+    [SerializeField] public int maxHealth;// { get; private set; }
 
     public bool overrideHealAnims = false;
     public bool needsBigBeat = false;
@@ -24,7 +24,7 @@ public class PlayerHealth : MonoBehaviour
     private float timeSinceLastDamage = 0f;
     private const float damageCooldown = 0.3f; // Minimum time between damage instances
 
-
+    private bool playerDied = false;
     #endregion
 
 
@@ -65,6 +65,8 @@ public class PlayerHealth : MonoBehaviour
         overrideHealAnims = true;
         StartCoroutine(ResetOverrideHealAnims());
         onHealthChanged.Invoke();
+
+        Debug.Log($"[PlayerHealth] SetMaxHealth called, current health: {currentHealth}/{maxHealth}");
     }
 
 
@@ -77,6 +79,12 @@ public class PlayerHealth : MonoBehaviour
             StartCoroutine(ResetOverrideHealAnims());
         }
         onHealthChanged.Invoke();
+        Debug.Log($"[PlayerHealth] SetCurrentHealth called, current health: {currentHealth}/{maxHealth}");
+    }
+
+    public void SetPlayerAlive()
+    {
+        playerDied = false;
     }
 
 
@@ -97,6 +105,8 @@ public class PlayerHealth : MonoBehaviour
     // Damages player by given amount; if health drops to 0 or below, player dies
     public void DamagePlayer(int dmgAmount)
     {
+        Debug.Log($"[PlayerHealth] Damaged Player by {dmgAmount}");
+        if (playerDied) return;
         // Ignore damage if player is dashing
         if (PlayerMovement.Instance.IsDashing)
             return;
@@ -153,6 +163,7 @@ public class PlayerHealth : MonoBehaviour
             
         currentHealth = 0;
         Debug.Log("Player Died :(");
+        playerDied = true;
         onPlayerDie?.Invoke();
         GameManager.Instance.OnDeath();
     }
