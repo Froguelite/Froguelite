@@ -131,6 +131,17 @@ public class RoomFactory : MonoBehaviour
             roomComponent.GenerateShop(shopAlternatePrefab);
         }
 
+        // If this is a totem room, spawn the totem
+        if (roomData.roomType == Room.RoomType.Totem)
+        {
+            Vector2 totemSpawnPos = roomData.GetRoomCenterWorldPosition();
+            GameObject totemObject = Instantiate(totemPrefab, totemSpawnPos, Quaternion.identity);
+            totemObject.transform.SetParent(roomObject.transform);
+            Totem totemComponent = totemObject.GetComponent<Totem>();
+            roomComponent.SetTotem(totemComponent);
+            totemComponent.SetParentRoom(roomComponent);
+        }
+
         // If this is a boss room, spawn the boss portal
         if (roomData.roomType == Room.RoomType.BossPortal)
         {

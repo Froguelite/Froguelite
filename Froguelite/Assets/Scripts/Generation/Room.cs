@@ -77,21 +77,6 @@ public class Room : MonoBehaviour
                 break;
             case RoomType.Totem:
                 // Spawn a totem at the center
-                {
-                    Vector3 totemPosition = roomData.GetRoomCenterWorldPosition();
-                    GameObject totemGO = new GameObject("Totem");
-                    totemGO.transform.position = totemPosition;
-                    totemGO.transform.SetParent(transform);
-
-                    // Add Totem component and required collider/tag
-                    Totem totem = totemGO.AddComponent<Totem>();
-                    CircleCollider2D col = totemGO.AddComponent<CircleCollider2D>();
-                    col.isTrigger = true;
-                    totemGO.tag = "Totem";
-
-                    totem.SetParentRoom(this);
-                    RegisterTotem(totem);
-                }
                 break;
             case RoomType.Normal:
             default:
@@ -217,7 +202,10 @@ public class Room : MonoBehaviour
             // During active totem waves, doors should not auto-open on room clear
             if (!isTotemActive)
             {
-                RoomManager.Instance.SpawnRoomClearItems(defeatedEnemy.transform.position);
+                if (roomData.roomType == RoomType.Normal)
+                    RoomManager.Instance.SpawnRoomClearItems(defeatedEnemy.transform.position, LevelManager.Instance.currentZone);
+                else if (roomData.roomType == RoomType.SubZoneBoss)
+                    RoomManager.Instance.SpawnSubZoneBossClearItems(defeatedEnemy.transform.position, LevelManager.Instance.currentZone);
                 OnRoomCleared();
             }
         }
@@ -319,7 +307,7 @@ public class Room : MonoBehaviour
     }
 
     // Registers a totem that controls this room's wave flow
-    public void RegisterTotem(Totem totem)
+    public void SetTotem(Totem totem)
     {
         totemInstance = totem;
     }

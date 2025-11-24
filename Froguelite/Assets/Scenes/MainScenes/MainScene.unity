@@ -401,6 +401,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1118267905821194168, guid: 1984249a298d03e46819244fb37d1342, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7dc18b580bb3d9747974b86a444689ac, type: 2}
+    - target: {fileID: 2796575979421742144, guid: 1984249a298d03e46819244fb37d1342, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4072048698298858925, guid: 1984249a298d03e46819244fb37d1342, type: 3}
       propertyPath: waterCollider
       value: 
@@ -822,7 +830,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5981309382374857493, guid: 1f22e60e09677994bb7ad739eb8171eb, type: 3}
       propertyPath: generateZoneOnStartZone
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9184431413264298512, guid: 1f22e60e09677994bb7ad739eb8171eb, type: 3}
       propertyPath: m_TileModifiers.Array.data[32].tile

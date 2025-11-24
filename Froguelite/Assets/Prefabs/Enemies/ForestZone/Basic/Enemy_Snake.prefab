@@ -197,8 +197,8 @@ MonoBehaviour:
     speed: 8
     lifetime: 3
     rotationSpeed: 2
-    projectileSprite: {fileID: 21300000, guid: d50af141154029246a6c52bc0c92f48c, type: 3}
-    dissipationColor: {r: 0.7058824, g: 1, b: 0.5137255, a: 1}
+    projectileSprite: {fileID: 1284625763255922679, guid: 3a8b7a80b5bfdf549a0b834c266ff1e8, type: 3}
+    dissipationColor: {r: 0.49411768, g: 0.2392157, b: 0.8000001, a: 1}
     scale: 4
   spitSpawnTransform: {fileID: 3621121816063080183}
   durationBetweenSpits: 1.5
@@ -206,6 +206,11 @@ MonoBehaviour:
   jumpDistance: 3
   arcJumpDuration: 0
   triggerProxyJump: 0
+  useRapidFire: 0
+  projectilesToSpit: 3
+  rapidFireMode: 0
+  timeBetweenRapidShots: 0.2
+  spreadAngleDegrees: 15
 --- !u!1 &8238543951520887452 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5519356621205672419, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
