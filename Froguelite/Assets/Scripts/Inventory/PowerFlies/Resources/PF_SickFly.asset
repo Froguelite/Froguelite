@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f63ee0f7713f8c34bba32b8bbee26cfb, type: 3}
+  m_Name: PF_SickFly
+  m_EditorClassIdentifier: Assembly-CSharp::PowerFlyData
+  flyID: a8eb71ec-1d8e-4430-ba3f-514ed5599564
+  displayImg: {fileID: -4108151583225950438, guid: 801eb56aa845b7749855f65062319e08, type: 3}
+  powerFlyName: Sick Fly
+  description: Feeling sick...
+  flyRarity: 2
+  effects:
+  - {fileID: 11400000, guid: cb1e68d5801b04adcb9ac5c890a2b27c, type: 2}
+  onlyOneAllowed: 1
+  isBaseSetFly: 0

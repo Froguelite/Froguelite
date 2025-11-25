@@ -107,6 +107,26 @@ PrefabInstance:
       propertyPath: associatedEnemy
       value: 
       objectReference: {fileID: 6106056513851520351}
+    - target: {fileID: 6080809158780904788, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6080809158780904788, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6080809158780904788, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6080809158780904788, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.397
+      objectReference: {fileID: 0}
+    - target: {fileID: 6080809158780904788, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6459276806488802660, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
       propertyPath: enemyBase
       value: 
@@ -138,6 +158,11 @@ PrefabInstance:
 --- !u!50 &275760823741614397 stripped
 Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 5129534094065454569, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
+  m_PrefabInstance: {fileID: 4970979028607452372}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &1688065017199742482 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 6021665811085920966, guid: d9b01c3a30b7e4b42b8aaffdcfabb25b, type: 3}
   m_PrefabInstance: {fileID: 4970979028607452372}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &2116552318802395568 stripped
@@ -179,6 +204,7 @@ MonoBehaviour:
   knockbackDuration: 0.1
   spriteRenderer: {fileID: 5115554003245492726}
   defeatSmokeAnimator: {fileID: 4085747073549916954}
+  sickParticles: {fileID: 1688065017199742482}
   onDeathEvent:
     m_PersistentCalls:
       m_Calls: []

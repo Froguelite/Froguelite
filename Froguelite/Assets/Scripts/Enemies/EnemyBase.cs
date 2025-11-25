@@ -42,6 +42,11 @@ public class EnemyBase : MonoBehaviour, IEnemy
     public bool isKnockedBack { get; private set; } = false; // Tracks if enemy is currently being knocked back
     private Color originalColor; // Store the original sprite color
 
+    [SerializeField] private ParticleSystem sickParticles; // Particle system that plays while poisoned
+    public bool isPoisoned { get; private set; } = false; // Tracks if enemy is currently poisoned
+    private Coroutine poisonCoroutine; // Reference to active poison coroutine
+    private Color poisonTintMultiplier = new Color(0.6f, 1f, 0.6f, 1f); // Multiplier for poison tint (slightly green)
+
     public Room parentRoom { get; private set; } = null; // The room this enemy belongs to
     public bool engagedWithPlayer { get; private set; } = false;
     public bool isDead { get { return currentHealth <= 0f; } }
@@ -154,6 +159,12 @@ public class EnemyBase : MonoBehaviour, IEnemy
             parentRoom.OnEnemyDefeated(this);
         onDeathEvent?.Invoke();
 
+        // Clean up poison if active
+        if (isPoisoned)
+        {
+            RemovePoison();
+        }
+
         spriteRenderer.enabled = false;
         StopPlayerChase();
         defeatSmokeAnimator.Play(true);
@@ -216,11 +227,110 @@ public class EnemyBase : MonoBehaviour, IEnemy
     private void FlashSprite()
     {
         LeanTween.cancel(spriteRenderer.gameObject);
-        spriteRenderer.color = flashColor;
-        LeanTween.value(spriteRenderer.gameObject, flashColor, originalColor, flashDuration).setOnUpdate((Color newColor) =>
+        Color targetFlashColor = flashColor;
+        Color targetOriginalColor = originalColor;
+        
+        // If poisoned, blend the flash and original colors with poison tint
+        if (isPoisoned)
+        {
+            targetFlashColor = MultiplyColors(flashColor, poisonTintMultiplier);
+            targetOriginalColor = MultiplyColors(originalColor, poisonTintMultiplier);
+        }
+        
+        spriteRenderer.color = targetFlashColor;
+        LeanTween.value(spriteRenderer.gameObject, targetFlashColor, targetOriginalColor, flashDuration).setOnUpdate((Color newColor) =>
         {
             spriteRenderer.color = newColor;
         });
+    }
+    
+    // Multiplies two colors component-wise for blending effects
+    private Color MultiplyColors(Color a, Color b)
+    {
+        return new Color(a.r * b.r, a.g * b.g, a.b * b.b, a.a * b.a);
+    }
+
+
+    #endregion
+
+
+    #region POISON
+
+
+    // Applies poison to this enemy
+    public void ApplyPoison(float duration, float damagePerSecond)
+    {
+        // If already poisoned, stop existing poison and restart with new duration
+        if (isPoisoned)
+        {
+            RemovePoison();
+        }
+
+        isPoisoned = true;
+        
+        // Apply green tint multiplier to current color
+        spriteRenderer.color = MultiplyColors(spriteRenderer.color, poisonTintMultiplier);
+        
+        // Start poison particles if assigned
+        if (sickParticles != null)
+        {
+            sickParticles.Play();
+        }
+
+        // Start poison coroutine
+        poisonCoroutine = StartCoroutine(PoisonCoroutine(duration, damagePerSecond));
+
+    }
+
+
+    // Coroutine to handle poison damage over time and visuals
+    private IEnumerator PoisonCoroutine(float duration, float damagePerSecond)
+    {
+        float elapsedTime = 0f;
+        float damageInterval = 1f; // Damage every second
+        float nextDamageTime = 0f;
+
+        while (elapsedTime < duration && !isDead)
+        {
+            elapsedTime += Time.deltaTime;
+
+            // Apply damage every second
+            if (elapsedTime >= nextDamageTime)
+            {
+                DamageEnemy(damagePerSecond, 0f); // Apply poison damage without knockback
+                nextDamageTime += damageInterval;
+            }
+
+            yield return null;
+        }
+
+        // Poison duration ended, remove it
+        RemovePoison();
+    }
+
+
+    // Removes poison effect and restores original color
+    private void RemovePoison()
+    {
+        if (!isPoisoned) return;
+
+        isPoisoned = false;
+
+        // Stop poison coroutine if running
+        if (poisonCoroutine != null)
+        {
+            StopCoroutine(poisonCoroutine);
+            poisonCoroutine = null;
+        }
+
+        // Restore original sprite color
+        spriteRenderer.color = originalColor;
+        
+        // Stop poison particles if assigned
+        if (sickParticles != null)
+        {
+            sickParticles.Stop();
+        }
     }
 
 

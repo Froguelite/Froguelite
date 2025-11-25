@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
@@ -28,6 +29,7 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private SpriteRenderer tongueSprite;
     [SerializeField] private Transform playerMouth;
     [SerializeField] private float tongueWidth = 0.2f;
+    private Color originalTongueColor; // Store original tongue color
 
     private Vector3 targetLocalPosition;
     private bool isExtending = false;
@@ -35,6 +37,15 @@ public class PlayerAttack : MonoBehaviour
     private bool inCooldown = false;
 
     public bool canAttack { get; private set; } = true;
+
+    [Header("Backwards Tongue Settings")]
+    private HashSet<string> activeTongueTags = new HashSet<string>();
+    private Transform backwardsTongue;
+    private GameObject backwardsTongueVisual;
+    private SpriteRenderer backwardsTongueSprite;
+    private Vector3 backwardsTargetLocalPosition;
+    private bool backwardsIsExtending = false;
+    private bool backwardsIsRetracting = false;
 
 
     #endregion
@@ -61,6 +72,12 @@ public class PlayerAttack : MonoBehaviour
             // Also enable the GameObject if it was disabled in editor
             tongueVisual.gameObject.SetActive(true);
             tongueSprite.gameObject.SetActive(true);
+            
+            // Store original tongue color
+            if (tongueSprite != null)
+            {
+                originalTongueColor = tongueSprite.color;
+            }
         }
     }
 
@@ -111,6 +128,12 @@ public class PlayerAttack : MonoBehaviour
         }
 
         isExtending = true;
+
+        // Spawn backwards tongue if tag exists
+        if (activeTongueTags.Contains("backwardsTongue"))
+        {
+            StartBackwardsTongueAttack(direction);
+        }
     }
 
 
@@ -137,6 +160,12 @@ public class PlayerAttack : MonoBehaviour
 
         // Update the tongue visual to stretch/retract
         UpdateTongueVisual();
+
+        // Handle backwards tongue if it exists
+        if (backwardsTongue != null)
+        {
+            HandleBackwardsTongueAttack();
+        }
     }
 
     // Stops the tongue extension and starts retraction
@@ -148,6 +177,12 @@ public class PlayerAttack : MonoBehaviour
         if (movePlayerWithRetract)
         {
             PlayerMovement.Instance.ManualMoveToPosition(tongue.position, tongueRetractSpeed);
+        }
+
+        // Also stop backwards tongue extension
+        if (backwardsTongue != null && backwardsIsExtending)
+        {
+            StopBackwardsTongueExtension();
         }
     }
 
@@ -186,7 +221,211 @@ public class PlayerAttack : MonoBehaviour
     // Returns whether the player is currently attacking (extending or retracting)
     public bool IsAttacking()
     {
-        return isExtending || isRetracting;
+        return isExtending || isRetracting || backwardsIsExtending || backwardsIsRetracting;
+    }
+
+
+    #endregion
+
+
+    #region TONGUE TAGS
+
+
+    // Adds a tongue tag if it doesn't already exist
+    public void AddTongueTag(string tag)
+    {
+        if (!activeTongueTags.Contains(tag))
+        {
+            activeTongueTags.Add(tag);
+            Debug.Log($"[PlayerAttack] Added tongue tag: {tag}");
+
+            // Initialize backwards tongue if this is the backwardsTongue tag
+            if (tag == "backwardsTongue")
+            {
+                InitializeBackwardsTongue();
+            }
+            
+            // Apply sick fly tint if this is the sickFly tag
+            if (tag == "sickFly")
+            {
+                PlayerMovement.Instance.ApplySickFlyTint();
+            }
+        }
+    }
+
+
+    // Checks if a tongue tag is active
+    public bool HasTongueTag(string tag)
+    {
+        return activeTongueTags.Contains(tag);
+    }
+
+
+    #endregion
+
+
+    #region BACKWARDS TONGUE
+
+
+    // Initializes the backwards tongue GameObject and components
+    private void InitializeBackwardsTongue()
+    {
+        if (backwardsTongue != null) return; // Already initialized
+
+        // Create backwards tongue tip (collider)
+        GameObject backwardsTongueTip = new GameObject("BackwardsTongueTip");
+        backwardsTongueTip.transform.SetParent(tongue.parent);
+        backwardsTongueTip.transform.localPosition = tongueStartOffset;
+        backwardsTongueTip.transform.localScale = tongue.localScale;
+        backwardsTongue = backwardsTongueTip.transform;
+
+        // Add collider and AttackOverlapHandler (copy from main tongue)
+        Collider2D mainCollider = tongue.GetComponent<Collider2D>();
+        if (mainCollider != null)
+        {
+            // Copy collider properties based on type
+            if (mainCollider is CircleCollider2D circleCollider)
+            {
+                CircleCollider2D backwardsCollider = backwardsTongueTip.AddComponent<CircleCollider2D>();
+                backwardsCollider.radius = circleCollider.radius;
+                backwardsCollider.offset = circleCollider.offset;
+                backwardsCollider.isTrigger = true;
+            }
+            else if (mainCollider is BoxCollider2D boxCollider)
+            {
+                BoxCollider2D backwardsCollider = backwardsTongueTip.AddComponent<BoxCollider2D>();
+                backwardsCollider.size = boxCollider.size;
+                backwardsCollider.offset = boxCollider.offset;
+                backwardsCollider.isTrigger = true;
+            }
+            else
+            {
+                // Fallback: add a basic circle collider
+                CircleCollider2D backwardsCollider = backwardsTongueTip.AddComponent<CircleCollider2D>();
+                backwardsCollider.radius = 0.1f;
+                backwardsCollider.isTrigger = true;
+            }
+        }
+
+        AttackOverlapHandler mainHandler = tongue.GetComponent<AttackOverlapHandler>();
+        if (mainHandler != null)
+        {
+            backwardsTongueTip.AddComponent<AttackOverlapHandler>();
+        }
+
+        // Create backwards tongue visual (matching the structure of main tongue visual)
+        backwardsTongueVisual = new GameObject("BackwardsTongueVisual");
+        backwardsTongueVisual.transform.SetParent(tongue.parent);
+        backwardsTongueVisual.transform.localPosition = Vector3.zero; // Will be positioned by UpdateBackwardsTongueVisual
+        backwardsTongueVisual.transform.localScale = new Vector3(0.2f, 0.2f, 1f); // Match main tongue visual's initial scale
+
+        // Create child sprite object (matching main tongue structure)
+        GameObject backwardsTongueSpriteObj = new GameObject("Sprite");
+        backwardsTongueSpriteObj.transform.SetParent(backwardsTongueVisual.transform);
+        backwardsTongueSpriteObj.transform.localPosition = Vector3.zero;
+        backwardsTongueSpriteObj.transform.localRotation = Quaternion.Euler(0, 180, -90); // Match main tongue sprite rotation
+        backwardsTongueSpriteObj.transform.localScale = new Vector3(0.2f, 1f, 1f); // Match main tongue sprite scale
+
+        // Add sprite renderer to child
+        backwardsTongueSprite = backwardsTongueSpriteObj.AddComponent<SpriteRenderer>();
+        backwardsTongueSprite.sprite = tongueSprite.sprite;
+        backwardsTongueSprite.sortingLayerID = tongueSprite.sortingLayerID;
+        backwardsTongueSprite.sortingOrder = tongueSprite.sortingOrder - 1; // Render behind main tongue
+        backwardsTongueSprite.enabled = false;
+
+        Debug.Log("[PlayerAttack] Initialized backwards tongue");
+    }
+
+
+    // Starts the backwards tongue attack in the opposite direction
+    private void StartBackwardsTongueAttack(Vector3 mainDirection)
+    {
+        if (backwardsTongue == null) return;
+
+        // Calculate opposite direction
+        Vector3 backwardsDirection = -mainDirection;
+        backwardsTargetLocalPosition = backwardsDirection * GetStatModifiedRange() + tongueStartOffset;
+        backwardsIsExtending = true;
+        backwardsIsRetracting = false;
+    }
+
+
+    // Handles the backwards tongue attack movement
+    private void HandleBackwardsTongueAttack()
+    {
+        if (backwardsIsExtending)
+        {
+            backwardsTongue.localPosition = Vector3.MoveTowards(backwardsTongue.localPosition, backwardsTargetLocalPosition, GetStatModifiedExtendSpeed() * Time.fixedDeltaTime);
+            if (Vector3.Distance(backwardsTongue.localPosition, backwardsTargetLocalPosition) < 0.01f)
+            {
+                StopBackwardsTongueExtension();
+            }
+        }
+        else if (backwardsIsRetracting)
+        {
+            backwardsTongue.localPosition = Vector3.MoveTowards(backwardsTongue.localPosition, tongueStartOffset, GetStatModifiedRetractSpeed() * Time.fixedDeltaTime);
+
+            if (Vector3.Distance(backwardsTongue.localPosition, tongueStartOffset) < 0.01f)
+            {
+                StopBackwardsTongueRetraction();
+            }
+        }
+
+        // Update the backwards tongue visual
+        UpdateBackwardsTongueVisual();
+    }
+
+
+    // Stops the backwards tongue extension and starts retraction
+    private void StopBackwardsTongueExtension()
+    {
+        backwardsIsExtending = false;
+        backwardsIsRetracting = true;
+    }
+
+
+    // Stops the backwards tongue retraction
+    private void StopBackwardsTongueRetraction()
+    {
+        backwardsIsRetracting = false;
+        backwardsTongue.localPosition = tongueStartOffset;
+    }
+
+
+    // Updates the backwards tongue visual to stretch between the player's mouth and tongue tip
+    private void UpdateBackwardsTongueVisual()
+    {
+        if (backwardsTongueVisual == null || backwardsTongueSprite == null) return;
+
+        // Show visual only when extending or retracting
+        bool shouldShow = backwardsIsExtending || backwardsIsRetracting;
+        backwardsTongueSprite.enabled = shouldShow;
+
+        if (!shouldShow) return;
+
+        // Use player mouth position as start
+        Vector3 mouthPos = playerMouth != null ? playerMouth.position : backwardsTongue.parent.position;
+        Vector3 tipPos = backwardsTongue.position;
+
+        // Calculate distance and direction
+        float distance = Vector3.Distance(mouthPos, tipPos);
+        Vector3 direction = tipPos - mouthPos;
+
+        // Position visual at midpoint between mouth and tip
+        backwardsTongueVisual.transform.position = (mouthPos + tipPos) / 2f;
+        backwardsTongueVisual.transform.position = new Vector3(
+            backwardsTongueVisual.transform.position.x,
+            backwardsTongueVisual.transform.position.y,
+            0f
+        );
+
+        // Scale the visual to match the distance
+        // The main tongue visual uses the same calculation, so this should match
+        backwardsTongueVisual.transform.localScale = new Vector3(tongueWidth, distance, 1f);
+
+        // Rotate to point in the correct direction
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+        backwardsTongueVisual.transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
 
@@ -259,6 +498,16 @@ public class PlayerAttack : MonoBehaviour
         // Subtract 90 degrees because sprites typically face "up" by default
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
         tongueVisual.transform.rotation = Quaternion.Euler(0, 0, angle);
+
+        // Set tongue color based on Sick Fly status
+        if (HasTongueTag("sickFly"))
+        {
+            tongueSprite.color = Color.green;
+        }
+        else
+        {
+            tongueSprite.color = originalTongueColor;
+        }
     }
 
 

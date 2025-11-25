@@ -115,6 +115,10 @@ PrefabInstance:
       propertyPath: associatedEnemy
       value: 
       objectReference: {fileID: 4000690402368564773}
+    - target: {fileID: 8338894879511515523, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.141
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1483300078910096697, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
     - {fileID: 1397738806206786191, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
@@ -147,6 +151,11 @@ Transform:
 --- !u!212 &1951471356628187786 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 2727076177215642101, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+  m_PrefabInstance: {fileID: 4525415628864119679}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &5370027637548653934 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8379978615620402705, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
   m_PrefabInstance: {fileID: 4525415628864119679}
   m_PrefabAsset: {fileID: 0}
 --- !u!50 &6789368428265003585 stripped
@@ -184,14 +193,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy_SpitAndProxyJump
   chaseOnStart: 0
   enemyId: Treefrog
-  maxHealth: 30
+  maxHealth: 25
   navAgent: {fileID: 174221802636514272}
   movementType: 0
+  isMiniboss: 0
   rb: {fileID: 6789368428265003585}
   useKnockback: 1
   knockbackDuration: 0.1
   spriteRenderer: {fileID: 1951471356628187786}
   defeatSmokeAnimator: {fileID: 7302693241191827558}
+  sickParticles: {fileID: 5370027637548653934}
+  onDeathEvent:
+    m_PersistentCalls:
+      m_Calls: []
   spittingSprite: {fileID: 21300000, guid: de6d07bdb843d25479893a5d34eb5610, type: 3}
   defaultSprite: {fileID: 21300000, guid: e7c03148a2fdda84f80c3895cc336d22, type: 3}
   jumpingSprite: {fileID: 21300000, guid: e7c03148a2fdda84f80c3895cc336d22, type: 3}
@@ -204,11 +218,16 @@ MonoBehaviour:
     dissipationColor: {r: 0.7058824, g: 1, b: 0.5137255, a: 1}
     scale: 4
   spitSpawnTransform: {fileID: 3621121816063080183}
-  durationBetweenSpits: 0.8
+  durationBetweenSpits: 1.5
   durationBetweenJumps: 1
   jumpDistance: 3
   arcJumpDuration: 0
   triggerProxyJump: 1
+  useRapidFire: 0
+  projectilesToSpit: 3
+  rapidFireMode: 0
+  timeBetweenRapidShots: 0.2
+  spreadAngleDegrees: 15
 --- !u!58 &5888404907910060035
 CircleCollider2D:
   m_ObjectHideFlags: 0

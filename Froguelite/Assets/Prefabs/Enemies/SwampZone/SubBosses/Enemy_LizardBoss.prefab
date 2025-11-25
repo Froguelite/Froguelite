@@ -132,6 +132,22 @@ PrefabInstance:
       propertyPath: associatedEnemy
       value: 
       objectReference: {fileID: 830418482755487160}
+    - target: {fileID: 8338894879511515523, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8338894879511515523, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8338894879511515523, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8338894879511515523, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.597
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1397738806206786191, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
     - {fileID: 1483300078910096697, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
@@ -161,6 +177,11 @@ NavMeshAgent:
 --- !u!50 &4885704521809256147 stripped
 Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 6986542162239207742, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+  m_PrefabInstance: {fileID: 2537969104010831853}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &6301388356384659964 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8379978615620402705, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
   m_PrefabInstance: {fileID: 2537969104010831853}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &8043460745776690702 stripped
@@ -242,6 +263,7 @@ MonoBehaviour:
   knockbackDuration: 0.1
   spriteRenderer: {fileID: 495440084114685464}
   defeatSmokeAnimator: {fileID: 8695690234847530228}
+  sickParticles: {fileID: 6301388356384659964}
   onDeathEvent:
     m_PersistentCalls:
       m_Calls: []
