@@ -13,6 +13,7 @@ public class SaveManager : MonoBehaviour
     // Events for other scripts to automatically update their variables when saving/loading
     public static event Action SaveData;
     public static event Action LoadData;
+    public static event Action LoadZone;
 
     private ProfileData profileData = new ProfileData(); // always initialized
 
@@ -47,14 +48,14 @@ public class SaveManager : MonoBehaviour
         DontDestroyOnLoad(gameObject); // persist across scenes
     }
 
-    private void OnApplicationQuit()
-    {
-        // Only save if a profile has been selected
-        if (fullPath != null)
-        {
-            WriteToFile();
-        }
-    }
+    //private void OnApplicationQuit()
+    //{
+    //    // Only save if a profile has been selected
+    //    if (fullPath != null)
+    //    {
+    //        WriteToFile();
+    //    }
+    //}
 
     #endregion
 
@@ -89,6 +90,12 @@ public class SaveManager : MonoBehaviour
     private static void SaveToFile()
     {
         CheckInstance();
+
+        if (Instance == null || Instance.fullPath == null)
+        {
+            Debug.LogWarning("[SaveManager] No active profile set, cannot save data. Skipping for now - might be due to saving without passing through menu first.");
+            return;
+        }
 
         string json = JsonConvert.SerializeObject(Instance.profileData, jsonSettings);
         File.WriteAllText(Instance.fullPath, json);
@@ -135,13 +142,13 @@ public class SaveManager : MonoBehaviour
         SaveToFile();
     }
 
-    // Public load entry point
-    // Loads from file, then fires LoadData event so subscribers can update variables automatically
-    public static void LoadDataToScript()
+    // Public load entry point for after scene generation (objects don't exist before generation)
+    // Fires LoadData event so subscribers can update variables automatically
+    public static void LoadDataAfterGeneration()
     {
         CheckInstance();
 
-        LoadFromFile();
+        //LoadFromFile();
 
         if (LoadData != null)
         {
@@ -151,6 +158,26 @@ public class SaveManager : MonoBehaviour
                 catch (Exception ex) { Debug.LogError($"[SaveManager] LoadData subscriber failed: {ex}"); }
             }
         }
+
+    }
+
+    // Public load entry point for before scene generation (zones) (exist as DontDestroy)
+    // Loads file, and then fires LoadZones event so subscribers can update variables automatically
+    public static void LoadDataBeforeGeneration()
+    {
+        CheckInstance();
+
+        LoadFromFile();
+
+        if (LoadZone != null)
+        {
+            foreach (Action subscriber in LoadZone.GetInvocationList())
+            {
+                try { subscriber.Invoke(); }
+                catch (Exception ex) { Debug.LogError($"[SaveManager] LoadZone subscriber failed: {ex}"); }
+            }
+        }
+
     }
 
     #endregion
@@ -165,12 +192,11 @@ public class SaveManager : MonoBehaviour
         activeProfile = profileNumber;
 
         // Setup file path for profile
-        Instance.folderPath = Application.persistentDataPath;
-        string fileName = "profile_" + activeProfile + Instance.fileNameEnd;
-        Instance.fullPath = Path.Combine(Instance.folderPath, fileName);
+        //Instance.folderPath = Application.persistentDataPath;
+        //string fileName = "profile_" + activeProfile + Instance.fileNameEnd;
+        //Instance.fullPath = Path.Combine(Instance.folderPath, fileName);
+        Instance.fullPath = buildFilePath(profileNumber);
         Debug.Log($"[SaveManager] Active profile set to {activeProfile}, file path: {Instance.fullPath}");
-
-        LoadDataToScript();
     }
 
     public static string GetFileNameEnd()
@@ -190,16 +216,47 @@ public class SaveManager : MonoBehaviour
             throw new Exception("[SaveManager] Instance not initialized! Ensure SaveManager exists in the scene.");
     }
 
+    private static string buildFilePath(int profileNumber)
+    {
+        CheckInstance();
+
+        // Setup file path for profile
+        if (Instance.folderPath == null)
+        {
+            Instance.folderPath = Application.persistentDataPath;
+        }
+        string fileName = "profile_" + profileNumber + Instance.fileNameEnd;
+        return Path.Combine(Instance.folderPath, fileName);
+    }
+
+    public static void DeleteProfile(int profileNumber)
+    {
+        string deleteFilePath = buildFilePath(profileNumber);
+        if (File.Exists(deleteFilePath))
+        {
+            File.Delete(deleteFilePath);
+            Debug.Log("File deleted: " +  deleteFilePath);
+        } else
+        {
+            Debug.LogWarning("File not found: " + deleteFilePath);
+        }
+    }
+
     #endregion
 }
 
 
 public enum SaveVariable
 {
-    PlayerHealth,
-    PlayerPosition,
+    CurrentHealth,
+    MaxHealth,
     CurrentLevel,
-    Inventory,
-    Coins,
-    EnemyStats
+    Lotus,
+    Woodpeckers,
+    CollectedPowerflies,
+    PurchasedPowerFlies,
+    GoldenFlies,
+    RandomSeed,
+    CurrentZone,
+    CurrentSubZone
 }

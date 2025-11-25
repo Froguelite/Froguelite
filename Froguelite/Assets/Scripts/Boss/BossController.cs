@@ -532,7 +532,7 @@ public class BossController : MonoBehaviour
         state = State.Death;
         StopAllCoroutines();
 
-        GameManager.Instance.OnWin();
+        StartCoroutine(WaitThenLoadNextZone());
         //-------------------//
 
 
@@ -543,6 +543,13 @@ public class BossController : MonoBehaviour
 
 
         //-------------------//
+    }
+
+    private IEnumerator WaitThenLoadNextZone()
+    {
+        yield return new WaitForSeconds(4f);
+        yield return StartCoroutine(UIManager.Instance.WinScreenCo());
+        _ = LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, LevelManager.LoadEffect.Portal);
     }
 
     public void ForceEnterDefense() => state = State.DefensePhase;

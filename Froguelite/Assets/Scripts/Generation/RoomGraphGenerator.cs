@@ -10,7 +10,7 @@ public static class RoomGraphGenerator
     #region GENERATION
 
 
-    public static RoomData[,] GetRoomGraph(int maxDistFromStarter, int roomSizeScaler = 1)
+    public static RoomData[,] GetRoomGraph(int zone, int maxDistFromStarter, int subZone, int roomSizeScaler = 1)
     {
         // STEP 1: Create empty graph with starter room in center
         //-----------------------------------------//
@@ -19,7 +19,8 @@ public static class RoomGraphGenerator
         Vector2Int currentPos = starterPos;
         roomGraph[starterPos.x, starterPos.y] = new RoomData(
             Room.RoomType.Starter,
-            new Vector2Int(starterPos.x, starterPos.y)
+            new Vector2Int(starterPos.x, starterPos.y),
+            zone
         );
 
         // STEP 2: Generate path to boss room; 4-6 rooms long, always "away" from starter room, ends with boss room.
@@ -28,42 +29,52 @@ public static class RoomGraphGenerator
         for (int i = 0; i < pathLength; i++)
         {
             // Place a normal room in a random direction away from the starter room
-            AddRandRoomToStarterPath(Room.RoomType.Normal, currentPos, starterPos, roomGraph, out currentPos, out roomGraph);
+            AddRandRoomToStarterPath(zone, Room.RoomType.Normal, currentPos, starterPos, roomGraph, out currentPos, out roomGraph);
         }
 
-        // Place the boss room at the end of the path
-        AddRandRoomToStarterPath(Room.RoomType.Boss, currentPos, starterPos, roomGraph, out currentPos, out roomGraph);
+        // Place the final room at the end of the path (sub-zone boss, or boss portal)
+        Room.RoomType finalRoomType;
+        if (subZone < 2)
+            finalRoomType = Room.RoomType.SubZoneBoss;
+        else
+            finalRoomType = Room.RoomType.BossPortal;
+
+        AddRandRoomToStarterPath(zone, finalRoomType, currentPos, starterPos, roomGraph, out currentPos, out roomGraph);
 
         // STEP 3: Randomly add new normal rooms branching off existing rooms (weighted by genWeight)
         //-----------------------------------------//
         int numAdditionalRooms = Random.Range(2, 5) + roomSizeScaler;
         for (int i = 0; i < numAdditionalRooms; i++)
         {
-            AddNormalLeafRoom(roomGraph, out roomGraph, out Vector2Int newRoomPosOut);
+            AddNormalLeafRoom(zone, roomGraph, out roomGraph, out Vector2Int newRoomPosOut);
         }
 
         // STEP 4: Replace a random leaf room with a shop, another with a fly, another with a totem.
         //-----------------------------------------//
-        Vector2Int shopRoomPos = GetRandomLeaf(roomGraph);
+        List<Vector2Int> excludedPositions = new List<Vector2Int>();
+
+        Vector2Int shopRoomPos = GetRandomLeafExcluding(roomGraph, excludedPositions);
         if (shopRoomPos == Vector2Int.zero)
         {
-            AddNormalLeafRoom(roomGraph, out roomGraph, out Vector2Int newRoomPosOut);
+            AddNormalLeafRoom(zone, roomGraph, out roomGraph, out Vector2Int newRoomPosOut);
             shopRoomPos = newRoomPosOut;
         }
         roomGraph[shopRoomPos.x, shopRoomPos.y].roomType = Room.RoomType.Shop;
+        excludedPositions.Add(shopRoomPos);
 
-        Vector2Int flyRoomPos = GetRandomLeaf(roomGraph);
+        Vector2Int flyRoomPos = GetRandomLeafExcluding(roomGraph, excludedPositions);
         if (flyRoomPos == Vector2Int.zero)
         {
-            AddNormalLeafRoom(roomGraph, out roomGraph, out Vector2Int newRoomPosOut);
+            AddNormalLeafRoom(zone, roomGraph, out roomGraph, out Vector2Int newRoomPosOut);
             flyRoomPos = newRoomPosOut;
         }
         roomGraph[flyRoomPos.x, flyRoomPos.y].roomType = Room.RoomType.Fly;
+        excludedPositions.Add(flyRoomPos);
 
-        Vector2Int totemRoomPos = GetRandomLeaf(roomGraph);
+        Vector2Int totemRoomPos = GetRandomLeafExcluding(roomGraph, excludedPositions);
         if (totemRoomPos == Vector2Int.zero)
         {
-            AddNormalLeafRoom(roomGraph, out roomGraph, out Vector2Int newRoomPosOut);
+            AddNormalLeafRoom(zone, roomGraph, out roomGraph, out Vector2Int newRoomPosOut);
             totemRoomPos = newRoomPosOut;
         }
         roomGraph[totemRoomPos.x, totemRoomPos.y].roomType = Room.RoomType.Totem;
@@ -85,7 +96,7 @@ public static class RoomGraphGenerator
 
     // Adds a room of given type to the graph at a random position stepped away from starter
     // Returns the new currentPos after stepping in random direction
-    private static void AddRandRoomToStarterPath(Room.RoomType roomType, Vector2Int currentPos, Vector2Int starterPos, RoomData[,] graph, out Vector2Int currentPosOut, out RoomData[,] graphOut)
+    private static void AddRandRoomToStarterPath(int zone, Room.RoomType roomType, Vector2Int currentPos, Vector2Int starterPos, RoomData[,] graph, out Vector2Int currentPosOut, out RoomData[,] graphOut)
     {
         // Get a random direction away from starter
         Vector2Int direction = GetRandDirectionAwayFromStarter(starterPos, currentPos);
@@ -118,7 +129,8 @@ public static class RoomGraphGenerator
 
         RoomData newRoomData = new RoomData(
             roomType,
-            new Vector2Int(currentPos.x, currentPos.y)
+            new Vector2Int(currentPos.x, currentPos.y),
+            zone
         );
 
         // Open door from new room back to old room
@@ -228,6 +240,36 @@ public static class RoomGraphGenerator
     }
 
 
+    // Gets a random leaf room from the graph, excluding specified positions
+    private static Vector2Int GetRandomLeafExcluding(RoomData[,] graph, List<Vector2Int> excludedPositions)
+    {
+        List<RoomData> leafRooms = new List<RoomData>();
+
+        // Gather all leaf rooms that are not in the excluded list
+        for (int x = 0; x < graph.GetLength(0); x++)
+        {
+            for (int y = 0; y < graph.GetLength(1); y++)
+            {
+                RoomData room = graph[x, y];
+                if (room != null && room.isLeaf && !excludedPositions.Contains(room.roomCoordinate))
+                {
+                    leafRooms.Add(room);
+                }
+            }
+        }
+
+        if (leafRooms.Count == 0)
+        {
+            Debug.LogWarning("[RoomGraphGenerator] GetRandomLeafExcluding: No available leaf rooms found (all excluded).");
+            return Vector2Int.zero;
+        }
+
+        // Select a random leaf room
+        int randIndex = Random.Range(0, leafRooms.Count);
+        return leafRooms[randIndex].roomCoordinate;
+    }
+
+
     #endregion
 
 
@@ -235,7 +277,7 @@ public static class RoomGraphGenerator
 
 
     // Adds a normal leaf room connected to a randomly selected existing room
-    private static void AddNormalLeafRoom(RoomData[,] roomGraph, out RoomData[,] roomGraphOut, out Vector2Int newRoomPosOut)
+    private static void AddNormalLeafRoom(int zone, RoomData[,] roomGraph, out RoomData[,] roomGraphOut, out Vector2Int newRoomPosOut)
     {
         bool roomAdded = false;
         int attempts = 0;
@@ -245,7 +287,7 @@ public static class RoomGraphGenerator
         {
             // Select a random room from the existing rooms, weighted by genWeight, and add a new normal room connected to it
             Vector2Int selectedRoomPos = SelectRandomRoomByWeight(roomGraph);
-            AddRoomConnectedToCoordinate(Room.RoomType.Normal, selectedRoomPos, roomGraph, out bool success, out roomGraph, out newRoomPos);
+            AddRoomConnectedToCoordinate(zone, Room.RoomType.Normal, selectedRoomPos, roomGraph, out bool success, out roomGraph, out newRoomPos);
             if (success)
             {
                 roomAdded = true;
@@ -269,7 +311,7 @@ public static class RoomGraphGenerator
 
     // Attempts to add a room of given type connected to the room at given coordinate
     // Returns true if successful, false if no valid position was found
-    private static void AddRoomConnectedToCoordinate(Room.RoomType roomType, Vector2Int fromCoord, RoomData[,] graph, out bool successOut, out RoomData[,] graphOut, out Vector2Int newRoomPosOut)
+    private static void AddRoomConnectedToCoordinate(int zone, Room.RoomType roomType, Vector2Int fromCoord, RoomData[,] graph, out bool successOut, out RoomData[,] graphOut, out Vector2Int newRoomPosOut)
     {
         // Check if fromCoord is valid
         if (!IsInBounds(fromCoord, graph) || graph[fromCoord.x, fromCoord.y] == null)
@@ -309,7 +351,8 @@ public static class RoomGraphGenerator
         // Set up new room
         RoomData newRoomData = new RoomData(
             roomType,
-            new Vector2Int(newRoomPos.x, newRoomPos.y)
+            new Vector2Int(newRoomPos.x, newRoomPos.y),
+            zone
         );
 
         // Open door from old room to new room
@@ -445,9 +488,9 @@ public static class RoomGraphGenerator
             for (int y = 0; y < graph.GetLength(1); y++)
             {
                 RoomData room = graph[x, y];
-                if (room != null && room.roomType != Room.RoomType.Boss && room.isLeaf)
+                if (room != null && (room.roomType == Room.RoomType.Fly || room.roomType == Room.RoomType.Totem || room.roomType == Room.RoomType.Shop) && room.isLeaf)
                 {
-                    // This room is not the boss room, and it is a leaf room. Lock it at 50% chance.
+                    // This room is not the boss room or a normal room, and it is a leaf room. Lock it at 50% chance.
 
                     if (Random.value < 0.5f) // 50% chance to lock a door in this leaf room
                     {

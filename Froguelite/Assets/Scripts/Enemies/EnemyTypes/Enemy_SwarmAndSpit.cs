@@ -27,6 +27,9 @@ public class Enemy_SwarmAndSpit : EnemyBase
     // Begin swarming behavior when starting player chase
     protected override void OnEngagePlayer()
     {
+        if (isDead)
+            return;
+            
         base.OnEngagePlayer();
         swarmBehavior.onTriggerSwarmAction.AddListener(StartSpitting);
         swarmBehavior.BeginChase(PlayerMovement.Instance.transform);
@@ -35,7 +38,9 @@ public class Enemy_SwarmAndSpit : EnemyBase
 
     public override void Die()
     {
-        swarmBehavior.swarmCenter.RemoveEnemyFromSwarm(swarmBehavior);
+        if (swarmBehavior.swarmCenter != null)
+            swarmBehavior.swarmCenter.RemoveEnemyFromSwarm(swarmBehavior);
+        
         base.Die();
     }
 

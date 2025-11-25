@@ -34,6 +34,18 @@ public class AttackOverlapHandler : MonoBehaviour
             if (enemy != null && !enemy.isDead)
             {
                 enemy.DamageEnemy(StatsManager.Instance.playerDamage.GetValue(), StatsManager.Instance.playerKnockback.GetValue());
+                
+                // Apply poison if Sick Fly is active
+                if (PlayerAttack.Instance.HasTongueTag("sickFly"))
+                {
+                    EnemyBase enemyBase = enemy as EnemyBase;
+                    if (enemyBase != null)
+                    {
+                        float poisonDamage = StatsManager.Instance.playerDamage.GetValue() * 0.3f; // 30% of player damage per second
+                        enemyBase.ApplyPoison(5f, poisonDamage); // 5 second duration (25% total damage)
+                    }
+                }
+                
                 PlayerAttack.Instance.StopTongueExtension(false);
             }
         }
@@ -60,6 +72,14 @@ public class AttackOverlapHandler : MonoBehaviour
             {
                 door.OnInteract();
             }
+            else
+            {
+                SubZoneFinalDoor finalDoor = collision.GetComponent<SubZoneFinalDoor>();
+                if (finalDoor != null)
+                {
+                    finalDoor.OnInteract();
+                }
+            }
         }
         // Collectables
         else if (collision.CompareTag("Collectable"))
@@ -80,7 +100,8 @@ public class AttackOverlapHandler : MonoBehaviour
             if (totem != null)
             {
                 totem.OnInteract();
-                PlayerAttack.Instance.StopTongueExtension(false);
+                if (totem.GetCurrentState() == Totem.TotemState.Idle)
+                    PlayerAttack.Instance.StopTongueExtension(false);
             }
         }
         // Foliage

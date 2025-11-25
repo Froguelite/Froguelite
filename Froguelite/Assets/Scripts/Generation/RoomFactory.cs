@@ -13,6 +13,8 @@ public class RoomFactory : MonoBehaviour
     [SerializeField] private ShopAlternate shopAlternatePrefab;
     [SerializeField] private GameObject bossPortalPrefab;
     [SerializeField] private GameObject totemPrefab;
+    [SerializeField] private SubZoneFinalDoor swampSubZoneFinalDoorPrefab;
+    [SerializeField] private SubZoneFinalDoor forestSubZoneFinalDoorPrefab;
 
 
     #endregion
@@ -24,7 +26,7 @@ public class RoomFactory : MonoBehaviour
     // Spawns a room at the given grid position with the given room data
     // Uses auto-tiling for tilemap generation
     // Sets the tiles, then returns the new Room component
-    public Room SpawnRoom(Tilemap roomsTilemap, AutoTileSet autoTileSet, Transform roomParent, RoomData roomData, int roomLength)
+    public Room SpawnRoom(int zone, Tilemap roomsTilemap, AutoTileSet autoTileSet, Transform roomParent, RoomData roomData, int roomLength)
     {
         // Get the offset of this room in tile coordinates
         Vector2Int tileOffset = new Vector2Int(
@@ -39,20 +41,23 @@ public class RoomFactory : MonoBehaviour
             case Room.RoomType.Starter:
                 landScale = 1.0f;
                 break;
-            case Room.RoomType.Boss:
+            case Room.RoomType.BossPortal:
                 landScale = 0.8f;
                 break;
             case Room.RoomType.Shop:
                 landScale = 0.8f;
                 break;
             case Room.RoomType.Fly:
-                landScale = 0.5f;
+                landScale = 0.8f;
                 break;
             case Room.RoomType.Totem:
-                landScale = 0.7f;
+                landScale = 1.2f;
                 break;
             case Room.RoomType.Normal:
                 landScale = 1.5f;
+                break;
+            case Room.RoomType.SubZoneBoss:
+                landScale = 1.2f;
                 break;
         }
 
@@ -85,6 +90,12 @@ public class RoomFactory : MonoBehaviour
             offsetY: tileOffset.y,
             noiseSettings: noiseSettings
         );
+
+        if (roomData.roomType != Room.RoomType.Normal)
+        {
+            // Ensure non-normal rooms have a central landmass
+            newRoomLayout = RoomTileHelper.AddCentralLandmass(newRoomLayout, roomLength, roomLength);
+        }
 
         // Post process to smooth and ensure connectivity
         newRoomLayout = RoomTileHelper.SmoothRoomLayout(newRoomLayout);
@@ -120,12 +131,67 @@ public class RoomFactory : MonoBehaviour
             roomComponent.GenerateShop(shopAlternatePrefab);
         }
 
-        // If this is a boss room, spawn the boss
-        if (roomData.roomType == Room.RoomType.Boss)
+        // If this is a totem room, spawn the totem
+        if (roomData.roomType == Room.RoomType.Totem)
+        {
+            Vector2 totemSpawnPos = roomData.GetRoomCenterWorldPosition();
+            GameObject totemObject = Instantiate(totemPrefab, totemSpawnPos, Quaternion.identity);
+            totemObject.transform.SetParent(roomObject.transform);
+            Totem totemComponent = totemObject.GetComponent<Totem>();
+            roomComponent.SetTotem(totemComponent);
+            totemComponent.SetParentRoom(roomComponent);
+        }
+
+        // If this is a boss room, spawn the boss portal
+        if (roomData.roomType == Room.RoomType.BossPortal)
         {
             Vector2 bossPortalSpawnPos = roomData.GetRoomCenterWorldPosition();
             GameObject bossObject = Instantiate(bossPortalPrefab, bossPortalSpawnPos, Quaternion.identity);
             bossObject.transform.SetParent(roomObject.transform);
+        }
+
+        // If this is a sub-zone boss, spawn the boss and its final door
+        if (roomData.roomType == Room.RoomType.SubZoneBoss)
+        {
+            // Find the single door in this room (should only have one)
+            DoorData singleDoor = null;
+            Door.DoorDirection entranceDoorDirection = Door.DoorDirection.Up;
+
+            foreach (var doorEntry in roomData.doors)
+            {
+                if (!doorEntry.Value.isImpassable)
+                {
+                    singleDoor = doorEntry.Value;
+                    entranceDoorDirection = doorEntry.Key;
+                    break;
+                }
+            }
+
+            if (singleDoor != null)
+            {
+                // Get the opposite direction for the final door
+                Door.DoorDirection finalDoorDirection = Door.GetOppositeDirection(entranceDoorDirection);
+
+                // Calculate the position where the final door should spawn
+                // This is the launch position for a door in the opposite direction
+                Vector2Int doorLaunchPos = RoomTileHelper.GetDoorLocation(roomData.tileLayout, finalDoorDirection, true);
+                Vector3 finalDoorWorldPos = new Vector3(
+                    roomData.roomCoordinate.x * roomData.roomLength + doorLaunchPos.x + 0.5f,
+                    roomData.roomCoordinate.y * roomData.roomLength + doorLaunchPos.y + 0.5f,
+                    -0.1f
+                );
+
+                // Spawn the SubZoneFinalDoor prefab
+                SubZoneFinalDoor subZoneFinalDoorPrefab = (zone == 0) ? swampSubZoneFinalDoorPrefab : forestSubZoneFinalDoorPrefab;
+                SubZoneFinalDoor finalDoorInstance = Instantiate(subZoneFinalDoorPrefab, finalDoorWorldPos, Quaternion.identity);
+                finalDoorInstance.transform.SetParent(roomObject.transform);
+
+                // Initialize the door with the opposite direction
+                finalDoorInstance.InitializeDoor(finalDoorDirection);
+
+                // Initialize the room with this final door reference
+                roomComponent.SetSubZoneFinalDoor(finalDoorInstance);
+            }
         }
 
         return roomComponent;

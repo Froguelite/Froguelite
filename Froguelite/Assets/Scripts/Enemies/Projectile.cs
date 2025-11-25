@@ -63,6 +63,10 @@ public class Projectile : MonoBehaviour
 
         if (collision.CompareTag("Player"))
         {
+            // Don't damage or destroy projectile if player is dashing
+            if (PlayerMovement.Instance.IsDashing)
+                return;
+
             StatsManager.Instance.playerHealth.DamagePlayer(1);
             DestroyProjectile();
         }
@@ -73,7 +77,7 @@ public class Projectile : MonoBehaviour
     }
 
 
-    private void DestroyProjectile()
+    public void DestroyProjectile()
     {
         if (destroyed)
             return;

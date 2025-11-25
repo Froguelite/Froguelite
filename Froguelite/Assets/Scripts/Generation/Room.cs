@@ -15,7 +15,8 @@ public class Room : MonoBehaviour
     {
         Normal,
         Starter,
-        Boss,
+        BossPortal,
+        SubZoneBoss,
         Shop,
         Fly,
         Totem,
@@ -26,6 +27,11 @@ public class Room : MonoBehaviour
     public List<Door> doors { get; private set; } = new List<Door>();
 
     public List<IEnemy> enemies { get; private set; } = new List<IEnemy>();
+
+    private SubZoneFinalDoor subZoneFinalDoor;
+    public SubZoneFinalDoor SubZoneFinalDoor => subZoneFinalDoor;
+
+    public bool isExplored { get; private set; } = false;
 
     // Totem integration
     private Totem totemInstance;
@@ -48,14 +54,17 @@ public class Room : MonoBehaviour
         {
             case RoomType.Starter:
                 break;
-            case RoomType.Boss:
+            case RoomType.BossPortal:
                 // TODO: Boss room specific setup
+                break;
+            case RoomType.SubZoneBoss:
+                // TODO: Sub-zone boss specific setup
                 break;
             case RoomType.Shop:
                 // TODO: Spawn shopkeeper and shop items
                 break;
             case RoomType.Fly:
-                PowerFlyData rolledFly = PowerFlyFactory.Instance.RollFlyForFlyRoom();
+                PowerFlyData rolledFly = PowerFlyFactory.Instance.RollFlyUnweighted();
                 if (rolledFly != null)
                 {
                     Vector3 flyPosition = roomData.GetRoomCenterWorldPosition();
@@ -68,21 +77,6 @@ public class Room : MonoBehaviour
                 break;
             case RoomType.Totem:
                 // Spawn a totem at the center
-                {
-                    Vector3 totemPosition = roomData.GetRoomCenterWorldPosition();
-                    GameObject totemGO = new GameObject("Totem");
-                    totemGO.transform.position = totemPosition;
-                    totemGO.transform.SetParent(transform);
-
-                    // Add Totem component and required collider/tag
-                    Totem totem = totemGO.AddComponent<Totem>();
-                    CircleCollider2D col = totemGO.AddComponent<CircleCollider2D>();
-                    col.isTrigger = true;
-                    totemGO.tag = "Totem";
-
-                    totem.SetParentRoom(this);
-                    RegisterTotem(totem);
-                }
                 break;
             case RoomType.Normal:
             default:
@@ -102,10 +96,10 @@ public class Room : MonoBehaviour
     // Generates a few enemies for this room
     public void GenerateEnemies()
     {
-        if (roomData.roomType != RoomType.Normal)
-            return; // Only spawn enemies in normal rooms
-
-        enemies = EnemyFactory.Instance.SpawnEnemiesForRoom(this);
+        if (roomData.roomType == RoomType.Normal)
+            enemies = EnemyFactory.Instance.SpawnEnemiesForRoom(roomData.zone, this);
+        else if (roomData.roomType == RoomType.SubZoneBoss)
+            enemies = EnemyFactory.Instance.SpawnSubZoneBossForRoom(roomData.zone, this);
     }
 
 
@@ -114,7 +108,7 @@ public class Room : MonoBehaviour
     {
         if (roomData.roomType != RoomType.Shop)
             return; // Only generate shop in shop rooms
-            
+
         // Create a new shop instance
         ShopAlternate newShop = Instantiate(shop, roomData.GetRoomCenterWorldPosition(), Quaternion.identity);
         newShop.transform.SetParent(transform);
@@ -179,10 +173,10 @@ public class Room : MonoBehaviour
     // (i.e. lilypad frog is fully back to original island)
     public void OnDoorTransitionComplete()
     {
-        // If no enemies are present, we are safe to open all doors (room is clear)
+        // If no enemies are present, we are safe to clear the room
         if (enemies.Count == 0)
         {
-            DoorManager.Instance.OpenAllDoors(true);
+            OnRoomCleared();
             return;
         }
     }
@@ -208,7 +202,10 @@ public class Room : MonoBehaviour
             // During active totem waves, doors should not auto-open on room clear
             if (!isTotemActive)
             {
-                RoomManager.Instance.SpawnRoomClearItems(defeatedEnemy.transform.position);
+                if (roomData.roomType == RoomType.Normal)
+                    RoomManager.Instance.SpawnRoomClearItems(defeatedEnemy.transform.position, LevelManager.Instance.currentZone);
+                else if (roomData.roomType == RoomType.SubZoneBoss)
+                    RoomManager.Instance.SpawnSubZoneBossClearItems(defeatedEnemy.transform.position, LevelManager.Instance.currentZone);
                 OnRoomCleared();
             }
         }
@@ -216,17 +213,101 @@ public class Room : MonoBehaviour
 
 
     // Called when the room is cleared of all enemies
-    private void OnRoomCleared()
+    public void OnRoomCleared()
     {
+        isExplored = true;
+
         // Clear all swarm centers
         SwarmManager.Instance.ClearAllSwarms();
 
         // Open all doors when room is cleared
         DoorManager.Instance.OpenAllDoors(true);
+
+        // Ping the minimap notifying we have cleared the room
+        MinimapManager.Instance.OnClearRoom(this);
+
+        // Perform sub-zone specific actions
+        if (roomData.roomType == RoomType.SubZoneBoss)
+        {
+            OnSubZoneBossDefeated();
+        }
+    }
+
+
+    #endregion
+
+
+    #region SUB-ZONE BOSS ROOM
+
+
+    public void SetSubZoneFinalDoor(SubZoneFinalDoor finalDoor)
+    {
+        subZoneFinalDoor = finalDoor;
+    }
+
+
+    private void OnSubZoneBossDefeated()
+    {
+        Debug.Log("Sub-zone boss defeated!");
+        // Open the final door when the sub-zone boss is defeated
+        if (subZoneFinalDoor != null)
+        {
+            subZoneFinalDoor.OpenDoor();
+        }
+    }
+
+
+    #endregion
+
+
+    #region HELPERS
+
+
+    // Gets a room adjacent to this one in the given direction, or null if none exists
+    public Room GetAdjacentRoom(Door.DoorDirection direction)
+    {
+        Vector2Int adjacentCoord = roomData.roomCoordinate;
+
+        switch (direction)
+        {
+            case Door.DoorDirection.Up:
+                adjacentCoord += new Vector2Int(0, 1);
+                break;
+            case Door.DoorDirection.Right:
+                adjacentCoord += new Vector2Int(1, 0);
+                break;
+            case Door.DoorDirection.Down:
+                adjacentCoord += new Vector2Int(0, -1);
+                break;
+            case Door.DoorDirection.Left:
+                adjacentCoord += new Vector2Int(-1, 0);
+                break;
+        }
+
+        return RoomManager.Instance.GetRoomAtGridPosition(adjacentCoord);
+    }
+
+
+    // Gets the world space position directly between this room and the adjacent room in the given direction
+    public Vector3 GetRoomConnectionCenter(Door.DoorDirection direction)
+    {
+        Vector3 roomCenter = roomData.GetRoomCenterWorldPosition();
+        Vector3 adjacentRoomCenter = GetAdjacentRoom(direction)?.roomData.GetRoomCenterWorldPosition() ?? roomCenter;
+
+        return (roomCenter + adjacentRoomCenter) / 2f;
+    }
+
+    // Gets the world space position of the final door connection (position of the final door itself)
+    public Vector3 GetFinalDoorConnectionPosition()
+    {
+        if (subZoneFinalDoor == null)
+            return Vector3.zero;
+
+        return subZoneFinalDoor.transform.position;
     }
 
     // Registers a totem that controls this room's wave flow
-    public void RegisterTotem(Totem totem)
+    public void SetTotem(Totem totem)
     {
         totemInstance = totem;
     }
@@ -274,6 +355,7 @@ public class RoomData
     public float genWeight = 1f; // Weight for random selection during generation (higher = more likely)
     public bool isLeaf = false; // Whether this room is a leaf node (dead end) in the graph
     public PerlinNoiseSettings originalNoiseSettings; // Original noise settings used for generating the room layout
+    public int zone = 0; // Zone this room belongs to (0 = swamp, 1 = forest, etc.)
 
 
     #endregion
@@ -283,10 +365,11 @@ public class RoomData
 
 
     // Constructor to initialize base RoomData with type and coordinates. Doors are set as empty.
-    public RoomData(Room.RoomType roomType, Vector2Int roomCoordinate)
+    public RoomData(Room.RoomType roomType, Vector2Int roomCoordinate, int zone)
     {
         this.roomType = roomType;
         this.roomCoordinate = roomCoordinate;
+        this.zone = zone;
         InitializeDoors();
     }
 

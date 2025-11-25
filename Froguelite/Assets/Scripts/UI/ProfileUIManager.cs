@@ -19,14 +19,15 @@ public class ProfileUIManager : MonoBehaviour
 
     private GameObject[] profileCards;
 
-    private string defaultSceneName = "TestMainScene-AA"; //TO DO: Replace with actual default scene name
+    private LevelManager.Scenes defaultSceneName = LevelManager.Scenes.StumpScene; //TO DO: Replace with actual default scene name
 
     private const int maxProfiles = 3;
 
-    private ProfileCardDataList profileCardDataList = null;
+    [SerializeField] private ProfileCardDataList profileCardDataList = null;
 
     private readonly string profileCardsFileName = "profile_cards.json";
 
+    private ProfileCardData profileToDelete;
     #endregion
 
     #region SETUP
@@ -75,6 +76,7 @@ public class ProfileUIManager : MonoBehaviour
     private void OnApplicationQuit()
     {
         SaveProfileCardsData();
+        Debug.Log("Called Save profile card data");
     }
 
     #endregion
@@ -105,7 +107,7 @@ public class ProfileUIManager : MonoBehaviour
         CreateExistingProfiles();
     }
 
-    private void SaveProfileCardsData()
+    public void SaveProfileCardsData()
     {
         string filePath = Path.Combine(Application.persistentDataPath, profileCardsFileName);
 
@@ -148,7 +150,6 @@ public class ProfileUIManager : MonoBehaviour
         //Create Profile Card
         GameObject newCard = Instantiate(profileCardPrefab, this.transform);
         ProfileCard cardScript = newCard.GetComponent<ProfileCard>();
-        //cardScript.Initialize(profileNumber, testSceneName);
         
         cardScript.Initialize(newCardData); //Passed by reference, so changes to cardScript.profileData will update the list
         profileCards[profileNumber] = newCard;
@@ -157,19 +158,14 @@ public class ProfileUIManager : MonoBehaviour
         newCard.transform.position = addSlots[profileNumber].transform.position;
 
         //Disable Add Slot for profile number
-        //addSlots[profileNumber].SetActive(false);
         addSlots[profileNumber].GetComponent<Button>().interactable = false;
     }
 
     private void CreateSavedProfile(ProfileCardData cardData)
     {
-        //Temporary: Use same method as CreateNewProfile for now
-        //CreateNewProfile(profileNumber);
-
         //Create Profile Card
         GameObject newCard = Instantiate(profileCardPrefab, this.transform);
         ProfileCard cardScript = newCard.GetComponent<ProfileCard>();
-        //cardScript.Initialize(profileNumber, testSceneName);
 
         cardScript.Initialize(cardData); //Passed by reference, so changes to cardScript.profileData will update the list
         profileCards[cardData.profileNumber] = newCard;
@@ -178,24 +174,11 @@ public class ProfileUIManager : MonoBehaviour
         newCard.transform.position = addSlots[cardData.profileNumber].transform.position;
 
         //Disable Add Slot for profile number
-        //addSlots[cardData.profileNumber].SetActive(false);
         addSlots[cardData.profileNumber].GetComponent<Button>().interactable = false;
     }
 
     public void CreateExistingProfiles()
     {
-        //string SaveProfilePath = SaveManager.GetFileNameEnd();
-
-        ////Check for existing save files and create profile cards accordingly
-        //string folderPath = Application.persistentDataPath;
-        //List<int> existingProfiles = GetSavedProfileNumbers(folderPath, SaveProfilePath);
-
-        ////Create profile cards for existing profiles
-        //foreach (int profileNum in existingProfiles)
-        //{
-        //    CreateSavedProfile(profileNum);
-        //}
-
         //Return if saved profiles do not exist
         if(profileCardDataList == null)
         {
@@ -206,57 +189,100 @@ public class ProfileUIManager : MonoBehaviour
         foreach (ProfileCardData cardData in profileCardDataList.profiles)
         {
             CreateSavedProfile(cardData);
+            Debug.Log($"Profile {cardData.profileNumber} loads scene {cardData.sceneToLoad}");
         }
     }
 
     public void DeleteProfile(ProfileCardData cardData)
     {
+        ////Destroy Profile Card
+        //Destroy(profileCards[cardData.profileNumber]);
+        //profileCards[cardData.profileNumber] = null;
+
+        ////Enable Add Slot for profile number
+        //addSlots[cardData.profileNumber].GetComponent<Button>().interactable = true;
+
+        ////Remove from profileCardDataList
+        //profileCardDataList.profiles.Remove(cardData);
+
+        ////Delete save file
+        //SaveManager.DeleteProfile(cardData.profileNumber);
+
+        //Show pop up to confirm profile delete
+        profileToDelete = cardData;
+        UIManager.Instance.ShowPopUpPanel();
+    }
+
+    public void ConfirmDelete()
+    {
         //Destroy Profile Card
-        Destroy(profileCards[cardData.profileNumber]);
-        profileCards[cardData.profileNumber] = null;
+        Destroy(profileCards[profileToDelete.profileNumber]);
+        profileCards[profileToDelete.profileNumber] = null;
 
         //Enable Add Slot for profile number
-        //addSlots[cardData.profileNumber].SetActive(true);
-        addSlots[cardData.profileNumber].GetComponent<Button>().interactable = true;
+        addSlots[profileToDelete.profileNumber].GetComponent<Button>().interactable = true;
 
         //Remove from profileCardDataList
-        profileCardDataList.profiles.Remove(cardData);
+        profileCardDataList.profiles.Remove(profileToDelete);
 
-        //TO DO: Delete save file
+        //Delete save file
+        SaveManager.DeleteProfile(profileToDelete.profileNumber);
+
+        //Profile Deleted, remove it
+        profileToDelete = null;
+
+        UIManager.Instance.ClosePopUpPanel();
+    }
+
+    public void CancelDelete()
+    {
+        //Profile not to deleted, remove it
+        profileToDelete = null;
+
+        UIManager.Instance.ClosePopUpPanel();
     }
 
     #endregion
 
     #region HELPER METHODS
-    private List<int> GetSavedProfileNumbers(string folderPath, string fileNameEnd)
+    //private List<int> GetSavedProfileNumbers(string folderPath, string fileNameEnd)
+    //{
+    //    // Get all files that match "profile_*_savefile.json"
+    //    string[] files = Directory.GetFiles(folderPath, "profile_*" + fileNameEnd);
+
+    //    List<int> profileNumbers = new List<int>();
+
+    //    foreach (string file in files)
+    //    {
+    //        // Extract the filename only (no path)
+    //        string fileName = Path.GetFileName(file);
+
+    //        // Example: "profile_3_savefile.json"
+    //        // Remove "profile_" and "_savefile.json"
+    //        string numberPart = fileName
+    //            .Replace("profile_", "")
+    //            .Replace(fileNameEnd, "");
+
+    //        // Try parse the number
+    //        if (int.TryParse(numberPart, out int num))
+    //        {
+    //            profileNumbers.Add(num);
+    //        }
+    //    }
+
+    //    // Optional: sort for convenience
+    //    profileNumbers.Sort();
+
+    //    return profileNumbers;
+    //}
+
+    public void UpdateSceneToLoadForProfile(int profileNumber, LevelManager.Scenes scene)
     {
-        // Get all files that match "profile_*_savefile.json"
-        string[] files = Directory.GetFiles(folderPath, "profile_*" + fileNameEnd);
-
-        List<int> profileNumbers = new List<int>();
-
-        foreach (string file in files)
-        {
-            // Extract the filename only (no path)
-            string fileName = Path.GetFileName(file);
-
-            // Example: "profile_3_savefile.json"
-            // Remove "profile_" and "_savefile.json"
-            string numberPart = fileName
-                .Replace("profile_", "")
-                .Replace(fileNameEnd, "");
-
-            // Try parse the number
-            if (int.TryParse(numberPart, out int num))
-            {
-                profileNumbers.Add(num);
-            }
-        }
-
-        // Optional: sort for convenience
-        profileNumbers.Sort();
-
-        return profileNumbers;
+        Debug.Log($"Called Update Scene To Load For Profile for profile {profileNumber} to load scene {scene} ");
+        profileCardDataList.profiles[profileNumber].sceneToLoad = scene;
+        Debug.Log($"Profile {profileCardDataList.profiles[profileNumber].name} loads {profileCardDataList.profiles[profileNumber].sceneToLoad}");
+        //Save changes to file
+        SaveProfileCardsData();
     }
     #endregion
 }
@@ -266,17 +292,17 @@ public class ProfileCardData
 {
     public int profileNumber;
     public string name;
-    public string sceneToLoad;
+    public LevelManager.Scenes sceneToLoad;
     //public int sceneToLoadInt;
 
-    public ProfileCardData(int number, string scene, string name)
+    public ProfileCardData(int number, LevelManager.Scenes scene, string name)
     {
         profileNumber = number;
         sceneToLoad = scene;
         this.name = name;
     }
 
-    public ProfileCardData(int number, string scene)
+    public ProfileCardData(int number, LevelManager.Scenes scene)
     {
         profileNumber = number;
         sceneToLoad = scene;

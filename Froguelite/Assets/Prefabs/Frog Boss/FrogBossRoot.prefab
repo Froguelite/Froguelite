@@ -1169,6 +1169,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 119600767357606251, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 362880712117942906, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -1343,7 +1347,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
       propertyPath: deathSprites.Array.size
-      value: 24
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
       propertyPath: stompSprites.Array.size
@@ -1570,6 +1574,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -5282269568586761941, guid: 2330a32f9c47aec45904648b177c2252, type: 3}
     - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
+      propertyPath: 'deathSprites.Array.data[24]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 471192023505544644, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
       propertyPath: 'stompSprites.Array.data[10]'
       value: 
       objectReference: {fileID: 2597192402939433509, guid: 3944461003fad2540999b67e721124f2, type: 3}
@@ -1642,6 +1650,10 @@ PrefabInstance:
       value: FrogBossRoot
       objectReference: {fileID: 0}
     - target: {fileID: 1580712868150624173, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1580712868150624173, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
       propertyPath: m_SortingOrder
       value: 1
       objectReference: {fileID: 0}
@@ -1669,6 +1681,10 @@ PrefabInstance:
       propertyPath: bossRenderer
       value: 
       objectReference: {fileID: 1678507191064879444}
+    - target: {fileID: 5534361125006285923, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
+      propertyPath: shadowSprite
+      value: 
+      objectReference: {fileID: 6652928369143933836}
     - target: {fileID: 6213689393964593935, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
       propertyPath: m_LocalPosition.x
       value: -56.53
@@ -1806,6 +1822,11 @@ Transform:
 --- !u!1 &2327144077167815614 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2517298519071536455, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
+  m_PrefabInstance: {fileID: 190436097541398265}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &6652928369143933836 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 6843047583652033909, guid: 40c584856eb27fb48838c4e5795227d8, type: 3}
   m_PrefabInstance: {fileID: 190436097541398265}
   m_PrefabAsset: {fileID: 0}
 --- !u!61 &6884369084244563518 stripped

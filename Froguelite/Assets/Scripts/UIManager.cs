@@ -20,6 +20,8 @@ public class UIManager : MonoBehaviour
 
     private UIPanels previousPanel;
 
+    private bool overrideUnsubscribe = false;
+
     #endregion
 
     #region SETUP
@@ -27,7 +29,8 @@ public class UIManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(this);
+            overrideUnsubscribe = true;
+            Destroy(gameObject);
             return;
         }
         Instance = this;
@@ -40,6 +43,9 @@ public class UIManager : MonoBehaviour
 
     void OnDestroy()
     {
+        // Prevents singleton destruction from unsubscribing events
+        if (overrideUnsubscribe) return;
+
         //Unsubscribe from pause input action
         pause.action.performed -= OnPauseClick;
         pause.action.Disable();
@@ -88,7 +94,8 @@ public class UIManager : MonoBehaviour
     public void ResetGame()
     {
         PanelSwitch(UIPanels.LoadingScreen);
-        LevelManager.Instance.LoadScene(LevelManager.Scenes.MenuScene);
+        //Suppress await warning _=
+        _= LevelManager.Instance.LoadScene(LevelManager.Scenes.MenuScene, LevelManager.LoadEffect.LoadingScreen);
     }
 
     public void OnStartGameClick()
@@ -128,8 +135,8 @@ public class UIManager : MonoBehaviour
 
     public void OnQuitClick()
     {
-        //Temporarily Quit to Profile Menu
-        OnProfilesClick();
+        //Suppress await warning _=
+        _= LevelManager.Instance.LoadScene(LevelManager.Scenes.MenuScene, LevelManager.LoadEffect.LoadingScreen);
     }
 
     public void OnSettingsClick()
@@ -146,11 +153,14 @@ public class UIManager : MonoBehaviour
     //}
 
     //Use enum instead string for setting scene to load
-    public void OnProfileStartClick(LevelManager.Scenes sceneToLoad)
+    public async void OnProfileStartClick(LevelManager.Scenes sceneToLoad)
     {
         //Switch to Loading Screen and call LevelManager to load scene
         PanelSwitch(UIPanels.LoadingScreen);
-        LevelManager.Instance.LoadScene(sceneToLoad);
+        LevelManager.Instance.useLoadedVal = true;
+        SaveManager.LoadDataBeforeGeneration();
+        await LevelManager.Instance.LoadScene(sceneToLoad, LevelManager.LoadEffect.LoadingScreen);
+        SaveManager.LoadDataAfterGeneration(); //Load from save file after scene is loaded
     }
 
     public void OnSceneLoadReturn(UIPanels panelToReturnTo)
@@ -160,19 +170,24 @@ public class UIManager : MonoBehaviour
     }
 
     private void OnPauseClick(InputAction.CallbackContext obj)
-    {
-        //Check if clicked during game
-        if(currentPanel != UIPanels.None)
+    {        
+        // Check state during click
+
+        switch(currentPanel)
         {
-            return;
+            case UIPanels.None:
+                // If no panel is shown, pause the game
+                Time.timeScale = 0f;
+                PanelSwitch(UIPanels.PauseMenu);
+                break;
+            case UIPanels.PauseMenu:
+                // If pause menu is already open, resume the game
+                OnResumeClick();
+                break;
+            default:
+                Debug.LogWarning($"Pause clicked but current panel is {currentPanel}. No action taken.");
+                break;
         }
-        
-        Time.timeScale = 0f;
-
-        //Temporary: Switch to Main Menu panel
-        PanelSwitch(UIPanels.PauseMenu);
-
-        //TO DO: Save game state if needed
     }
 
     public void OnResumeClick()
@@ -181,7 +196,11 @@ public class UIManager : MonoBehaviour
         //Switch back to previous panel
         PanelSwitch(UIPanels.None);
 
-        //Time.timeScale = 1f;
+        // Push any pending inputs
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.PushAnyPendingMovement();
+        }
     }
 
     public void OnExitClick()
@@ -233,10 +252,11 @@ public class UIManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
-        ResetGame();
+        //Suppress await warning _=
+        _= LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, LevelManager.LoadEffect.LoadingScreen);
     }
 
-    private IEnumerator WinScreenCo()
+    public IEnumerator WinScreenCo()
     {
         float winTextBigScale = 1.3f;
 
@@ -261,13 +281,28 @@ public class UIManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
-        ResetGame();
+        //ResetGame();
+    }
+
+    #endregion
+
+    #region POP-UP METHODS
+    public void ShowPopUpPanel()
+    {
+        if(uiPanels[(int)UIPanels.PopUpScreen].panelObject != null)
+            uiPanels[(int) UIPanels.PopUpScreen].panelObject.SetActive(true);
+    }
+
+    public void ClosePopUpPanel()
+    {
+        if (uiPanels[(int)UIPanels.PopUpScreen].panelObject != null)
+            uiPanels[(int)UIPanels.PopUpScreen].panelObject.SetActive(false);
     }
 
     #endregion
 
     #region HELPER METHODS
-    private void PanelSwitch(UIPanels next)
+    public void PanelSwitch(UIPanels next)
     {
         //Set current panel to inactive
         int currentIndex = (int)currentPanel;
@@ -301,7 +336,8 @@ public enum UIPanels
     LoadingScreen,
     DeathScreen,
     WinScreen,
-    SettingsScreen
+    SettingsScreen,
+    PopUpScreen
     //InGameHUD,
     //PauseMenu
 }

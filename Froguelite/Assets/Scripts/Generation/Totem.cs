@@ -8,15 +8,21 @@ public class Totem : MonoBehaviour
 
     #region VARIABLES
 
-    [Header("Totem Layers")]
-    [SerializeField] private GameObject layer1;
-    [SerializeField] private GameObject layer2;
-    [SerializeField] private GameObject layer3;
+    [Header("Totem Sprite")]
+    [SerializeField] private SpriteRenderer totemSprite;
+    [SerializeField] private Collider2D totemCollision;
     
     [Header("Visual Effects")]
-    [SerializeField] private Color glowColor = Color.yellow;
-    [SerializeField] private float glowIntensity = 2f;
+    [SerializeField] private ParticleSystem dirtParticles;
+    [SerializeField] private Color normalColor = Color.white;
+    [SerializeField] private Color goldenColor = new Color(1f, 0.84f, 0f, 1f);
     [SerializeField] private float glowPulseSpeed = 2f;
+    
+    [Header("Sinking Animation")]
+    [SerializeField] private float sinkDistance = 0.5f; // Distance to sink per wave
+    [SerializeField] private float sinkDuration = 1f; // Time for sinking animation
+    [SerializeField] private float shakeIntensity = 0.1f; // Shake intensity during sinking
+    [SerializeField] private float shakeSpeed = 20f; // Shake speed during sinking
     
     [Header("Enemy Spawning")]
     [SerializeField] private int minEnemiesPerWave = 2;
@@ -28,16 +34,16 @@ public class Totem : MonoBehaviour
     [SerializeField] private float flySpawnHeight = 1f;
 
     // State tracking
-    private int currentLayer = 0; 
+    private int currentWave = 0; 
     private TotemState currentState = TotemState.Idle;
     private Room parentRoom;
     private List<IEnemy> currentWaveEnemies = new List<IEnemy>();
     private List<PowerFly> spawnedPowerFlies = new List<PowerFly>();
     
     // Visual components
-    private List<SpriteRenderer> layerRenderers = new List<SpriteRenderer>();
-    private List<Color> originalColors = new List<Color>();
+    private Vector3 initialPosition;
     private bool isGlowing = false;
+    private bool isSinking = false;
 
     public enum TotemState
     {
@@ -53,79 +59,36 @@ public class Totem : MonoBehaviour
 
     private void Awake()
     {
-        // If layers aren't assigned, create them at runtime
-        if (layer1 == null || layer2 == null || layer3 == null)
+        // Validate totem sprite reference
+        if (totemSprite == null)
         {
-            CreateLayersAtRuntime();
+            Debug.LogError("Totem: totemSprite is not assigned!");
         }
-        
-        // Initialize layer renderers and store original colors
-        InitializeLayerRenderers();
-    }
-    
-    // Creates visual layers at runtime if not assigned in prefab
-    private void CreateLayersAtRuntime()
-    {
-        // Create Layer 1 (bottom)
-        layer1 = CreateLayer("Layer1", new Vector3(0, 0, 0), new Vector3(1, 0.5f, 1), new Color(0.4f, 0.3f, 0.2f, 1f), 0);
-        
-        // Create Layer 2 (middle)
-        layer2 = CreateLayer("Layer2", new Vector3(0, 0.5f, 0), new Vector3(0.8f, 0.4f, 1), new Color(0.5f, 0.45f, 0.4f, 1f), 1);
-        
-        // Create Layer 3 (top)
-        layer3 = CreateLayer("Layer3", new Vector3(0, 0.9f, 0), new Vector3(0.6f, 0.3f, 1), new Color(0.6f, 0.55f, 0.5f, 1f), 2);
-        
-    }
-    
-    // Helper to create a single layer
-    private GameObject CreateLayer(string name, Vector3 localPos, Vector3 scale, Color color, int sortOrder)
-    {
-        GameObject layer = new GameObject(name);
-        layer.transform.SetParent(transform);
-        layer.transform.localPosition = localPos;
-        layer.transform.localScale = scale;
-        
-        SpriteRenderer sr = layer.AddComponent<SpriteRenderer>();
-        sr.sprite = CreateSquareSprite();
-        sr.color = color;
-        sr.sortingOrder = sortOrder;
-                
-        return layer;
-    }
-    
-    // Creates a simple white square sprite
-    private Sprite CreateSquareSprite()
-    {
-        // Create a larger texture for better visibility
-        int size = 32;
-        Texture2D texture = new Texture2D(size, size);
-        
-        // Fill with white
-        for (int x = 0; x < size; x++)
+        else
         {
-            for (int y = 0; y < size; y++)
-            {
-                texture.SetPixel(x, y, Color.white);
-            }
+            // Store initial local position and normal color from sprite
+            initialPosition = totemSprite.transform.localPosition;
+            normalColor = totemSprite.color;
         }
-        texture.Apply();
-        
-        // Create sprite from texture
-        return Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 32f);
     }
+    
+
 
     private void Start()
     {
-        // Set initial state - all layers visible, none glowing
-        UpdateLayerVisibility();
+        // Totem starts in idle state with normal color
+        if (totemSprite != null)
+        {
+            totemSprite.color = normalColor;
+        }
     }
 
     private void Update()
     {
-        // Handle glow pulsing effect
-        if (isGlowing && currentState == TotemState.WaitingForDefeat)
+        // Handle golden glow pulsing effect
+        if (isGlowing && currentState == TotemState.WaitingForDefeat && !isSinking)
         {
-            PulseGlowEffect();
+            PulseGoldenGlow();
         }
     }
 
@@ -139,42 +102,7 @@ public class Totem : MonoBehaviour
         parentRoom = room;
     }
 
-    // Initializes layer renderers and stores original colors
-    private void InitializeLayerRenderers()
-    {
-        layerRenderers.Clear();
-        originalColors.Clear();
 
-        if (layer1 != null)
-        {
-            SpriteRenderer renderer = layer1.GetComponent<SpriteRenderer>();
-            if (renderer != null)
-            {
-                layerRenderers.Add(renderer);
-                originalColors.Add(renderer.color);
-            }
-        }
-
-        if (layer2 != null)
-        {
-            SpriteRenderer renderer = layer2.GetComponent<SpriteRenderer>();
-            if (renderer != null)
-            {
-                layerRenderers.Add(renderer);
-                originalColors.Add(renderer.color);
-            }
-        }
-
-        if (layer3 != null)
-        {
-            SpriteRenderer renderer = layer3.GetComponent<SpriteRenderer>();
-            if (renderer != null)
-            {
-                layerRenderers.Add(renderer);
-                originalColors.Add(renderer.color);
-            }
-        }
-    }
 
     #endregion
 
@@ -188,27 +116,27 @@ public class Totem : MonoBehaviour
             return; // Already active or completed
         }
 
-        StartWave(currentLayer);
+        StartWave(currentWave);
     }
 
     #endregion
 
     #region WAVE MANAGEMENT
 
-    // Starts a wave for the specified layer
-    private void StartWave(int layerIndex)
+    // Starts a wave
+    private void StartWave(int waveIndex)
     {
-        if (layerIndex >= 3)
+        if (waveIndex >= 3)
         {
-            Debug.LogError("Totem: Attempted to start wave for invalid layer index: " + layerIndex);
+            Debug.LogError("Totem: Attempted to start wave for invalid index: " + waveIndex);
             return;
         }
 
         currentState = TotemState.Spawning;
         if (parentRoom != null) parentRoom.SetTotemActive(true);
         
-        // Make current layer glow
-        SetLayerGlow(layerIndex, true);
+        // Make totem glow golden
+        StartGoldenGlow();
         
         // Spawn enemies for this wave
         int enemyCount = Random.Range(minEnemiesPerWave, maxEnemiesPerWave + 1);
@@ -223,17 +151,15 @@ public class Totem : MonoBehaviour
     {
         currentWaveEnemies.Clear();
 
-        for (int i = 0; i < count; i++)
-        {
-            Vector2 spawnPosition = GetRandomSpawnPosition();
-            //IEnemy newEnemy = EnemyFactory.Instance.SpawnRandomEnemy(parentRoom, spawnPosition);
+        List<IEnemy> spawnedEnemies = EnemyFactory.Instance.SpawnEnemiesForRoom(parentRoom.roomData.zone, parentRoom);
 
-            //if (newEnemy != null)
-            //{
-            //    currentWaveEnemies.Add(newEnemy);
-            //    newEnemy.BeginPlayerChase();
-            //}
-            Debug.LogWarning("Commented new genration of enemies in SpawnEnemies() to avoid compilation error");
+        foreach (IEnemy newEnemy in spawnedEnemies)
+        {
+            if (newEnemy != null)
+            {
+                currentWaveEnemies.Add(newEnemy);
+                newEnemy.BeginPlayerChase();
+            }
         }
     }
 
@@ -300,15 +226,120 @@ public class Totem : MonoBehaviour
     // Called when current wave is complete
     private void OnWaveComplete()
     {
-        Debug.Log($"Totem: Wave {currentLayer + 1} completed!");
+        Debug.Log($"Totem: Wave {currentWave + 1} completed!");
         
-        // Break current layer
-        BreakLayer(currentLayer);
+        // Stop glowing
+        StopGoldenGlow();
         
-        // Move to next layer or complete totem
-        currentLayer++;
+        // Sink the totem
+        StartCoroutine(SinkTotemCoroutine());
         
-        if (currentLayer >= 3)
+        // Move to next wave or complete totem
+        currentWave++;
+        
+        if (currentWave >= 3)
+        {
+            // Totem will complete after final sink animation
+        }
+        else
+        {
+            // Next wave will start after sinking animation completes
+        }
+    }
+
+    // Starts the next wave
+    private void StartNextWave()
+    {
+        if (currentWave < 3)
+        {
+            StartWave(currentWave);
+        }
+    }
+
+    #endregion
+
+    #region VISUAL EFFECTS
+
+    // Starts the golden glow effect
+    private void StartGoldenGlow()
+    {
+        isGlowing = true;
+    }
+
+    // Stops the golden glow effect
+    private void StopGoldenGlow()
+    {
+        isGlowing = false;
+        if (totemSprite != null)
+        {
+            totemSprite.color = normalColor;
+        }
+    }
+
+    // Pulses between normal and golden color
+    private void PulseGoldenGlow()
+    {
+        if (totemSprite == null) return;
+        
+        float pulse = Mathf.Sin(Time.time * glowPulseSpeed) * 0.5f + 0.5f;
+        totemSprite.color = Color.Lerp(normalColor, goldenColor, pulse);
+    }
+
+    // Coroutine to animate totem sinking into the ground
+    private System.Collections.IEnumerator SinkTotemCoroutine()
+    {
+        isSinking = true;
+        
+        if (totemSprite == null)
+        {
+            Debug.LogError("Totem: Cannot sink - totemSprite is null!");
+            isSinking = false;
+            yield break;
+        }
+        
+        Vector3 startPosition = totemSprite.transform.localPosition;
+        Vector3 targetPosition = startPosition - new Vector3(0, sinkDistance, 0);
+        float elapsedTime = 0f;
+        
+        // Play dirt particles if available
+        if (dirtParticles != null)
+        {
+            dirtParticles.Play();
+        }
+        
+        // Animate sinking with shake effect
+        while (elapsedTime < sinkDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / sinkDuration;
+            
+            // Smooth interpolation for sinking
+            Vector3 sinkPosition = Vector3.Lerp(startPosition, targetPosition, t);
+            
+            // Add shake effect
+            float shakeX = Mathf.Sin(Time.time * shakeSpeed) * shakeIntensity * (1 - t); // Reduce shake over time
+            float shakeY = Mathf.Cos(Time.time * shakeSpeed * 1.3f) * shakeIntensity * (1 - t);
+            
+            totemSprite.transform.localPosition = sinkPosition + new Vector3(shakeX, shakeY, 0);
+            
+            yield return null;
+        }
+        
+        // Ensure final position is exact
+        totemSprite.transform.localPosition = targetPosition;
+        
+        // Stop dirt particles
+        if (dirtParticles != null)
+        {
+            dirtParticles.Stop();
+        }
+        
+        isSinking = false;
+        
+        Debug.Log($"Totem: Sunk segment {currentWave} into ground");
+        
+        // Handle next action based on wave count
+        if (currentWave >= 3)
         {
             OnTotemComplete();
         }
@@ -316,85 +347,6 @@ public class Totem : MonoBehaviour
         {
             // Start next wave after a brief delay
             Invoke(nameof(StartNextWave), 1f);
-        }
-    }
-
-    // Starts the next wave
-    private void StartNextWave()
-    {
-        if (currentLayer < 3)
-        {
-            StartWave(currentLayer);
-        }
-    }
-
-    #endregion
-
-    #region LAYER MANAGEMENT
-
-    // Sets glow effect for a specific layer
-    private void SetLayerGlow(int layerIndex, bool glow)
-    {
-        if (layerIndex < 0 || layerIndex >= layerRenderers.Count)
-            return;
-
-        isGlowing = glow;
-        
-        if (glow)
-        {
-            // Start glow effect
-            layerRenderers[layerIndex].color = glowColor;
-        }
-        else
-        {
-            // Stop glow effect
-            layerRenderers[layerIndex].color = originalColors[layerIndex];
-        }
-    }
-
-    // Breaks (disables) a layer
-    private void BreakLayer(int layerIndex)
-    {
-        if (layerIndex < 0 || layerIndex >= 3)
-            return;
-
-        // Stop glowing
-        SetLayerGlow(layerIndex, false);
-        
-        // Disable the layer GameObject
-        switch (layerIndex)
-        {
-            case 0:
-                if (layer1 != null) layer1.SetActive(false);
-                break;
-            case 1:
-                if (layer2 != null) layer2.SetActive(false);
-                break;
-            case 2:
-                if (layer3 != null) layer3.SetActive(false);
-                break;
-        }
-        
-        Debug.Log($"Totem: Layer {layerIndex + 1} broken!");
-    }
-
-    // Updates layer visibility based on current state
-    private void UpdateLayerVisibility()
-    {
-        // All layers start visible
-        if (layer1 != null) layer1.SetActive(true);
-        if (layer2 != null) layer2.SetActive(true);
-        if (layer3 != null) layer3.SetActive(true);
-    }
-
-    // Pulses the glow effect
-    private void PulseGlowEffect()
-    {
-        if (currentLayer < layerRenderers.Count)
-        {
-            float pulse = Mathf.Sin(Time.time * glowPulseSpeed) * 0.5f + 0.5f;
-            Color currentColor = Color.Lerp(originalColors[currentLayer], glowColor, pulse);
-            layerRenderers[currentLayer].color = currentColor;
         }
     }
 
@@ -409,6 +361,12 @@ public class Totem : MonoBehaviour
         
         currentState = TotemState.Completed;
         isGlowing = false;
+        
+        // Disable collision
+        if (totemCollision != null)
+        {
+            totemCollision.enabled = false;
+        }
         
         // Spawn 3 power flies for player to choose from
         SpawnPowerFlyRewards();
@@ -467,7 +425,7 @@ public class Totem : MonoBehaviour
             // Keep rolling until we get a different fly
             do
             {
-                newFly = PowerFlyFactory.Instance.RollFlyForFlyRoom();
+                newFly = PowerFlyFactory.Instance.RollFlyUnweighted();
                 attempts++;
                 
                 // If we've tried too many times, just use what we got
@@ -521,10 +479,10 @@ public class Totem : MonoBehaviour
         return currentState;
     }
 
-    // Gets the current layer index
-    public int GetCurrentLayer()
+    // Gets the current wave index
+    public int GetCurrentWave()
     {
-        return currentLayer;
+        return currentWave;
     }
 
     // Checks if the totem is active =

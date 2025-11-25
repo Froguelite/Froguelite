@@ -13,6 +13,7 @@ public class BossEntity : MonoBehaviour
 
     [SerializeField] private BossController bossController;
     [SerializeField] private SpriteRenderer bossRenderer;
+    [SerializeField] private SpriteRenderer shadowSprite;
     [SerializeField] private Color flashColor = Color.red; // Color to flash when hit
     private Color originalColor; // Store the original sprite color
     [SerializeField] private float flashDuration = 0.2f; // How long
@@ -106,13 +107,37 @@ public class BossEntity : MonoBehaviour
 
         healthBar.HideHealthBar();
 
+        // Fade out shadow sprite if it exists
+        if (shadowSprite != null)
+        {
+            LeanTween.alpha(shadowSprite.gameObject, 0f, 2f);
+        }
+
+        // Disable all colliders on the boss
+        DisableAllColliders();
+
         if (bossController != null)
         {
             bossController.Death();
         }
         //Implement animations, loot drops, or cutscene transitions here
 
+        InventoryManager.Instance.SpewGoldenFlies(transform.position, Random.Range(3, 6));
+
     } // END Die
+
+    // Disable all colliders on this GameObject and its children
+    //-----------------------------------//
+    private void DisableAllColliders()
+    //-----------------------------------//
+    {
+        Collider2D[] colliders = GetComponentsInChildren<Collider2D>();
+        foreach (Collider2D col in colliders)
+        {
+            col.enabled = false;
+        }
+        Debug.Log($"Disabled {colliders.Length} collider(s) on {stats.bossName}.");
+    } // END DisableAllColliders
 
     public void OnPlayerDie()
     {

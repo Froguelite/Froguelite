@@ -18,6 +18,7 @@ public class InputManager : MonoBehaviour
     private InputAction moveAction;
     private InputAction attackAction;
     private InputAction mapAction;
+    private InputAction dashAction;
 
     private bool pendingAttack = false;
     private Vector2 pendingMoveInput = Vector2.zero;
@@ -69,11 +70,12 @@ public class InputManager : MonoBehaviour
         moveAction = playerInput.actions["Move"];
         attackAction = playerInput.actions["Attack"];
         mapAction = playerInput.actions["Map"];
+        dashAction = playerInput.actions["Dash"];
     }
 
 
     // Enables all actions and subscribes to their events
-    private void EnableActions()
+    public void EnableActions()
     {
         moveAction.performed += OnMove;
         moveAction.canceled += OnMoveCanceled;
@@ -82,11 +84,13 @@ public class InputManager : MonoBehaviour
 
         mapAction.started += OnOpenMap;
         mapAction.canceled += OnCloseMap;
+
+        dashAction.started += OnDash;
     }
 
 
     // Disables all actions and unsubscribes from their events
-    private void DisableActions()
+    public void DisableActions()
     {
         moveAction.performed -= OnMove;
         moveAction.canceled -= OnMoveCanceled;
@@ -95,6 +99,8 @@ public class InputManager : MonoBehaviour
 
         mapAction.started -= OnOpenMap;
         mapAction.canceled -= OnCloseMap;
+
+        dashAction.started -= OnDash;
     }
 
 
@@ -172,6 +178,19 @@ public class InputManager : MonoBehaviour
     public void OnCloseMap(InputAction.CallbackContext context)
     {
         MinimapManager.Instance.ToggleFullMap(false);
+    }
+
+
+    #endregion
+
+
+    #region DASH
+
+
+    // Called when the dash action is started
+    public void OnDash(InputAction.CallbackContext context)
+    {
+        PlayerMovement.Instance.InitiateDash();
     }
 
 

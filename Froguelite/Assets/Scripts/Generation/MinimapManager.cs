@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -36,6 +37,15 @@ public class MinimapManager : MonoBehaviour
     [SerializeField] private float mapViewRadius = 20f; // Radius around player to mark as explored
 
     private bool canToggleFullMap = true;
+
+    [SerializeField] private MinimapRoomConnection roomConnectionPrefab;
+    
+    // Room-based connection tracking - each connection is stored once per room pair
+    private Dictionary<(Room, Room), MinimapRoomConnection> minimapRoomConnections = new Dictionary<(Room, Room), MinimapRoomConnection>();
+    private Dictionary<(Room, Room), MinimapRoomConnection> fullMapRoomConnections = new Dictionary<(Room, Room), MinimapRoomConnection>();
+    
+    // Helper dictionary to quickly find all connections involving a specific room
+    private Dictionary<Room, List<(Room, Room)>> roomConnectionKeys = new Dictionary<Room, List<(Room, Room)>>();
 
 
     #endregion
@@ -133,6 +143,52 @@ public class MinimapManager : MonoBehaviour
         {
             Debug.LogWarning("MinimapGenerator: landTileArray is null, cannot initialize minimap");
             return;
+        }
+
+        // Reset all room connections
+        foreach (var connection in minimapRoomConnections.Values)
+        {
+            if (connection != null)
+            {
+                Destroy(connection.gameObject);
+            }
+        }
+        minimapRoomConnections.Clear();
+
+        foreach (var connection in fullMapRoomConnections.Values)
+        {
+            if (connection != null)
+            {
+                Destroy(connection.gameObject);
+            }
+        }
+        fullMapRoomConnections.Clear();
+
+        roomConnectionKeys.Clear();
+
+        // Additional safety: Destroy any remaining connection objects that might not be in the dictionaries
+        if (minimapDisplayImg != null && minimapDisplayImg.transform != null)
+        {
+            foreach (Transform child in minimapDisplayImg.transform)
+            {
+                MinimapRoomConnection connection = child.GetComponent<MinimapRoomConnection>();
+                if (connection != null)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+        }
+
+        if (fullMapDisplayImg != null && fullMapDisplayImg.transform != null)
+        {
+            foreach (Transform child in fullMapDisplayImg.transform)
+            {
+                MinimapRoomConnection connection = child.GetComponent<MinimapRoomConnection>();
+                if (connection != null)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
         }
 
         // Get dimensions of the land tile array
@@ -308,7 +364,7 @@ public class MinimapManager : MonoBehaviour
     public void ToggleFullMap(bool showMap)
     {
         if (!canToggleFullMap) return;
-        
+
         LeanTween.cancel(fullMapTransform.gameObject);
         LeanTween.cancel(fullMapCanvasGroup.gameObject);
 
@@ -336,11 +392,293 @@ public class MinimapManager : MonoBehaviour
         if (minimapParentCanvGroup != null)
         {
             minimapParentCanvGroup.alpha = 0;
-            minimapParentCanvGroup.interactable = false;
-            minimapParentCanvGroup.blocksRaycasts = false;
 
             ToggleFullMap(false);
             canToggleFullMap = false;
+        }
+    }
+
+
+    public void ShowMinimap()
+    {
+        if (minimapParentCanvGroup != null)
+        {
+            minimapParentCanvGroup.alpha = 1;
+
+            canToggleFullMap = true;
+        }
+    }
+
+
+    #endregion
+
+
+    #region COORDINATE CONVERSION
+
+
+    // Converts a world position to a local position on the minimap display image
+    public Vector2 WorldToMinimapPosition(Vector3 worldPosition)
+    {
+        if (minimapTexture == null || minimapDisplayImg == null)
+        {
+            Debug.LogWarning("MinimapManager: Cannot convert world position - minimap not initialized");
+            return Vector2.zero;
+        }
+
+        // Get texture dimensions
+        float textureWidth = minimapTexture.width;
+        float textureHeight = minimapTexture.height;
+
+        // Convert world position to texture coordinates (assuming 1:1 mapping)
+        Vector2 texturePos = new Vector2(worldPosition.x, worldPosition.y);
+
+        // Convert to normalized coordinates (0-1)
+        float normalizedX = texturePos.x / textureWidth;
+        float normalizedY = texturePos.y / textureHeight;
+
+        // Get the minimap display image rect transform and size
+        RectTransform imageRectTransform = minimapDisplayImg.rectTransform;
+        Vector2 imageSize = imageRectTransform.sizeDelta;
+
+        // Convert normalized coordinates to local position on the minimap image
+        // The minimap image origin is at its center, so we need to offset from center
+        float localX = (normalizedX - 0.5f) * imageSize.x;
+        float localY = (normalizedY - 0.5f) * imageSize.y;
+
+        return new Vector2(localX, localY);
+    }
+
+
+    // Converts a world position to a local position on the full map display image
+    public Vector2 WorldToFullMapPosition(Vector3 worldPosition)
+    {
+        if (minimapTexture == null || fullMapDisplayImg == null)
+        {
+            Debug.LogWarning("MinimapManager: Cannot convert world position - full map not initialized");
+            return Vector2.zero;
+        }
+
+        // Get texture dimensions
+        float textureWidth = minimapTexture.width;
+        float textureHeight = minimapTexture.height;
+
+        // Convert world position to texture coordinates (assuming 1:1 mapping)
+        Vector2 texturePos = new Vector2(worldPosition.x, worldPosition.y);
+
+        // Convert to normalized coordinates (0-1)
+        float normalizedX = texturePos.x / textureWidth;
+        float normalizedY = texturePos.y / textureHeight;
+
+        // Get the full map display image rect transform and size
+        RectTransform imageRectTransform = fullMapDisplayImg.rectTransform;
+        Vector2 imageSize = imageRectTransform.sizeDelta;
+
+        // Convert normalized coordinates to local position on the full map image
+        // The full map image origin is at its center, so we need to offset from center
+        float localX = (normalizedX - 0.5f) * imageSize.x;
+        float localY = (normalizedY - 0.5f) * imageSize.y;
+
+        return new Vector2(localX, localY);
+    }
+
+
+    #endregion
+
+
+    #region DOORS AND CONNECTIONS
+
+
+    // Helper method to create a room pair key (always ordered consistently)
+    private (Room, Room) CreateRoomPairKey(Room room1, Room room2)
+    {
+        // Use a consistent ordering to avoid duplicate keys for the same room pair
+        return room1.GetHashCode() < room2.GetHashCode() ? (room1, room2) : (room2, room1);
+    }
+
+
+    // Helper method to add a connection key to the lookup dictionary
+    private void AddConnectionKeyToLookup(Room room, (Room, Room) connectionKey)
+    {
+        if (!roomConnectionKeys.ContainsKey(room))
+        {
+            roomConnectionKeys[room] = new List<(Room, Room)>();
+        }
+        
+        if (!roomConnectionKeys[room].Contains(connectionKey))
+        {
+            roomConnectionKeys[room].Add(connectionKey);
+        }
+    }
+
+
+    // Helper method to determine connection orientation
+    private MinimapRoomConnection.ConnectionOrientation GetConnectionProperties(Room fromRoom, Room toRoom, Door.DoorDirection doorDirection)
+    {
+        return (doorDirection == Door.DoorDirection.Up || doorDirection == Door.DoorDirection.Down) ?
+            MinimapRoomConnection.ConnectionOrientation.Vertical : MinimapRoomConnection.ConnectionOrientation.Horizontal;
+    }
+
+
+    // Helper method to get the opposite door direction
+    private Door.DoorDirection GetOppositeDoorDirection(Door.DoorDirection direction)
+    {
+        switch (direction)
+        {
+            case Door.DoorDirection.Up:
+                return Door.DoorDirection.Down;
+            case Door.DoorDirection.Down:
+                return Door.DoorDirection.Up;
+            case Door.DoorDirection.Left:
+                return Door.DoorDirection.Right;
+            case Door.DoorDirection.Right:
+                return Door.DoorDirection.Left;
+            default:
+                return direction;
+        }
+    }
+
+
+    // Called when clearing a room, update doors / connections
+    public void OnClearRoom(Room clearedRoom)
+    {
+        // Loop through each door in the cleared room
+        foreach (var entry in clearedRoom.roomData.doors)
+        {
+            Door.DoorDirection doorDir = entry.Key;
+            DoorData doorData = entry.Value;
+
+            // If the door is a real door (not impassable), and connects to an unexplored room
+            if (!doorData.isImpassable)
+            {
+                Room adjacentRoom = clearedRoom.GetAdjacentRoom(doorDir);
+                if (adjacentRoom != null && !adjacentRoom.isExplored)
+                {
+                    // Create connection key for this room pair
+                    var connectionKey = CreateRoomPairKey(clearedRoom, adjacentRoom);
+                    
+                    // Skip if connection already exists
+                    if (minimapRoomConnections.ContainsKey(connectionKey))
+                        continue;
+
+                    Vector3 connectionCenter = clearedRoom.GetRoomConnectionCenter(doorDir);
+
+                    // Get connection orientation
+                    MinimapRoomConnection.ConnectionOrientation orientation = GetConnectionProperties(clearedRoom, adjacentRoom, doorDir);
+
+                    // Check if the door is locked (check both directions)
+                    bool isConnectionLocked = doorData.isLocked;
+                    if (!isConnectionLocked && adjacentRoom.roomData.doors.ContainsKey(GetOppositeDoorDirection(doorDir)))
+                    {
+                        isConnectionLocked = adjacentRoom.roomData.doors[GetOppositeDoorDirection(doorDir)].isLocked;
+                    }
+
+                    // Create connection on the minimap
+                    MinimapRoomConnection minimapConnection = Instantiate(roomConnectionPrefab, minimapDisplayImg.transform);
+                    Vector2 minimapPos = WorldToMinimapPosition(connectionCenter);
+                    minimapPos.y = -minimapPos.y;
+                    minimapConnection.transform.localPosition = minimapPos;
+                    minimapConnection.SetupConnection(orientation, isConnectionLocked, LevelManager.Instance.currentZone);
+
+                    // Create connection on the full map
+                    MinimapRoomConnection fullMapConnection = Instantiate(roomConnectionPrefab, fullMapDisplayImg.transform);
+                    Vector2 fullMapPos = WorldToFullMapPosition(connectionCenter);
+                    fullMapPos.y = -fullMapPos.y;
+                    fullMapConnection.transform.localPosition = fullMapPos;
+                    fullMapConnection.SetupConnection(orientation, isConnectionLocked, LevelManager.Instance.currentZone);
+
+                    // Store connections
+                    minimapRoomConnections[connectionKey] = minimapConnection;
+                    fullMapRoomConnections[connectionKey] = fullMapConnection;
+                    
+                    // Add to lookup dictionaries for both rooms
+                    AddConnectionKeyToLookup(clearedRoom, connectionKey);
+                    AddConnectionKeyToLookup(adjacentRoom, connectionKey);
+                }
+            }
+        }
+
+        // Handle final door connection for SubZoneBoss rooms
+        if (clearedRoom.roomData.roomType == Room.RoomType.SubZoneBoss && clearedRoom.SubZoneFinalDoor != null)
+        {
+            SpawnFinalDoorConnection(clearedRoom);
+        }
+    }
+
+
+    // Spawns a special connection for the final door in a SubZoneBoss room
+    private void SpawnFinalDoorConnection(Room bossRoom)
+    {
+        Vector3 finalDoorPosition = bossRoom.GetFinalDoorConnectionPosition();
+        Door.DoorDirection finalDoorDirection = bossRoom.SubZoneFinalDoor.doorDirection;
+
+        // Get connection orientation
+        MinimapRoomConnection.ConnectionOrientation orientation = 
+            (finalDoorDirection == Door.DoorDirection.Up || finalDoorDirection == Door.DoorDirection.Down) ?
+            MinimapRoomConnection.ConnectionOrientation.Vertical : MinimapRoomConnection.ConnectionOrientation.Horizontal;
+
+        // Create connection on the minimap
+        MinimapRoomConnection minimapConnection = Instantiate(roomConnectionPrefab, minimapDisplayImg.transform);
+        Vector2 minimapPos = WorldToMinimapPosition(finalDoorPosition);
+        minimapPos.y = -minimapPos.y;
+        minimapConnection.transform.localPosition = minimapPos;
+        minimapConnection.SetupConnection(orientation, false, LevelManager.Instance.currentZone, true);
+
+        // Create connection on the full map
+        MinimapRoomConnection fullMapConnection = Instantiate(roomConnectionPrefab, fullMapDisplayImg.transform);
+        Vector2 fullMapPos = WorldToFullMapPosition(finalDoorPosition);
+        fullMapPos.y = -fullMapPos.y;
+        fullMapConnection.transform.localPosition = fullMapPos;
+        fullMapConnection.SetupConnection(orientation, false, LevelManager.Instance.currentZone, true);
+
+        // Store connections using a special key for the final door
+        var connectionKey = (bossRoom, bossRoom); // Use same room twice to indicate it's a final door
+        minimapRoomConnections[connectionKey] = minimapConnection;
+        fullMapRoomConnections[connectionKey] = fullMapConnection;
+        
+        // Add to lookup dictionary
+        AddConnectionKeyToLookup(bossRoom, connectionKey);
+    }
+
+
+    // Called when player travels through a door from one room to another
+    public void OnPlayerTravelThroughDoor(Room fromRoom, Door.DoorDirection doorDirection)
+    {
+        Room toRoom = fromRoom.GetAdjacentRoom(doorDirection);
+        if (toRoom == null) return;
+
+        // Animate the specific connection between fromRoom and toRoom
+        var connectionKey = CreateRoomPairKey(fromRoom, toRoom);
+        
+        if (minimapRoomConnections.ContainsKey(connectionKey))
+        {
+            minimapRoomConnections[connectionKey].PlayTransferAnimation();
+        }
+        
+        if (fullMapRoomConnections.ContainsKey(connectionKey))
+        {
+            fullMapRoomConnections[connectionKey].PlayTransferAnimation();
+        }
+    }
+
+
+    // Called when a door is unlocked, update the associated connection if it exists
+    public void OnDoorUnlocked(Room room, Door.DoorDirection doorDirection)
+    {
+        Room adjacentRoom = room.GetAdjacentRoom(doorDirection);
+        if (adjacentRoom == null) return;
+
+        // Create connection key for this room pair
+        var connectionKey = CreateRoomPairKey(room, adjacentRoom);
+        
+        // Check if connection exists and unlock it
+        if (minimapRoomConnections.ContainsKey(connectionKey))
+        {
+            minimapRoomConnections[connectionKey].UnlockConnection();
+        }
+        
+        if (fullMapRoomConnections.ContainsKey(connectionKey))
+        {
+            fullMapRoomConnections[connectionKey].UnlockConnection();
         }
     }
 
