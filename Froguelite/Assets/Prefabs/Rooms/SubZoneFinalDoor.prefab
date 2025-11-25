@@ -1,0 +1,142 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &1855906241191356176
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3336606055558518360, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 6.893
+      objectReference: {fileID: 0}
+    - target: {fileID: 3336606055558518360, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.76
+      objectReference: {fileID: 0}
+    - target: {fileID: 4584231778072468431, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 147.66153
+      objectReference: {fileID: 0}
+    - target: {fileID: 4584231778072468431, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 193.42078
+      objectReference: {fileID: 0}
+    - target: {fileID: 4584231778072468431, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4584231778072468431, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4584231778072468431, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4584231778072468431, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4584231778072468431, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4584231778072468431, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4584231778072468431, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4584231778072468431, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5814347898379958975, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_Name
+      value: SubZoneFinalDoor
+      objectReference: {fileID: 0}
+    - target: {fileID: 6808443582076083435, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_Size.x
+      value: 1.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 6808443582076083435, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_Size.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6808443582076083435, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 9e0e25b1cc7834f4dbc92c49bfa9f4f7, type: 3}
+    - target: {fileID: 6808443582076083435, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9091323761200889617, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.2720151
+      objectReference: {fileID: 0}
+    - target: {fileID: 9091323761200889617, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4124863209244450078, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5814347898379958975, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 2993340084417876695}
+  m_SourcePrefab: {fileID: 100100000, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+--- !u!198 &4267106611679671920 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 2519287071320248672, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+  m_PrefabInstance: {fileID: 1855906241191356176}
+  m_PrefabAsset: {fileID: 0}
+--- !u!331 &4456657336943150371 stripped
+SpriteMask:
+  m_CorrespondingSourceObject: {fileID: 2601034225918845491, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+  m_PrefabInstance: {fileID: 1855906241191356176}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &5169555926613163003 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 6808443582076083435, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+  m_PrefabInstance: {fileID: 1855906241191356176}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5292070956928196015 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5814347898379958975, guid: 8524b793fb94bc6409188101cc7b3970, type: 3}
+  m_PrefabInstance: {fileID: 1855906241191356176}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2993340084417876695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5292070956928196015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efb3258ab188a684b9e0ceab789415b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SubZoneFinalDoor
+  doorDirection: 0
+  frogRenderer: {fileID: 5169555926613163003}
+  frogMask: {fileID: 4456657336943150371}
+  useWaterSway: 1
+  useRipples: 1
+  rippleParticles: {fileID: 4267106611679671920}
+  useLeafTrail: 0
+  leafTrailParticles: []
+  spriteUp: {fileID: 21300000, guid: 89ddbb95753a36549addd923fdf68598, type: 3}
+  spriteDown: {fileID: 21300000, guid: 9e0e25b1cc7834f4dbc92c49bfa9f4f7, type: 3}
+  spriteLeft: {fileID: 21300000, guid: ca71afd6d168cb74583e07b726189ee6, type: 3}
+  spriteRight: {fileID: 21300000, guid: 657bd5d1acd935c47aedf0657df2d34f, type: 3}
+  signPrefab: {fileID: 3461941862502400734, guid: 38539a0b7e0575c4ba326a7929c8ed76, type: 3}
+  subZoneSignSprite: {fileID: 21300000, guid: bb6aeb8b901f6aa45b5b1a6b890d0612, type: 3}
+  zone: 0

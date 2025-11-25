@@ -145,6 +145,27 @@ public class MinimapManager : MonoBehaviour
             return;
         }
 
+        // Reset all room connections
+        foreach (var connection in minimapRoomConnections.Values)
+        {
+            if (connection != null)
+            {
+                Destroy(connection.gameObject);
+            }
+        }
+        minimapRoomConnections.Clear();
+
+        foreach (var connection in fullMapRoomConnections.Values)
+        {
+            if (connection != null)
+            {
+                Destroy(connection.gameObject);
+            }
+        }
+        fullMapRoomConnections.Clear();
+
+        roomConnectionKeys.Clear();
+
         // Get dimensions of the land tile array
         int width = landTileArray.GetLength(0);
         int height = landTileArray.GetLength(1);
@@ -531,14 +552,14 @@ public class MinimapManager : MonoBehaviour
                     Vector2 minimapPos = WorldToMinimapPosition(connectionCenter);
                     minimapPos.y = -minimapPos.y;
                     minimapConnection.transform.localPosition = minimapPos;
-                    minimapConnection.SetupConnection(orientation, isConnectionLocked);
+                    minimapConnection.SetupConnection(orientation, isConnectionLocked, LevelManager.Instance.currentZone);
 
                     // Create connection on the full map
                     MinimapRoomConnection fullMapConnection = Instantiate(roomConnectionPrefab, fullMapDisplayImg.transform);
                     Vector2 fullMapPos = WorldToFullMapPosition(connectionCenter);
                     fullMapPos.y = -fullMapPos.y;
                     fullMapConnection.transform.localPosition = fullMapPos;
-                    fullMapConnection.SetupConnection(orientation, isConnectionLocked);
+                    fullMapConnection.SetupConnection(orientation, isConnectionLocked, LevelManager.Instance.currentZone);
 
                     // Store connections
                     minimapRoomConnections[connectionKey] = minimapConnection;
@@ -550,6 +571,47 @@ public class MinimapManager : MonoBehaviour
                 }
             }
         }
+
+        // Handle final door connection for SubZoneBoss rooms
+        if (clearedRoom.roomData.roomType == Room.RoomType.SubZoneBoss && clearedRoom.SubZoneFinalDoor != null)
+        {
+            SpawnFinalDoorConnection(clearedRoom);
+        }
+    }
+
+
+    // Spawns a special connection for the final door in a SubZoneBoss room
+    private void SpawnFinalDoorConnection(Room bossRoom)
+    {
+        Vector3 finalDoorPosition = bossRoom.GetFinalDoorConnectionPosition();
+        Door.DoorDirection finalDoorDirection = bossRoom.SubZoneFinalDoor.doorDirection;
+
+        // Get connection orientation
+        MinimapRoomConnection.ConnectionOrientation orientation = 
+            (finalDoorDirection == Door.DoorDirection.Up || finalDoorDirection == Door.DoorDirection.Down) ?
+            MinimapRoomConnection.ConnectionOrientation.Vertical : MinimapRoomConnection.ConnectionOrientation.Horizontal;
+
+        // Create connection on the minimap
+        MinimapRoomConnection minimapConnection = Instantiate(roomConnectionPrefab, minimapDisplayImg.transform);
+        Vector2 minimapPos = WorldToMinimapPosition(finalDoorPosition);
+        minimapPos.y = -minimapPos.y;
+        minimapConnection.transform.localPosition = minimapPos;
+        minimapConnection.SetupConnection(orientation, false, LevelManager.Instance.currentZone, true);
+
+        // Create connection on the full map
+        MinimapRoomConnection fullMapConnection = Instantiate(roomConnectionPrefab, fullMapDisplayImg.transform);
+        Vector2 fullMapPos = WorldToFullMapPosition(finalDoorPosition);
+        fullMapPos.y = -fullMapPos.y;
+        fullMapConnection.transform.localPosition = fullMapPos;
+        fullMapConnection.SetupConnection(orientation, false, LevelManager.Instance.currentZone, true);
+
+        // Store connections using a special key for the final door
+        var connectionKey = (bossRoom, bossRoom); // Use same room twice to indicate it's a final door
+        minimapRoomConnections[connectionKey] = minimapConnection;
+        fullMapRoomConnections[connectionKey] = fullMapConnection;
+        
+        // Add to lookup dictionary
+        AddConnectionKeyToLookup(bossRoom, connectionKey);
     }
 
 

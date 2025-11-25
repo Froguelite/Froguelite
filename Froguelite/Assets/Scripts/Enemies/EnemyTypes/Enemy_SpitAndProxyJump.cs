@@ -6,6 +6,11 @@ public class Enemy_SpitAndProxyJump : EnemyBase
 
     // Enemy_SpitAndProxyJump is an enemy type that utilizes spitting attacks and proximity jumping.
 
+    public enum RapidFireMode
+    {
+        BackToBack,      // Fire projectiles in sequence with delay
+        Simultaneous     // Fire all projectiles at once with spread angle
+    }
 
     #region VARIABLES
 
@@ -20,6 +25,12 @@ public class Enemy_SpitAndProxyJump : EnemyBase
     [SerializeField] private float durationBetweenJumps = 1f;
     [SerializeField] private float jumpDistance = 3f;
     [SerializeField] private float arcJumpDuration = 0.5f;
+    [SerializeField] private bool triggerProxyJump = true;
+    [SerializeField] private bool useRapidFire = false;
+    [SerializeField] private int projectilesToSpit = 3;
+    [SerializeField] private RapidFireMode rapidFireMode = RapidFireMode.BackToBack;
+    [SerializeField] private float timeBetweenRapidShots = 0.2f;
+    [SerializeField] private float spreadAngleDegrees = 15f;
 
     private bool overlapped = false;
     private bool jumping = false;
@@ -82,8 +93,56 @@ public class Enemy_SpitAndProxyJump : EnemyBase
 
             Vector2 spitDirection = (PlayerMovement.Instance.GetPlayerCenter() - spitSpawnTransform.position).normalized;
 
-            Projectile newProjectile = Instantiate(projectilePrefab, spitSpawnTransform.position, Quaternion.identity);
-            newProjectile.InitializeProjectile(spitProjectileData, spitDirection);
+            if (useRapidFire)
+            {
+                if (rapidFireMode == RapidFireMode.BackToBack)
+                {
+                    // Fire projectiles one after another with delay
+                    for (int i = 0; i < projectilesToSpit; i++)
+                    {
+                        Projectile newProjectile = Instantiate(projectilePrefab, spitSpawnTransform.position, Quaternion.identity);
+                        newProjectile.InitializeProjectile(spitProjectileData, spitDirection);
+                        
+                        if (i < projectilesToSpit - 1) // Don't wait after the last shot
+                        {
+                            yield return new WaitForSeconds(timeBetweenRapidShots);
+                        }
+                    }
+                }
+                else // RapidFireMode.Simultaneous
+                {
+                    // Fire all projectiles at once with spread
+                    for (int i = 0; i < projectilesToSpit; i++)
+                    {
+                        // Calculate angle offset for this projectile
+                        float angleOffset = 0f;
+                        
+                        if (projectilesToSpit > 1)
+                        {
+                            // Distribute projectiles evenly across the spread angle
+                            float totalSpread = spreadAngleDegrees * 2;
+                            angleOffset = -spreadAngleDegrees + (totalSpread / (projectilesToSpit - 1)) * i;
+                        }
+                        
+                        // Rotate the direction by the angle offset
+                        float angleInRadians = angleOffset * Mathf.Deg2Rad;
+                        float cos = Mathf.Cos(angleInRadians);
+                        float sin = Mathf.Sin(angleInRadians);
+                        Vector2 rotatedDirection = new Vector2(
+                            spitDirection.x * cos - spitDirection.y * sin,
+                            spitDirection.x * sin + spitDirection.y * cos
+                        );
+                        
+                        Projectile newProjectile = Instantiate(projectilePrefab, spitSpawnTransform.position, Quaternion.identity);
+                        newProjectile.InitializeProjectile(spitProjectileData, rotatedDirection);
+                    }
+                }
+            }
+            else
+            {
+                Projectile newProjectile = Instantiate(projectilePrefab, spitSpawnTransform.position, Quaternion.identity);
+                newProjectile.InitializeProjectile(spitProjectileData, spitDirection);
+            }
 
             yield return new WaitForSeconds(0.4f);
             spriteRenderer.sprite = defaultSprite;
@@ -167,6 +226,8 @@ public class Enemy_SpitAndProxyJump : EnemyBase
             overlapped = true;
 
             if (!engagedWithPlayer) return;
+
+            if (!triggerProxyJump) return;
 
             if (!jumping)
             {

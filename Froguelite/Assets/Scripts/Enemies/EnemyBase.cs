@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 public class EnemyBase : MonoBehaviour, IEnemy
 {
@@ -27,9 +28,11 @@ public class EnemyBase : MonoBehaviour, IEnemy
     private float currentHealth;
     [SerializeField] protected NavMeshAgent navAgent;
     [SerializeField] private EnemyMovementType movementType;
+    [SerializeField] private bool isMiniboss = false;
 
     [Header("Effects")]
     [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private bool useKnockback = true;
     [SerializeField] private float knockbackDuration = 0.1f; // How long knockback lasts
     [SerializeField] protected SpriteRenderer spriteRenderer;
     [SerializeField] private FlipbookAnimator defeatSmokeAnimator;
@@ -49,6 +52,8 @@ public class EnemyBase : MonoBehaviour, IEnemy
     public Room parentRoom { get; private set; } = null; // The room this enemy belongs to
     public bool engagedWithPlayer { get; private set; } = false;
     public bool isDead { get { return currentHealth <= 0f; } }
+    [HideInInspector]
+    public UnityEvent onDeathEvent;
 
 
     #endregion
@@ -129,6 +134,8 @@ public class EnemyBase : MonoBehaviour, IEnemy
     // Damages this enemy
     public virtual void DamageEnemy(float damageAmount, float knockbackForce)
     {
+        if (isDead) return;
+
         currentHealth -= damageAmount;
         if (currentHealth <= 0f)
         {
@@ -140,7 +147,7 @@ public class EnemyBase : MonoBehaviour, IEnemy
         FlashSprite();
 
         // Apply knockback if force is greater than 0
-        if (knockbackForce > 0f)
+        if (knockbackForce > 0f && useKnockback)
         {
             ApplyKnockback(knockbackForce);
         }
@@ -152,6 +159,7 @@ public class EnemyBase : MonoBehaviour, IEnemy
     {
         if (parentRoom != null)
             parentRoom.OnEnemyDefeated(this);
+        onDeathEvent?.Invoke();
 
         // Clean up poison if active
         if (isPoisoned)
@@ -162,6 +170,14 @@ public class EnemyBase : MonoBehaviour, IEnemy
         spriteRenderer.enabled = false;
         StopPlayerChase();
         defeatSmokeAnimator.Play(true);
+
+        if (isMiniboss)
+        {
+            if (parentRoom == null)
+                InventoryManager.Instance.SpewGoldenFlies(transform.position, 1);
+            else if (parentRoom.enemies.Count == 0)
+                InventoryManager.Instance.SpewGoldenFlies(transform.position, 1);
+        }
             
         Destroy(gameObject, 1f);
     }

@@ -20,6 +20,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
+    private Vector2 lastMoveDirection = Vector2.right; // Track last movement direction, default to right
     private Vector2 currentVel;
 
     private bool isManualMoving = false;
@@ -29,6 +30,15 @@ public class PlayerMovement : MonoBehaviour
 
     public bool canMove { get; private set; } = true;
     public bool isAttackingOverride { get; private set; } = false; // If true, player cannot move due to attacking
+    public bool IsDashing => isDashing; // Public getter to check if player is currently dashing
+
+    private bool isDashing = false;
+    private float dashDuration = 0.2f; // How long the dash lasts
+    private float dashSpeed = 15f; // Speed multiplier during dash
+    private float dashCooldown = 0.5f; // Cooldown between dashes
+    private float dashTimer = 0f;
+    private float dashCooldownTimer = 0f;
+    private Vector2 dashDirection = Vector2.zero;
 
     private bool useDrunkMovement = false;
     private Vector2 drunkOffset = Vector2.zero;
@@ -71,6 +81,22 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        // Update dash cooldown
+        if (dashCooldownTimer > 0f)
+        {
+            dashCooldownTimer -= Time.deltaTime;
+        }
+
+        // Update dash timer
+        if (isDashing)
+        {
+            dashTimer -= Time.deltaTime;
+            if (dashTimer <= 0f)
+            {
+                EndDash();
+            }
+        }
+
         if (useJitterAnimation)
         {
             UpdateJitterAnimation();
@@ -100,13 +126,24 @@ public class PlayerMovement : MonoBehaviour
     public void SetMoveInputAxes(Vector2 newMoveInput)
     {
         moveInput = newMoveInput;
+        
+        // Track last movement direction when there's valid input
+        if (newMoveInput.magnitude > 0.1f)
+        {
+            lastMoveDirection = newMoveInput.normalized;
+        }
     }
 
 
     // Applies the movement to the player
     public void ApplyMovement()
     {
-        if (canMove && !isManualMoving)
+        if (isDashing)
+        {
+            // During dash, move in the dash direction at dash speed
+            rb.linearVelocity = dashDirection * dashSpeed;
+        }
+        else if (canMove && !isManualMoving)
         {
             Vector2 finalMoveInput = Vector2.zero;
             if (!isAttackingOverride)
@@ -161,6 +198,13 @@ public class PlayerMovement : MonoBehaviour
     public void SetCanMove(bool value)
     {
         canMove = value;
+        
+        // Cancel active dash if movement is disabled
+        if (!canMove && isDashing)
+        {
+            EndDash();
+        }
+        
         if (canMove && !isAttackingOverride)
             InputManager.Instance.PushAnyPendingMovement();
         else
@@ -172,6 +216,13 @@ public class PlayerMovement : MonoBehaviour
     public void SetAttackingOverride(bool value)
     {
         isAttackingOverride = value;
+        
+        // Cancel active dash if attacking starts
+        if (isAttackingOverride && isDashing)
+        {
+            EndDash();
+        }
+        
         if (!isAttackingOverride && canMove)
             InputManager.Instance.PushAnyPendingMovement();
         else
@@ -248,6 +299,72 @@ public class PlayerMovement : MonoBehaviour
     public Vector3 GetPlayerCenter()
     {
         return damageCollider.bounds.center;
+    }
+
+
+    #endregion
+
+
+    #region DASH
+
+
+    // Initiates a dash in the current movement direction
+    public void InitiateDash()
+    {
+        // Check if player can dash (not on cooldown, can move, not manually moving, already dashing)
+        if (dashCooldownTimer > 0f || !canMove || isManualMoving || isDashing)
+            return;
+
+        // If attacking, immediately retract tongue and stop attack
+        if (isAttackingOverride && PlayerAttack.Instance.IsAttacking())
+        {
+            PlayerAttack.Instance.ImmediateRetract();
+        }
+
+        // Determine dash direction based on current movement input
+        Vector2 direction = moveInput;
+        
+        // If no movement input, try velocity direction
+        if (direction.magnitude < 0.1f)
+        {
+            direction = rb.linearVelocity.normalized;
+        }
+        
+        // If still no direction, use last stored movement direction
+        if (direction.magnitude < 0.1f)
+        {
+            direction = lastMoveDirection;
+        }
+        
+        // Final fallback: dash to the right (should never reach here due to initialization)
+        if (direction.magnitude < 0.1f)
+        {
+            direction = Vector2.right;
+        }
+
+        // Start the dash
+        isDashing = true;
+        dashDirection = direction.normalized;
+        dashTimer = dashDuration;
+        dashCooldownTimer = dashCooldown;
+        
+        // Play dash animation
+        PlayerAnimationController.Instance.PlayDashAnimation(dashDirection);
+    }
+
+
+    // Ends the dash
+    private void EndDash()
+    {
+        isDashing = false;
+        dashDirection = Vector2.zero;
+        
+        // End dash animation
+        PlayerAnimationController.Instance.EndDashAnimation();
+        
+        // Re-apply current movement input if player can move
+        if (canMove && !isAttackingOverride)
+            InputManager.Instance.PushAnyPendingMovement();
     }
 
 

@@ -173,6 +173,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ef7e31513812ee46b71031e05119fcb, type: 3}
+--- !u!1 &30940364548261547 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1671279340389369328, guid: 4ef7e31513812ee46b71031e05119fcb, type: 3}
+  m_PrefabInstance: {fileID: 1683360739357967195}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &8255724344924695373 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7335877952669919254, guid: 4ef7e31513812ee46b71031e05119fcb, type: 3}
@@ -508,6 +513,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProfileCard
   profileNameInputField: {fileID: 7568375471587218740}
   profileNameTMP: {fileID: 2884605917220473297}
+  playButton: {fileID: 30940364548261547}
 --- !u!1001 &4650440314057552386
 PrefabInstance:
   m_ObjectHideFlags: 0

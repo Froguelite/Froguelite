@@ -17,6 +17,8 @@ public class ZoneGenerator : MonoBehaviour
     public bool zoneGenerated { get; private set; } = false;
 
     [SerializeField] private bool generateZoneOnStart = true;
+    [SerializeField] private int generateZoneOnStartZone = 0;
+    [SerializeField] private int generateZoneOnStartSubZone = 0;
     [SerializeField] private bool teleportPlayerToStarterRoom = true;
     
     [SerializeField] private RoomFactory roomFactory;
@@ -31,7 +33,8 @@ public class ZoneGenerator : MonoBehaviour
     private RoomData[,] roomGraph;
     private Dictionary<Vector2Int, Room> spawnedRooms = new Dictionary<Vector2Int, Room>();
     private char[,] combinedTileLayout; // Combined tile layout of the entire zone
-
+    private int randomSeed;
+    private bool useLoadedSeed = true;
 
     #endregion
 
@@ -53,24 +56,64 @@ public class ZoneGenerator : MonoBehaviour
     void Start()
     {
         if (generateZoneOnStart)
-            GenerateZone();
+            GenerateZone(generateZoneOnStartZone,generateZoneOnStartSubZone);
     }
 
 
     #endregion
 
+    #region SAVE AND LOAD RANDOM SEED
+    private void SaveRandomSeed()
+    {
+        SaveManager.SaveForProfile<int>(SaveVariable.RandomSeed, randomSeed);
+    }
+
+    private void LoadRandomSeed()
+    {
+        //First load player's current health
+        try
+        {
+            randomSeed = SaveManager.LoadForProfile<int>(SaveVariable.RandomSeed);
+            Debug.Log($"[ZoneGenerator] Loaded {randomSeed} random seed from profile {SaveManager.activeProfile}");
+        }
+        catch (System.Collections.Generic.KeyNotFoundException)
+        {
+            // No saved data yet, use random value
+            randomSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            Debug.Log($"[ZoneGenerator] No saved random seed found, defaulting to random value {randomSeed}");
+        }
+        catch (System.Exception ex)
+        {
+            // Handle other exceptions (e.g., no active profile set)
+            Debug.LogWarning($"[ZoneGenerator] Failed to load current random seed: {ex.Message}");
+            randomSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        }
+        useLoadedSeed = true;
+    }
+
+    #endregion
 
     #region GENERATION
 
 
     // Generates the zone by creating a room graph and spawning rooms and doors
-    public void GenerateZone()
+    public void GenerateZone(int zone, int subZone)
     {
         // TODO: Temporary, chooses a random seed every time
-        UnityEngine.Random.InitState(UnityEngine.Random.Range(int.MinValue, int.MaxValue));
+        //Uses Loaded seed from profile only the first time, afterwards it will be randomly generated
+        if (useLoadedSeed)
+        {
+            UnityEngine.Random.InitState(randomSeed);
+            useLoadedSeed = false;
+        } else
+        {
+            randomSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            UnityEngine.Random.InitState(randomSeed);
+            SaveManager.WriteToFile(); //Need to save the next seed for generation ?
+        }
 
-        roomGraph = RoomGraphGenerator.GetRoomGraph(8);
-        combinedTileLayout = SpawnRoomsFromGraph();
+        roomGraph = RoomGraphGenerator.GetRoomGraph(zone, 8, subZone);
+        combinedTileLayout = SpawnRoomsFromGraph(zone);
         MinimapManager.Instance.InitializeMinimap(combinedTileLayout);
 
         // Initialize the RoomManager with the generated rooms
@@ -145,7 +188,7 @@ public class ZoneGenerator : MonoBehaviour
 
 
     // Spawns rooms and doors from the room graph
-    private char[,] SpawnRoomsFromGraph()
+    private char[,] SpawnRoomsFromGraph(int zone)
     {
         if (roomGraph == null)
         {
@@ -173,7 +216,7 @@ public class ZoneGenerator : MonoBehaviour
                 RoomData room = roomGraph[x, y];
                 if (room != null)
                 {
-                    SpawnRoom(room, new Vector2Int(x, y));
+                    SpawnRoom(zone, room, new Vector2Int(x, y));
                 }
                 else
                 {
@@ -207,20 +250,20 @@ public class ZoneGenerator : MonoBehaviour
 
 
     // Spawns a single room at the specified grid position
-    private void SpawnRoom(RoomData roomData, Vector2Int gridPosition)
+    private void SpawnRoom(int zone, RoomData roomData, Vector2Int gridPosition)
     {
-        Room spawnedRoom = roomFactory.SpawnRoom(roomsTilemap, zoneAutoTileSet, roomParent, roomData, 32);
+        Room spawnedRoom = roomFactory.SpawnRoom(zone, roomsTilemap, zoneAutoTileSet, roomParent, roomData, 32);
         spawnedRooms[gridPosition] = spawnedRoom;
 
         // Generate foliage for the room
         float foliageLandDensity = 1f;
 
-        if (roomData.roomType == Room.RoomType.Boss || roomData.roomType == Room.RoomType.Fly || roomData.roomType == Room.RoomType.Shop)
+        if (roomData.roomType == Room.RoomType.SubZoneBoss || roomData.roomType == Room.RoomType.BossPortal || roomData.roomType == Room.RoomType.Fly || roomData.roomType == Room.RoomType.Shop)
         {
             foliageLandDensity = 5f; // Less foliage in special rooms
         }
 
-        foliageFactory.GenerateFoliageForRoom(spawnedRoom, foliageLandDensity);
+        foliageFactory.GenerateFoliageForRoom(zone, spawnedRoom, foliageLandDensity);
     }
 
 

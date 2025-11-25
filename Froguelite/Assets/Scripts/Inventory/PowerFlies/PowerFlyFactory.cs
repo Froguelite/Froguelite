@@ -64,7 +64,6 @@ public class PowerFlyFactory : MonoBehaviour
         SaveManager.LoadData -= LoadPurchasedFlies;
     }
 
-
     // Loads all power fly data from resources
     private void LoadAllPowerFlyData()
     {
@@ -179,6 +178,13 @@ public class PowerFlyFactory : MonoBehaviour
     public PowerFlyData RollCommonFly()
     {
         return RollFlyWithWeights(1f, 0f, 0f);
+    }
+
+
+    // Rolls randomly for a power fly with equal weights across all rarities
+    public PowerFlyData RollFlyUnweighted()
+    {
+        return RollFlyWithWeights(1f, 1f, 1f);
     }
 
 

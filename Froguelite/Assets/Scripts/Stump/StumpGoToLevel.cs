@@ -17,7 +17,8 @@ public class StumpGoToLevel : MonoBehaviour
 
     private void TransitionToLevel()
     {
-        LevelManager.Instance.LoadScene(LevelManager.Scenes.MainScene, showLoadingScreen: true);
+        //Supress await _=
+        _= LevelManager.Instance.LoadScene(LevelManager.Scenes.MainScene, LevelManager.LoadEffect.LoadingScreen);
     }
 
 

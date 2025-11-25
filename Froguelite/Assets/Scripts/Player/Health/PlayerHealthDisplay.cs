@@ -20,7 +20,7 @@ public class PlayerHealthDisplay : MonoBehaviour
 
     public int maxHealth { get; private set; } = 0;
     private int displayedMaxHealth = 0;
-    public int remainingHealth { get; private set; } = 0;
+    public int remainingHealth { get; private set; } = 0; //save and load variable
     private int displayedRemainingHealth = 0;
     public bool isDead { get; private set; } = false;
     private bool beatTopHeart = false;
@@ -152,7 +152,6 @@ public class PlayerHealthDisplay : MonoBehaviour
 
 
     #endregion
-
 
     #region REMAINING HEALTH
 

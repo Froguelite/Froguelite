@@ -122,12 +122,13 @@ public class StumpUnlocksShop : MonoBehaviour
             }
         }
 
-        if (baseFliesAdded > 0)
-        {
-            Debug.Log($"[StumpUnlocksShop] Added {baseFliesAdded} base set flies to purchased list");
-            // Save the updated list
-            SaveManager.WriteToFile();
-        }
+        //Avoid Saving in loading function
+        //if (baseFliesAdded > 0)
+        //{
+        //    Debug.Log($"[StumpUnlocksShop] Added {baseFliesAdded} base set flies to purchased list");
+        //    // Save the updated list
+        //    SaveManager.WriteToFile();
+        //}
     }
 
 
