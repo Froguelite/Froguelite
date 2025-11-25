@@ -40,7 +40,7 @@ public class ShopAlternate : MonoBehaviour
         // Set up pedestals based on predefined items and prices for now
         PowerFlyData powerFlyData = PowerFlyFactory.Instance.RollFlyUnweighted();
         pedestals[0].Setup(heartItemDef, 2, true);
-        pedestals[1].Setup(woodpeckerItemDef, 2);
+        pedestals[1].Setup(woodpeckerItemDef, 2, false, true);
         pedestals[2].Setup(powerFlyData, 3);
     }
 

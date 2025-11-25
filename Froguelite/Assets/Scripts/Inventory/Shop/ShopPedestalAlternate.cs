@@ -17,6 +17,8 @@ public class ShopPedestalAlternate : GroundCollectable
     private PowerFlyData powerFlyData;
     private int priceInLotuses;
     private bool healPlayerOnPurchase = false;
+    private bool addWoodpeckerOnPurchase = false;
+    private bool hasBeenPurchased = false;
 
 
     #endregion
@@ -26,11 +28,12 @@ public class ShopPedestalAlternate : GroundCollectable
 
 
     // Sets up this pedestal with the given item definition and price
-    public void Setup(ItemDefinition newItemDef, int newPriceInLotuses, bool healPlayerOnPurchase = false)
+    public void Setup(ItemDefinition newItemDef, int newPriceInLotuses, bool healPlayerOnPurchase = false, bool addWoodpeckerOnPurchase = false)
     {
         itemDef = newItemDef;
         priceInLotuses = newPriceInLotuses;
         this.healPlayerOnPurchase = healPlayerOnPurchase;
+        this.addWoodpeckerOnPurchase = addWoodpeckerOnPurchase;
         if (healPlayerOnPurchase)
         {
             doHeartbeat = true;
@@ -72,6 +75,12 @@ public class ShopPedestalAlternate : GroundCollectable
     {// Retract the tongue
         PlayerAttack.Instance.StopTongueExtension();
 
+        // Prevent duplicate purchases
+        if (hasBeenPurchased)
+        {
+            return;
+        }
+
         // Try to buy the item
         if (InventoryManager.Instance.lotuses >= priceInLotuses)
         {
@@ -91,6 +100,11 @@ public class ShopPedestalAlternate : GroundCollectable
             {
                 StatsManager.Instance.playerHealth.HealPlayer(2);
             }
+
+            if (addWoodpeckerOnPurchase)
+            {
+                InventoryManager.Instance.AddWoodpeckers(1);
+            }
         }
         else if (powerFlyData != null)
         {
@@ -102,6 +116,7 @@ public class ShopPedestalAlternate : GroundCollectable
         }
 
         InventoryManager.Instance.RemoveLotuses(priceInLotuses);
+        hasBeenPurchased = true;
         Destroy(gameObject);
     }
 
