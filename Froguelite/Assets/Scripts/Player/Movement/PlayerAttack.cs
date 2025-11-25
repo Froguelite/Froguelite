@@ -244,6 +244,12 @@ public class PlayerAttack : MonoBehaviour
             {
                 InitializeBackwardsTongue();
             }
+            
+            // Apply sick fly tint if this is the sickFly tag
+            if (tag == "sickFly")
+            {
+                PlayerMovement.Instance.ApplySickFlyTint();
+            }
         }
     }
 

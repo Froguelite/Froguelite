@@ -17,11 +17,19 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Collider2D playerCollider;
     [SerializeField] private Collider2D damageCollider;
     [SerializeField] public SpriteRenderer playerSpriteRenderer;
+    [SerializeField] private ParticleSystem sickParticles; // Particle system for sick fly effect
+    [SerializeField] private ParticleSystem iceParticles; // Particle system for ice/reduced friction effect
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private Vector2 lastMoveDirection = Vector2.right; // Track last movement direction, default to right
     private Vector2 currentVel;
+    
+    private Color originalSpriteColor; // Store the original sprite color
+    private bool isSickFlyActive = false; // Track if sick fly effect is active
+    private Color sickFlyTintMultiplier = new Color(0.7f, 1f, 0.7f, 1f); // Green tint multiplier for sick fly
+    private bool isIceTintActive = false; // Track if ice/reduced friction effect is active
+    private Color iceTintMultiplier = new Color(0.8f, 0.9f, 1f, 1f); // Light blue tint multiplier for ice
 
     private bool isManualMoving = false;
     private Vector3 manualMoveTarget;
@@ -54,6 +62,8 @@ public class PlayerMovement : MonoBehaviour
     private float jitterChangeInterval = 0.05f; // How fast the jitter changes (faster = more jittery)
     private float jitterMagnitude = 0.05f; // How far the sprite jitters (in world units)
 
+    public Transform lilypadCenterPoint;
+
     private float originalDrag;
     private bool useReducedFriction = false;
 
@@ -77,6 +87,16 @@ public class PlayerMovement : MonoBehaviour
 
         rb = GetComponent<Rigidbody2D>();
         originalDrag = rb.linearDamping;
+        originalSpriteColor = playerSpriteRenderer.color;
+        
+        // Subscribe to reset event
+        GameManager.ResetPlayerState += ResetSpriteColor;
+    }
+
+    private void OnDestroy()
+    {
+        // Unsubscribe from reset event
+        GameManager.ResetPlayerState -= ResetSpriteColor;
     }
 
     private void Update()
@@ -460,11 +480,13 @@ public class PlayerMovement : MonoBehaviour
         {
             // Set very low damping for ice-like sliding
             rb.linearDamping = 0.1f;
+            ApplyIceTint();
         }
         else
         {
             // Restore original damping
             rb.linearDamping = originalDrag;
+            RemoveIceTint();
             // Stop any sliding momentum when disabled
             if (moveInput.magnitude < 0.01f)
             {
@@ -492,6 +514,120 @@ public class PlayerMovement : MonoBehaviour
     public void SetSpriteHidden(bool value)
     {
         playerSpriteRenderer.enabled = !value;
+    }
+
+
+    // Applies sick fly green tint to the player sprite
+    public void ApplySickFlyTint()
+    {
+        if (isSickFlyActive) return; // Already applied
+        
+        isSickFlyActive = true;
+        playerSpriteRenderer.color = MultiplyColors(playerSpriteRenderer.color, sickFlyTintMultiplier);
+        
+        // Play sick particles if assigned
+        if (sickParticles != null)
+        {
+            sickParticles.Play();
+        }
+    }
+
+
+    // Removes sick fly green tint from the player sprite
+    public void RemoveSickFlyTint()
+    {
+        if (!isSickFlyActive) return; // Not applied
+        
+        isSickFlyActive = false;
+        // Divide current color by the tint multiplier to reverse the effect
+        Color currentColor = playerSpriteRenderer.color;
+        playerSpriteRenderer.color = new Color(
+            currentColor.r / sickFlyTintMultiplier.r,
+            currentColor.g / sickFlyTintMultiplier.g,
+            currentColor.b / sickFlyTintMultiplier.b,
+            currentColor.a / sickFlyTintMultiplier.a
+        );
+        
+        // Stop sick particles if assigned
+        if (sickParticles != null)
+        {
+            sickParticles.Stop();
+        }
+    }
+
+
+    // Applies ice/reduced friction blue tint to the player sprite
+    private void ApplyIceTint()
+    {
+        if (isIceTintActive) return; // Already applied
+        
+        isIceTintActive = true;
+        playerSpriteRenderer.color = MultiplyColors(playerSpriteRenderer.color, iceTintMultiplier);
+        
+        // Play ice particles if assigned
+        if (iceParticles != null)
+        {
+            iceParticles.Play();
+        }
+    }
+
+
+    // Removes ice/reduced friction blue tint from the player sprite
+    private void RemoveIceTint()
+    {
+        if (!isIceTintActive) return; // Not applied
+        
+        isIceTintActive = false;
+        // Divide current color by the tint multiplier to reverse the effect
+        Color currentColor = playerSpriteRenderer.color;
+        playerSpriteRenderer.color = new Color(
+            currentColor.r / iceTintMultiplier.r,
+            currentColor.g / iceTintMultiplier.g,
+            currentColor.b / iceTintMultiplier.b,
+            currentColor.a / iceTintMultiplier.a
+        );
+        
+        // Stop ice particles if assigned
+        if (iceParticles != null)
+        {
+            iceParticles.Stop();
+        }
+    }
+
+
+    // Multiplies two colors component-wise for blending effects
+    private Color MultiplyColors(Color a, Color b)
+    {
+        return new Color(a.r * b.r, a.g * b.g, a.b * b.b, a.a * b.a);
+    }
+
+
+    // Resets the player sprite color to its original value, removing all tints
+    private void ResetSpriteColor()
+    {
+        // Remove all active tints
+        if (isSickFlyActive)
+        {
+            isSickFlyActive = false;
+            // Stop sick particles if assigned
+            if (sickParticles != null)
+            {
+                sickParticles.Stop();
+            }
+        }
+        
+        if (isIceTintActive)
+        {
+            isIceTintActive = false;
+            // Stop ice particles if assigned
+            if (iceParticles != null)
+            {
+                iceParticles.Stop();
+            }
+        }
+        
+        // Reset to original color
+        playerSpriteRenderer.color = originalSpriteColor;
     }
 
 

@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63ee0f7713f8c34bba32b8bbee26cfb, type: 3}
   m_Name: PF_SickFly
   m_EditorClassIdentifier: Assembly-CSharp::PowerFlyData
-  flyID: 
+  flyID: a8eb71ec-1d8e-4430-ba3f-514ed5599564
   displayImg: {fileID: -4108151583225950438, guid: 801eb56aa845b7749855f65062319e08, type: 3}
   powerFlyName: Sick Fly
-  description: This one is sick...
+  description: Feeling sick...
   flyRarity: 2
   effects:
   - {fileID: 11400000, guid: cb1e68d5801b04adcb9ac5c890a2b27c, type: 2}
-  onlyOneAllowed: 0
+  onlyOneAllowed: 1
   isBaseSetFly: 0

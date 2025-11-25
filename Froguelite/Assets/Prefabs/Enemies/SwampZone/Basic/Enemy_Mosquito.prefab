@@ -68,6 +68,10 @@ PrefabInstance:
       propertyPath: associatedEnemy
       value: 
       objectReference: {fileID: 1002974770924024167}
+    - target: {fileID: 8338894879511515523, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.485
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1483300078910096697, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
     m_RemovedGameObjects: []
@@ -95,6 +99,11 @@ Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 6986542162239207742, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
   m_PrefabInstance: {fileID: 2871866098851542231}
   m_PrefabAsset: {fileID: 0}
+--- !u!198 &6021665811085920966 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8379978615620402705, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+  m_PrefabInstance: {fileID: 2871866098851542231}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8536678332011776947 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5882462761335553892, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
@@ -117,13 +126,20 @@ MonoBehaviour:
   maxHealth: 10
   navAgent: {fileID: 1980914540849464392}
   movementType: 1
+  isMiniboss: 0
   rb: {fileID: 5129534094065454569}
+  useKnockback: 1
   knockbackDuration: 0.1
   spriteRenderer: {fileID: 144799453320457506}
   defeatSmokeAnimator: {fileID: 8957389480216010702}
+  sickParticles: {fileID: 6021665811085920966}
+  onDeathEvent:
+    m_PersistentCalls:
+      m_Calls: []
   swarmBehavior: {fileID: 6459276806488802660}
   chargeupSprite: {fileID: -7758905640523202750, guid: 6b52ddda2e39df045932babe1cfff1ae, type: 3}
   defaultSprite: {fileID: 7939039619528793279, guid: 3b14ea5430cbe5041a6579908592235f, type: 3}
+  maxDistForDash: 5
 --- !u!114 &6459276806488802660
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -42,12 +42,10 @@ public class EnemyBase : MonoBehaviour, IEnemy
     public bool isKnockedBack { get; private set; } = false; // Tracks if enemy is currently being knocked back
     private Color originalColor; // Store the original sprite color
 
-    [Header("Poison")]
-    [SerializeField] private GameObject poisonBubbleParticlesPrefab; // Prefab for bubble particles above head when poisoned
+    [SerializeField] private ParticleSystem sickParticles; // Particle system that plays while poisoned
     public bool isPoisoned { get; private set; } = false; // Tracks if enemy is currently poisoned
     private Coroutine poisonCoroutine; // Reference to active poison coroutine
-    private GameObject poisonParticlesInstance; // Instance of bubble particles above head when poisoned
-    private Color poisonColor = new Color(0.7f, 1f, 0.7f, 1f); // Green tint color for poison
+    private Color poisonTintMultiplier = new Color(0.6f, 1f, 0.6f, 1f); // Multiplier for poison tint (slightly green)
 
     public Room parentRoom { get; private set; } = null; // The room this enemy belongs to
     public bool engagedWithPlayer { get; private set; } = false;
@@ -229,11 +227,27 @@ public class EnemyBase : MonoBehaviour, IEnemy
     private void FlashSprite()
     {
         LeanTween.cancel(spriteRenderer.gameObject);
-        spriteRenderer.color = flashColor;
-        LeanTween.value(spriteRenderer.gameObject, flashColor, originalColor, flashDuration).setOnUpdate((Color newColor) =>
+        Color targetFlashColor = flashColor;
+        Color targetOriginalColor = originalColor;
+        
+        // If poisoned, blend the flash and original colors with poison tint
+        if (isPoisoned)
+        {
+            targetFlashColor = MultiplyColors(flashColor, poisonTintMultiplier);
+            targetOriginalColor = MultiplyColors(originalColor, poisonTintMultiplier);
+        }
+        
+        spriteRenderer.color = targetFlashColor;
+        LeanTween.value(spriteRenderer.gameObject, targetFlashColor, targetOriginalColor, flashDuration).setOnUpdate((Color newColor) =>
         {
             spriteRenderer.color = newColor;
         });
+    }
+    
+    // Multiplies two colors component-wise for blending effects
+    private Color MultiplyColors(Color a, Color b)
+    {
+        return new Color(a.r * b.r, a.g * b.g, a.b * b.b, a.a * b.a);
     }
 
 
@@ -254,24 +268,13 @@ public class EnemyBase : MonoBehaviour, IEnemy
 
         isPoisoned = true;
         
-        // Apply green tint
-        spriteRenderer.color = poisonColor;
-
-        // Spawn bubble particles above head
-        if (poisonBubbleParticlesPrefab != null)
+        // Apply green tint multiplier to current color
+        spriteRenderer.color = MultiplyColors(spriteRenderer.color, poisonTintMultiplier);
+        
+        // Start poison particles if assigned
+        if (sickParticles != null)
         {
-            // Calculate position above enemy's head (offset upward by sprite height)
-            Vector3 particlePosition = transform.position;
-            if (spriteRenderer != null && spriteRenderer.bounds.size.y > 0)
-            {
-                particlePosition.y += spriteRenderer.bounds.size.y * 0.5f + 0.3f; // Above head with small offset
-            }
-            else
-            {
-                particlePosition.y += 0.5f; // Fallback offset
-            }
-
-            poisonParticlesInstance = Instantiate(poisonBubbleParticlesPrefab, particlePosition, Quaternion.identity, transform);
+            sickParticles.Play();
         }
 
         // Start poison coroutine
@@ -322,12 +325,11 @@ public class EnemyBase : MonoBehaviour, IEnemy
 
         // Restore original sprite color
         spriteRenderer.color = originalColor;
-
-        // Clean up particles if they exist
-        if (poisonParticlesInstance != null)
+        
+        // Stop poison particles if assigned
+        if (sickParticles != null)
         {
-            Destroy(poisonParticlesInstance);
-            poisonParticlesInstance = null;
+            sickParticles.Stop();
         }
     }
 

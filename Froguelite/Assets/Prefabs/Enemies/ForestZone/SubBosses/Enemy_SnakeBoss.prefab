@@ -131,6 +131,26 @@ PrefabInstance:
       propertyPath: associatedEnemy
       value: 
       objectReference: {fileID: 4000690402368564773}
+    - target: {fileID: 8338894879511515523, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8338894879511515523, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8338894879511515523, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8338894879511515523, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.396
+      objectReference: {fileID: 0}
+    - target: {fileID: 8338894879511515523, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1483300078910096697, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
     - {fileID: 1397738806206786191, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
@@ -160,6 +180,11 @@ Transform:
 --- !u!212 &1951471356628187786 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 2727076177215642101, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
+  m_PrefabInstance: {fileID: 4525415628864119679}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &5370027637548653934 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8379978615620402705, guid: 9d70cbaf7cac6d24db6a6c39741ab7ec, type: 3}
   m_PrefabInstance: {fileID: 4525415628864119679}
   m_PrefabAsset: {fileID: 0}
 --- !u!50 &6789368428265003585 stripped
@@ -206,6 +231,7 @@ MonoBehaviour:
   knockbackDuration: 0.1
   spriteRenderer: {fileID: 1951471356628187786}
   defeatSmokeAnimator: {fileID: 7302693241191827558}
+  sickParticles: {fileID: 5370027637548653934}
   onDeathEvent:
     m_PersistentCalls:
       m_Calls: []

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63ee0f7713f8c34bba32b8bbee26cfb, type: 3}
   m_Name: PF_OrbitalFly
   m_EditorClassIdentifier: Assembly-CSharp::PowerFlyData
-  flyID: 
+  flyID: c5c1507d-dada-4976-bad0-5328edc10106
   displayImg: {fileID: 21300000, guid: 5b0f736642f2db14b8b7977b0a645189, type: 3}
   powerFlyName: Roundabout Fly
-  description: This one goes round and round....
+  description: Spinning friend
   flyRarity: 2
   effects:
   - {fileID: 11400000, guid: 767ddcee584fa4db2ad7253b4f79cd8a, type: 2}

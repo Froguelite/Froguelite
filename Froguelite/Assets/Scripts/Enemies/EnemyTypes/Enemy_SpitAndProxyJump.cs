@@ -53,7 +53,7 @@ public class Enemy_SpitAndProxyJump : EnemyBase
         spitCoroutine = SpitCo();
         jumpCoroutine = JumpCo();
 
-        if (overlapped)
+        if (overlapped && triggerProxyJump)
         {
             jumping = true;
             StartCoroutine(jumpCoroutine);

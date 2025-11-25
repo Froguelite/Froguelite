@@ -41,7 +41,7 @@ public class AttackOverlapHandler : MonoBehaviour
                     EnemyBase enemyBase = enemy as EnemyBase;
                     if (enemyBase != null)
                     {
-                        float poisonDamage = StatsManager.Instance.playerDamage.GetValue() * 0.05f; // 5% of player damage per second
+                        float poisonDamage = StatsManager.Instance.playerDamage.GetValue() * 0.3f; // 30% of player damage per second
                         enemyBase.ApplyPoison(5f, poisonDamage); // 5 second duration (25% total damage)
                     }
                 }

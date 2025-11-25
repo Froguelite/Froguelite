@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63ee0f7713f8c34bba32b8bbee26cfb, type: 3}
   m_Name: PF_IcyFly
   m_EditorClassIdentifier: Assembly-CSharp::PowerFlyData
-  flyID: 
+  flyID: 2d328e77-c9d9-4d76-a5f4-5de0ad814bcc
   displayImg: {fileID: 0}
   powerFlyName: Icy Fly
-  description: This one is slippery...
+  description: Slippery speed
   flyRarity: 2
   effects:
   - {fileID: 11400000, guid: 056f6633faf724946acaa60b7a51ab97, type: 2}

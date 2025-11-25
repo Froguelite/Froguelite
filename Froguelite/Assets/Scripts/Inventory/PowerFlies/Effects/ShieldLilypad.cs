@@ -21,7 +21,7 @@ public class ShieldLilypad : MonoBehaviour
         // Get player reference
         if (PlayerMovement.Instance != null)
         {
-            playerTransform = PlayerMovement.Instance.transform;
+            playerTransform = PlayerMovement.Instance.lilypadCenterPoint;
         }
 
         // Ensure trigger collider
@@ -38,7 +38,7 @@ public class ShieldLilypad : MonoBehaviour
         {
             // Try to find player again if lost
             if (PlayerMovement.Instance != null)
-                playerTransform = PlayerMovement.Instance.transform;
+                playerTransform = PlayerMovement.Instance.lilypadCenterPoint;
             else
                 return;
         }
