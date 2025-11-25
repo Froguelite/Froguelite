@@ -194,7 +194,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4576706229470442010}
   - component: {fileID: 7771371771933272945}
-  - component: {fileID: 8801970899541586985}
   m_Layer: 0
   m_Name: Collision
   m_TagString: Collectable
@@ -253,34 +252,6 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.4
---- !u!114 &8801970899541586985
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5225140767548827303}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbff453297873674f9f445fd3f74083d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OverlapEventHandler
-  onPlayerOverlap:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8927312566676857175}
-        m_TargetAssemblyTypeName: PowerFly, Assembly-CSharp
-        m_MethodName: OnCollect
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onlyOnce: 0
 --- !u!1 &5534749219680855998
 GameObject:
   m_ObjectHideFlags: 0

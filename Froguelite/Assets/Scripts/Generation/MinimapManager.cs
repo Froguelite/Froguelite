@@ -166,6 +166,31 @@ public class MinimapManager : MonoBehaviour
 
         roomConnectionKeys.Clear();
 
+        // Additional safety: Destroy any remaining connection objects that might not be in the dictionaries
+        if (minimapDisplayImg != null && minimapDisplayImg.transform != null)
+        {
+            foreach (Transform child in minimapDisplayImg.transform)
+            {
+                MinimapRoomConnection connection = child.GetComponent<MinimapRoomConnection>();
+                if (connection != null)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+        }
+
+        if (fullMapDisplayImg != null && fullMapDisplayImg.transform != null)
+        {
+            foreach (Transform child in fullMapDisplayImg.transform)
+            {
+                MinimapRoomConnection connection = child.GetComponent<MinimapRoomConnection>();
+                if (connection != null)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+        }
+
         // Get dimensions of the land tile array
         int width = landTileArray.GetLength(0);
         int height = landTileArray.GetLength(1);

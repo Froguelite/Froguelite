@@ -82,9 +82,58 @@ public class PlayerAttack : MonoBehaviour
     }
 
 
+    void OnEnable()
+    {
+        GameManager.ResetPlayerState += ResetAttackState;
+    }
+
+
+    void OnDisable()
+    {
+        GameManager.ResetPlayerState -= ResetAttackState;
+    }
+
+
     void FixedUpdate()
     {
         HandleTongueAttack();
+    }
+
+
+    #endregion
+
+
+    #region RESET
+
+
+    // Resets the attack to its standard state, clearing all tongue tags and reverting changes
+    private void ResetAttackState()
+    {
+        // Clear all tongue tags
+        activeTongueTags.Clear();
+
+        // Destroy backwards tongue if it exists
+        if (backwardsTongue != null)
+        {
+            Destroy(backwardsTongue.gameObject);
+            backwardsTongue = null;
+        }
+        if (backwardsTongueVisual != null)
+        {
+            Destroy(backwardsTongueVisual);
+            backwardsTongueVisual = null;
+        }
+        backwardsTongueSprite = null;
+        backwardsIsExtending = false;
+        backwardsIsRetracting = false;
+
+        // Revert tongue color to original
+        if (tongueSprite != null)
+        {
+            tongueSprite.color = originalTongueColor;
+        }
+
+        Debug.Log("[PlayerAttack] Attack state reset to standard");
     }
 
 

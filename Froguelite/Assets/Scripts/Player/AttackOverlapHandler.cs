@@ -100,7 +100,8 @@ public class AttackOverlapHandler : MonoBehaviour
             if (totem != null)
             {
                 totem.OnInteract();
-                PlayerAttack.Instance.StopTongueExtension(false);
+                if (totem.GetCurrentState() == Totem.TotemState.Idle)
+                    PlayerAttack.Instance.StopTongueExtension(false);
             }
         }
         // Foliage
