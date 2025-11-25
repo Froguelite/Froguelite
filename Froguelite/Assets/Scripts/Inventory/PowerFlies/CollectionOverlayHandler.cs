@@ -95,6 +95,35 @@ public class CollectionOverlayHandler : MonoBehaviour
         }
     }
 
+    // Triggers the overlay to show generic text
+    public void ShowGenericText(string titleText, string descriptionText)
+    {
+        LeanTween.cancel(overlayCanvasGroup.gameObject);
+        LeanTween.cancel(contentParent.gameObject);
+        LeanTween.cancel(lockImage.gameObject);
+        LeanTween.cancel(lockCanvGroup.gameObject);
+        StopCoroutine(MoveLockCo());
+        lockImage.transform.localPosition = lockStartPos;
+        lockImage.transform.localRotation = Quaternion.Euler(Vector3.zero);
+
+        overlayCanvasGroup.alpha = 0f;
+        overlayCanvasGroup.LeanAlpha(1f, fadeDuration).setOnComplete(() =>
+        {
+            overlayCanvasGroup.LeanAlpha(0f, fadeDuration).setDelay(displayDuration);
+        });
+
+        contentParent.localPosition = new Vector3(contentParent.localPosition.x, contentStartY - contentMoveDistance, contentParent.localPosition.z);
+        contentParent.LeanMoveLocalY(contentStartY, fadeDuration).setEaseOutQuad().setOnComplete(() =>
+        {
+            contentParent.LeanMoveLocalY(contentStartY + contentMoveDistance, fadeDuration).setDelay(displayDuration).setEaseInQuad();
+        });
+
+        flyNameText.text = titleText.ToUpper();
+        flyDescriptionText.text = descriptionText;
+
+        lockCanvGroup.alpha = 0f;
+    }
+
 
     private IEnumerator MoveLockCo()
     {

@@ -9,7 +9,7 @@ public class GoldenFlyHUD : MonoBehaviour
 
     [Header("Animation Settings")]
     private Vector3 onScreenPosition = Vector3.zero; // Position when visible
-    private Vector3 offScreenPosition = new Vector3(300f, 0f, 0f); // Position when hidden (off to the right)
+    private Vector3 offScreenPosition = new Vector3(-300f, 0f, 0f); // Position when hidden (off to the right)
     [SerializeField] private float slideInDuration = 0.5f; // Duration of slide-in animation
     [SerializeField] private float slideOutDuration = 0.4f; // Duration of slide-out animation
     [SerializeField] private float displayDuration = 3f; // How long to show before hiding

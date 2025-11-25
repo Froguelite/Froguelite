@@ -94,16 +94,18 @@ public class ShopPedestalAlternate : GroundCollectable
     {
         if (itemDef != null)
         {
-            InventoryManager.Instance.AddItem(itemDef);
-
-            if (healPlayerOnPurchase)
-            {
-                StatsManager.Instance.playerHealth.HealPlayer(2);
-            }
-
             if (addWoodpeckerOnPurchase)
             {
                 InventoryManager.Instance.AddWoodpeckers(1);
+            }
+            else
+            {
+                InventoryManager.Instance.AddItem(itemDef);
+
+                if (healPlayerOnPurchase)
+                {
+                    StatsManager.Instance.playerHealth.HealPlayer(2);
+                }
             }
         }
         else if (powerFlyData != null)

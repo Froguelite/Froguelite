@@ -264,6 +264,9 @@ public class LevelManager : MonoBehaviour
             bubbleLoadingEffect.StopEffect();
         }
 
+        // Call to display the current level
+        StartCoroutine(DisplayCurrentLevel(sceneName));
+
         PlayerMovement.Instance.SetCanMove(true);
         PlayerAttack.Instance.SetCanAttack(true);
     }
@@ -290,6 +293,39 @@ public class LevelManager : MonoBehaviour
 
         MinimapManager.Instance.ShowMinimap();
         GameManager.Instance.SetPlayerState(GameManager.PlayerState.Exploring);
+    }
+
+    private IEnumerator DisplayCurrentLevel(Scenes sceneName)
+    {
+        if (sceneName != Scenes.MainScene && sceneName != Scenes.MinibossRushScene && sceneName != Scenes.StumpScene && sceneName != Scenes.BossScene)
+        {
+            yield break;
+        }
+
+        yield return new WaitForSeconds(1.5f);
+
+        switch (sceneName)
+        {
+            case Scenes.MainScene:
+                if (currentZone == 1)
+                {
+                    CollectionOverlayHandler.Instance.ShowGenericText("The Breezy Brush", "Zone " + (currentSubZone + 1) + " / 3");
+                }
+                else
+                {
+                    CollectionOverlayHandler.Instance.ShowGenericText("The Soggy Swamp", "Zone " + (currentSubZone + 1) + " / 3");
+                }
+                break;
+            case Scenes.MinibossRushScene:
+                CollectionOverlayHandler.Instance.ShowGenericText("Ambushed!!!", "");
+                break;
+            case Scenes.StumpScene:
+                CollectionOverlayHandler.Instance.ShowGenericText("The Stump", "");
+                break;
+            case Scenes.BossScene:
+                CollectionOverlayHandler.Instance.ShowGenericText("The King of the Swamp", "");
+                break;
+        }
     }
 
     private void IncrementZoneProgression()
