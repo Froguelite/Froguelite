@@ -215,7 +215,7 @@ MonoBehaviour:
     dissipationColor: {r: 0.49411768, g: 0.2392157, b: 0.8000001, a: 1}
     scale: 4
   spitSpawnTransform: {fileID: 3621121816063080183}
-  durationBetweenSpits: 1.5
+  durationBetweenSpits: 2
   durationBetweenJumps: 1
   jumpDistance: 3
   arcJumpDuration: 0
