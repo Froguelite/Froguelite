@@ -25,6 +25,15 @@ public class ShieldManager : MonoBehaviour
             return;
         }
         Instance = this;
+        
+        // Subscribe to reset event
+        GameManager.ResetPlayerState += RemoveAllShields;
+    }
+
+    private void OnDestroy()
+    {
+        // Unsubscribe from reset event
+        GameManager.ResetPlayerState -= RemoveAllShields;
     }
 
     /// <summary>
@@ -76,6 +85,24 @@ public class ShieldManager : MonoBehaviour
     {
         activeShields.Remove(shield);
         RecalculateShieldPositions();
+    }
+
+    /// <summary>
+    /// Removes all shields.
+    /// </summary>
+    public void RemoveAllShields()
+    {
+        // Destroy all active shields
+        for (int i = activeShields.Count - 1; i >= 0; i--)
+        {
+            if (activeShields[i] != null)
+            {
+                Destroy(activeShields[i].gameObject);
+            }
+        }
+        
+        // Clear the list
+        activeShields.Clear();
     }
 }
 

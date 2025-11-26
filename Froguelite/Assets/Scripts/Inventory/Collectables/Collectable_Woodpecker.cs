@@ -10,6 +10,8 @@ public class Collectable_Woodpecker : GroundCollectable
         // Prevent duplicate collection
         if (hasBeenCollected) return;
         hasBeenCollected = true;
+
+        AudioManager.Instance.PlaySound(CollectibleSound.WoodpeckerCollect);
         
         // Immediately disable collider and hide visual
         Collider2D collider = GetComponent<Collider2D>();

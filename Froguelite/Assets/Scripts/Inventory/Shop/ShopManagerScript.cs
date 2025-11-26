@@ -83,6 +83,7 @@ public class ShopManagerScript : MonoBehaviour
 
     public void CloseShop()
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         currentPedestal = null;
 
         if (shopPanel)    shopPanel.SetActive(false);
@@ -94,6 +95,7 @@ public class ShopManagerScript : MonoBehaviour
 
     public void BuyCurrent()
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         if (!inventory)
             inventory = InventoryManager.Instance
                 ?? FindFirstObjectByType<InventoryManager>(FindObjectsInactive.Include);

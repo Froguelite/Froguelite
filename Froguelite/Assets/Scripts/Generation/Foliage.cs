@@ -81,6 +81,8 @@ public class Foliage : MonoBehaviour
     // Destroys the foliage with a particle effect
     private IEnumerator DestroyFoliage()
     {
+        AudioManager.Instance.PlaySound(CombatSound.BrushDestroyed, .6f);
+
         // Play particle effect
         if (destroyParticles != null)
         {

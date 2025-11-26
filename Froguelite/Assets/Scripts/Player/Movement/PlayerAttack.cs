@@ -177,6 +177,7 @@ public class PlayerAttack : MonoBehaviour
         }
 
         isExtending = true;
+        AudioManager.Instance.PlaySound(CombatSound.TongueOut, 1.5f);
 
         // Spawn backwards tongue if tag exists
         if (activeTongueTags.Contains("backwardsTongue"))
@@ -241,6 +242,7 @@ public class PlayerAttack : MonoBehaviour
         PlayerMovement.Instance.SetAttackingOverride(false);
         isRetracting = false;
         tongue.localPosition = tongueStartOffset;
+        //AudioManager.Instance.PlaySound(SoundType.TongueIn);
         StartCoroutine(TongueCooldownCoroutine());
     }
 

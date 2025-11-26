@@ -345,6 +345,7 @@ public class Door : MonoBehaviour
         if (doorData.isLocked)
         {
             doorData.isLocked = false;
+            AudioManager.Instance.PlaySound(CollectibleSound.WoodpeckerUse);
 
             if (!doorData.isImpassable)
             {

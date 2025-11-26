@@ -117,6 +117,8 @@ public class Totem : MonoBehaviour
         }
 
         StartWave(currentWave);
+        AudioManager.Instance.PlayOverrideMusic(MusicType.SubBoss);
+        AudioManager.Instance.PlaySound(CombatSound.TotemImpact, 1.4f);
     }
 
     #endregion
@@ -306,6 +308,8 @@ public class Totem : MonoBehaviour
         {
             dirtParticles.Play();
         }
+
+        AudioManager.Instance.PlaySoundIndefinite(CombatSound.TotemMove, 1.6f);
         
         // Animate sinking with shake effect
         while (elapsedTime < sinkDuration)
@@ -333,6 +337,9 @@ public class Totem : MonoBehaviour
         {
             dirtParticles.Stop();
         }
+
+        AudioManager.Instance.StopIndefiniteSound(CombatSound.TotemMove);
+        AudioManager.Instance.PlaySound(CombatSound.TotemImpact, 1.4f);
         
         isSinking = false;
         
@@ -370,6 +377,9 @@ public class Totem : MonoBehaviour
         
         // Spawn 3 power flies for player to choose from
         SpawnPowerFlyRewards();
+        AudioManager.Instance.ClearOverrideMusic();
+
+        AudioManager.Instance.PlaySound(TravelSound.RoomClear);
         
         // Notify parent room that totem is complete
         if (parentRoom != null) parentRoom.OnTotemCompleted();

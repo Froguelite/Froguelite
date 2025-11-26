@@ -106,18 +106,21 @@ public class LevelManager : MonoBehaviour
 
         if (loadEffect == LoadEffect.Portal)
         {
+            AudioManager.Instance.PlaySoundIndefinite(TravelSound.PortalTravel);
             portalLoadingEffect.StartEffect();
             await Task.Delay(2000); // Wait for portal effect duration
         }
 
         if (loadEffect == LoadEffect.Bubble)
         {
+            AudioManager.Instance.PlaySoundIndefinite(TravelSound.BubbleTravel);
             bubbleLoadingEffect.StartEffect(false);
             await Task.Delay(2000); // Wait for bubble effect duration
         }
 
         if (loadEffect == LoadEffect.Leaves)
         {
+            AudioManager.Instance.PlaySoundIndefinite(TravelSound.LeafTravel);
             bubbleLoadingEffect.StartEffect(true);
             await Task.Delay(2000); // Wait for bubble effect duration
         }
@@ -149,7 +152,7 @@ public class LevelManager : MonoBehaviour
                     IncrementZoneProgression();
                 }
                 //change start scene from stump to main if 1 sub zone completed
-                if(currentZone == 0 && currentSubZone == 0)
+                if(currentZone == 1 && currentSubZone == 0)
                 {
                     int profileNumber = SaveManager.activeProfile;
                     ProfileUIManager.Instance.UpdateSceneToLoadForProfile(profileNumber, Scenes.MainScene);
@@ -256,16 +259,23 @@ public class LevelManager : MonoBehaviour
         if (loadEffect == LoadEffect.Portal)
         {
             await Task.Delay(1000);
+            AudioManager.Instance.StopIndefiniteSound(TravelSound.PortalTravel);
             portalLoadingEffect.StopEffect();
         }
 
         if (loadEffect == LoadEffect.Bubble || loadEffect == LoadEffect.Leaves)
         {
+            AudioManager.Instance.StopIndefiniteSound(TravelSound.BubbleTravel);
+            AudioManager.Instance.StopIndefiniteSound(TravelSound.LeafTravel);
             bubbleLoadingEffect.StopEffect();
         }
 
         // Call to display the current level
         StartCoroutine(DisplayCurrentLevel(sceneName));
+
+        // Play music
+        AudioManager.Instance.ClearOverrideMusic();
+        PlayMusicForScene(sceneName);
 
         PlayerMovement.Instance.SetCanMove(true);
         PlayerAttack.Instance.SetCanAttack(true);
@@ -324,6 +334,35 @@ public class LevelManager : MonoBehaviour
                 break;
             case Scenes.BossScene:
                 CollectionOverlayHandler.Instance.ShowGenericText("The King of the Swamp", "");
+                break;
+        }
+    }
+
+    private void PlayMusicForScene(Scenes sceneName)
+    {
+        switch (sceneName)
+        {
+            case Scenes.MainScene:
+                if (currentZone == 1)
+                {
+                    AudioManager.Instance.PlayMusic(MusicType.ForestZone);
+                }
+                else
+                {
+                    AudioManager.Instance.PlayMusic(MusicType.SwampZone);
+                }
+                break;
+            case Scenes.MenuScene:
+                AudioManager.Instance.PlayMusic(MusicType.Menu);
+                break;
+            case Scenes.BossScene:
+                AudioManager.Instance.PlayMusic(MusicType.Boss);
+                break;
+            case Scenes.StumpScene:
+                AudioManager.Instance.PlayMusic(MusicType.Stump);
+                break;
+            case Scenes.MinibossRushScene:
+                AudioManager.Instance.PlayMusic(MusicType.Boss);
                 break;
         }
     }

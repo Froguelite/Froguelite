@@ -532,22 +532,15 @@ public class BossController : MonoBehaviour
         state = State.Death;
         StopAllCoroutines();
 
+        AudioManager.Instance.PlaySound(CombatSound.BossDeath);
+        AudioManager.Instance.PlayMusic(MusicType.None);
         StartCoroutine(WaitThenLoadNextZone());
-        //-------------------//
-
-
-
-        //ADD DEATH LOGIC HERE
-
-
-
-
-        //-------------------//
     }
 
     private IEnumerator WaitThenLoadNextZone()
     {
         yield return new WaitForSeconds(4f);
+        AudioManager.Instance.PlaySound(CombatSound.Victory);
         yield return StartCoroutine(UIManager.Instance.WinScreenCo());
         _ = LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, LevelManager.LoadEffect.Portal);
     }
