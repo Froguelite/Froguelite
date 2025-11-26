@@ -69,6 +69,8 @@ public class GameManager : MonoBehaviour
         SetPlayerState(PlayerState.Dead);
         UIManager.Instance.ShowDeathScreen();
 
+        AudioManager.Instance.PlayOverrideMusic(MusicType.Defeat);
+
         PlayerMovement.Instance.SetCanMove(false);
         PlayerAttack.Instance.SetCanAttack(false);
         ResetPlayerState?.Invoke();

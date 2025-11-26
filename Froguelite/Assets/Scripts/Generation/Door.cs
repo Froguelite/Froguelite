@@ -421,6 +421,7 @@ public class Door : MonoBehaviour
 
             PlayerMovement.Instance.onReachManualMoveTarget.AddListener(() =>
             {
+                AudioManager.Instance.PlaySound(TravelSound.MountTravel);
                 // Make sure the player is exactly inside the frog, and parent them to it so they move with it
                 PlayerMovement.Instance.transform.position = attachTransform.transform.position;
                 PlayerMovement.Instance.transform.SetParent(attachTransform.transform);
@@ -480,6 +481,7 @@ public class Door : MonoBehaviour
 
     private IEnumerator LaunchPlayerToLanding(float duration = .5f)
     {
+        AudioManager.Instance.PlaySound(TravelSound.DoorLaunch);
         Vector3 startPosition = PlayerMovement.Instance.transform.position;
         Vector3 endPosition = doorData.landingPosition;
 

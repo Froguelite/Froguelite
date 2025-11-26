@@ -407,6 +407,7 @@ GameObject:
   - component: {fileID: 2509013789670278515}
   - component: {fileID: 1351899915832330935}
   - component: {fileID: 2529204245386322385}
+  - component: {fileID: 6438876126368017317}
   m_Layer: 5
   m_Name: MenuCanvas
   m_TagString: Untagged
@@ -558,6 +559,22 @@ MonoBehaviour:
   winScreenTextCanvasGroup: {fileID: 3808833413850019379}
   displayOnStart: 1
   pause: {fileID: 2865761933179070232, guid: c1897a3bcf5cfa449b2eb136b71c1121, type: 3}
+--- !u!114 &6438876126368017317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3474332523444214854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d143fa2c649ea94286007f36d8c7b51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameSettings
+  resolutionDropdown: {fileID: 9058000971628088840}
+  fullscreenToggle: {fileID: 2162940676254338901}
+  audioSlider: {fileID: 571504851835269957}
+  volumeLevelText: {fileID: 8206170372394563899}
 --- !u!1 &4452028185143550466
 GameObject:
   m_ObjectHideFlags: 0
@@ -820,7 +837,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7523385696315574825}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameSettings, Assembly-CSharp
         m_MethodName: ToggleFullscreen
         m_Mode: 1
@@ -1519,10 +1536,6 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 158265291279230698, guid: 0c262dd52a4151f4eb94b77533f46be9, type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 7523385696315574825}
-    - target: {fileID: 158265291279230698, guid: 0c262dd52a4151f4eb94b77533f46be9, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
@@ -2195,10 +2208,6 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 8351792085640906498, guid: 44aab1983a9c4fd4fa99796717f0969c, type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 7523385696315574825}
     - target: {fileID: 8351792085640906498, guid: 44aab1983a9c4fd4fa99796717f0969c, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -3047,10 +3056,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 555926856408136713, guid: 3e336caf7df5c854f925d57b80b49fba, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6237920486046132434}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5404029027689177742, guid: 3e336caf7df5c854f925d57b80b49fba, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7523385696315574825}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3e336caf7df5c854f925d57b80b49fba, type: 3}
 --- !u!224 &1818707955305623031 stripped
 RectTransform:
@@ -3067,22 +3073,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5404029027689177742, guid: 3e336caf7df5c854f925d57b80b49fba, type: 3}
   m_PrefabInstance: {fileID: 2200665617078768126}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7523385696315574825
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6085667653168755568}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d143fa2c649ea94286007f36d8c7b51, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameSettings
-  resolutionDropdown: {fileID: 9058000971628088840}
-  fullscreenToggle: {fileID: 2162940676254338901}
-  audioSlider: {fileID: 571504851835269957}
-  volumeLevelText: {fileID: 8206170372394563899}
 --- !u!1001 &2218894006839093623
 PrefabInstance:
   m_ObjectHideFlags: 0

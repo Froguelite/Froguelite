@@ -42,6 +42,8 @@ public enum TravelSound
     BubbleTravel,
     PortalTravel,
     RoomClear,
+    DoorLaunch,
+    MountTravel,
 }
 
 public enum PlayerSound
@@ -50,6 +52,17 @@ public enum PlayerSound
     PlayerHurt,
     PlayerDeath,
     UiClick,
+}
+
+public enum BossSound
+{
+    BossJump,
+    BossLand,
+    BossIntoWater,
+    BossTongueOut,
+    BossTongueIn,
+    BossStomp,
+    BossHit,
 }
 
 public enum MusicType 
@@ -62,6 +75,7 @@ public enum MusicType
     SubBoss,
     Mystic,
     Portal,
+    Defeat,
     None,
 }
 
@@ -74,6 +88,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private CollectibleAudioListItem[] collectibleAudioList;
     [SerializeField] private TravelAudioListItem[] travelAudioList;
     [SerializeField] private PlayerAudioListItem[] playerAudioList;
+    [SerializeField] private BossAudioListItem[] bossAudioList;
     
     [Header("Music")]
     [SerializeField] private MusicListItem[] musicList;
@@ -295,6 +310,16 @@ public class AudioManager : MonoBehaviour
             foreach (var audioItem in Instance.playerAudioList)
             {
                 if (audioItem.soundType == playerSound)
+                {
+                    return audioItem.soundsList;
+                }
+            }
+        }
+        else if (sound is BossSound bossSound)
+        {
+            foreach (var audioItem in Instance.bossAudioList)
+            {
+                if (audioItem.soundType == bossSound)
                 {
                     return audioItem.soundsList;
                 }
@@ -705,6 +730,13 @@ public struct TravelAudioListItem
 public struct PlayerAudioListItem
 {
     public PlayerSound soundType;
+    public AudioClip[] soundsList;
+}
+
+[Serializable]
+public struct BossAudioListItem
+{
+    public BossSound soundType;
     public AudioClip[] soundsList;
 }
 

@@ -321,6 +321,7 @@ MonoBehaviour:
   playerSpriteRenderer: {fileID: 4510821104931963814}
   sickParticles: {fileID: 2784787423186773154}
   iceParticles: {fileID: 7412751580708354599}
+  afterimagePrefab: {fileID: 6838333156694691377, guid: 4b1da50332c7bb24faaf01582f51b9f8, type: 3}
   onReachManualMoveTarget:
     m_PersistentCalls:
       m_Calls: []
@@ -424,9 +425,15 @@ MonoBehaviour:
   - {fileID: -749034433948679102, guid: 44ebe64df925a9647a39b8168f41c01b, type: 3}
   attackingFrameDuration: 0.06
   dashingSprites:
-  - {fileID: 398253203554383916, guid: a6e4a4e8612e5df4cacb75723ba9724a, type: 3}
-  - {fileID: 4900125362090257478, guid: ec5aa7b9e0d940146b5d42ed18e93f44, type: 3}
-  dashingFrameDuration: 0.05
+  - {fileID: -3290674671907390974, guid: a5673c663b811ec4dae3c66bc8fa7729, type: 3}
+  - {fileID: 7024334433008991214, guid: a5673c663b811ec4dae3c66bc8fa7729, type: 3}
+  - {fileID: 3369059855790039033, guid: a5673c663b811ec4dae3c66bc8fa7729, type: 3}
+  - {fileID: 1402840801787880270, guid: a5673c663b811ec4dae3c66bc8fa7729, type: 3}
+  - {fileID: 6393424719690266325, guid: a5673c663b811ec4dae3c66bc8fa7729, type: 3}
+  - {fileID: -1701717067038617534, guid: a5673c663b811ec4dae3c66bc8fa7729, type: 3}
+  - {fileID: 2871607407060923344, guid: a5673c663b811ec4dae3c66bc8fa7729, type: 3}
+  - {fileID: 1683910805981844369, guid: a5673c663b811ec4dae3c66bc8fa7729, type: 3}
+  dashingFrameDuration: 0.025
   movementThreshold: 0.1
   overrideAnimations: 0
 --- !u!1 &2376128576377614570
@@ -476,7 +483,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShieldManager
   shieldLilypadPrefab: {fileID: 679183484723080474, guid: 0b58b21fafddd4229836540c90c21473, type: 3}
   orbitRadius: 1.5
-  rotationSpeed: 2
+  rotationSpeed: 3.5
 --- !u!114 &9156644498591348783
 MonoBehaviour:
   m_ObjectHideFlags: 0

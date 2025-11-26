@@ -18,6 +18,7 @@ public class BossController : MonoBehaviour
     [SerializeField] private BossEntity bossEntity;
     [SerializeField] private Collider2D frogHitbox;         // assign the collider that blocks/contacts the player
     [SerializeField] private GameObject aoeCirclePrefab;
+    [SerializeField] private ParticleSystem dirtParticles;  // dirt particles on landing/stomp
 
     [Header("Animations")]
     [SerializeField] private Sprite[] idleSprites; // Idle animation
@@ -161,6 +162,7 @@ public class BossController : MonoBehaviour
         }
 
         // Launch upward
+        AudioManager.Instance.PlaySound(BossSound.BossJump);
         frogHitbox.enabled = false;
         Vector3 launchApex = visualStart + new Vector3(0f, jumpElevation * 3f, 0f);
         float t = 0f;
@@ -226,9 +228,11 @@ public class BossController : MonoBehaviour
             frogFlipbook.ResetAnimation();
             frogFlipbook.SetSprites(landSprites, 0.1f, FlipbookLoopMethod.Once);
             frogFlipbook.Play();
+            AudioManager.Instance.PlaySound(BossSound.BossLand);
 
             frogHitbox.enabled = true;
             ApplyJumpDamage(fallTarget);
+            StartCoroutine(ActivateDirtParticles());
 
             Destroy(shadow);
         }
@@ -251,9 +255,11 @@ public class BossController : MonoBehaviour
         frogFlipbook.ResetAnimation();
         frogFlipbook.SetSprites(jumpSprites, 0.1f, FlipbookLoopMethod.Once);
         frogFlipbook.Play();
+        AudioManager.Instance.PlaySound(BossSound.BossJump);
         float arcOutTime = 0.4f;
         if (state == State.Death) yield break;
         yield return StartCoroutine(ParabolicMove(visualRoot, start, offPivotPos, arcOutTime, jumpElevation * 1.8f));
+        AudioManager.Instance.PlaySound(BossSound.BossIntoWater);
 
         SetVisualVisible(true);
         shadowPrefab.GetComponent<SpriteRenderer>().enabled = false;
@@ -321,6 +327,7 @@ public class BossController : MonoBehaviour
         yield return new WaitForSeconds(holdTime);
 
         // Retract
+        AudioManager.Instance.PlaySound(BossSound.BossTongueIn);
         t = 0f;
         while (t < retractTime)
         {
@@ -352,6 +359,7 @@ public class BossController : MonoBehaviour
     {
         frogFlipbook.SetSprites(tongueAttackSprites, 0.16f, FlipbookLoopMethod.Once);
         frogFlipbook.Play();
+        AudioManager.Instance.PlaySound(BossSound.BossTongueOut);
         if (state == State.Death) yield break;
         yield return new WaitForSeconds(0.5f);
 
@@ -406,6 +414,8 @@ public class BossController : MonoBehaviour
     private void StompAoe()
     //--------------------------------------------//
     {
+        AudioManager.Instance.PlaySound(BossSound.BossStomp);
+        StartCoroutine(ActivateDirtParticles());
         int damage = stompDamage;
         if (stompAoePrefab != null)
         {
@@ -543,6 +553,16 @@ public class BossController : MonoBehaviour
         AudioManager.Instance.PlaySound(CombatSound.Victory);
         yield return StartCoroutine(UIManager.Instance.WinScreenCo());
         _ = LevelManager.Instance.LoadScene(LevelManager.Scenes.StumpScene, LevelManager.LoadEffect.Portal);
+    }
+
+    private IEnumerator ActivateDirtParticles()
+    {
+        if (dirtParticles != null)
+        {
+            dirtParticles.Play();
+            yield return new WaitForSeconds(0.3f);
+            dirtParticles.Stop();
+        }
     }
 
     public void ForceEnterDefense() => state = State.DefensePhase;

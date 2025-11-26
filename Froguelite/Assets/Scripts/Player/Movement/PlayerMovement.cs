@@ -19,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] public SpriteRenderer playerSpriteRenderer;
     [SerializeField] private ParticleSystem sickParticles; // Particle system for sick fly effect
     [SerializeField] private ParticleSystem iceParticles; // Particle system for ice/reduced friction effect
+    [SerializeField] private GameObject afterimagePrefab; // Prefab for dash afterimages
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
@@ -47,6 +48,11 @@ public class PlayerMovement : MonoBehaviour
     private float dashTimer = 0f;
     private float dashCooldownTimer = 0f;
     private Vector2 dashDirection = Vector2.zero;
+    
+    // Afterimage settings
+    private float afterimageSpawnInterval = 0.05f; // Time between spawning afterimages
+    private float afterimageFadeDuration = 0.3f; // How long afterimages take to fade out
+    private float afterimageTimer = 0f; // Timer for spawning afterimages
 
     private bool useDrunkMovement = false;
     private Vector2 drunkOffset = Vector2.zero;
@@ -114,6 +120,14 @@ public class PlayerMovement : MonoBehaviour
             if (dashTimer <= 0f)
             {
                 EndDash();
+            }
+            
+            // Spawn afterimages during dash
+            afterimageTimer -= Time.deltaTime;
+            if (afterimageTimer <= 0f)
+            {
+                SpawnAfterimage();
+                afterimageTimer = afterimageSpawnInterval;
             }
         }
 
@@ -369,7 +383,7 @@ public class PlayerMovement : MonoBehaviour
         dashCooldownTimer = dashCooldown;
         
         // Play dash animation
-        PlayerAnimationController.Instance.PlayDashAnimation(dashDirection);
+        //PlayerAnimationController.Instance.PlayDashAnimation(dashDirection);
 
         AudioManager.Instance.PlaySound(PlayerSound.Dodge, 0.3f);
     }
@@ -382,11 +396,48 @@ public class PlayerMovement : MonoBehaviour
         dashDirection = Vector2.zero;
         
         // End dash animation
-        PlayerAnimationController.Instance.EndDashAnimation();
+        //PlayerAnimationController.Instance.EndDashAnimation();
         
         // Re-apply current movement input if player can move
         if (canMove && !isAttackingOverride)
             InputManager.Instance.PushAnyPendingMovement();
+    }
+
+
+    // Spawns an afterimage at the player's current position
+    private void SpawnAfterimage()
+    {
+        if (afterimagePrefab == null || playerSpriteRenderer == null)
+            return;
+
+        // Create the afterimage GameObject
+        GameObject afterimage = Instantiate(afterimagePrefab, transform.position, Quaternion.identity);
+        
+        // Get the SpriteRenderer component from the afterimage
+        SpriteRenderer afterimageSR = afterimage.GetComponent<SpriteRenderer>();
+        if (afterimageSR != null)
+        {
+            // Copy the current sprite and visual properties from the player
+            afterimageSR.sprite = playerSpriteRenderer.sprite;
+            Color afterimageColor = playerSpriteRenderer.color;
+            afterimageColor.a *= 0.6f; // Start at 60% opacity
+            afterimageSR.color = afterimageColor;
+            afterimageSR.flipX = playerSpriteRenderer.flipX;
+            afterimageSR.flipY = playerSpriteRenderer.flipY;
+            afterimageSR.sortingLayerName = playerSpriteRenderer.sortingLayerName;
+            afterimageSR.sortingOrder = playerSpriteRenderer.sortingOrder - 1; // Render behind player
+            
+            // Fade out the afterimage using LeanTween
+            LeanTween.alpha(afterimage, 0f, afterimageFadeDuration).setOnComplete(() =>
+            {
+                Destroy(afterimage);
+            });
+        }
+        else
+        {
+            // If no SpriteRenderer found, just destroy the afterimage after the fade duration
+            Destroy(afterimage, afterimageFadeDuration);
+        }
     }
 
 

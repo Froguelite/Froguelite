@@ -39,6 +39,7 @@ public class EnemyBase : MonoBehaviour, IEnemy
     [SerializeField] private AudioClip deathSound;
     private float flashDuration = 0.2f; // How long the red flash lasts
     private Color flashColor = Color.red; // Color to flash when hit
+    private int colorTweenId = -1; // ID for tracking the color flash tween
 
     public bool isKnockedBack { get; private set; } = false; // Tracks if enemy is currently being knocked back
     private Color originalColor; // Store the original sprite color
@@ -228,7 +229,12 @@ public class EnemyBase : MonoBehaviour, IEnemy
     // Flash the sprite red when taking damage
     private void FlashSprite()
     {
-        LeanTween.cancel(spriteRenderer.gameObject);
+        // Cancel previous color tween if it exists
+        if (colorTweenId != -1)
+        {
+            LeanTween.cancel(colorTweenId);
+        }
+        
         Color targetFlashColor = flashColor;
         Color targetOriginalColor = originalColor;
         
@@ -240,10 +246,10 @@ public class EnemyBase : MonoBehaviour, IEnemy
         }
         
         spriteRenderer.color = targetFlashColor;
-        LeanTween.value(spriteRenderer.gameObject, targetFlashColor, targetOriginalColor, flashDuration).setOnUpdate((Color newColor) =>
+        colorTweenId = LeanTween.value(spriteRenderer.gameObject, targetFlashColor, targetOriginalColor, flashDuration).setOnUpdate((Color newColor) =>
         {
             spriteRenderer.color = newColor;
-        });
+        }).id;
     }
     
     // Multiplies two colors component-wise for blending effects

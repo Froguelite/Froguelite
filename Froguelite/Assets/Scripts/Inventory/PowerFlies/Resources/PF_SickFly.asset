@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PF_SickFly
   m_EditorClassIdentifier: Assembly-CSharp::PowerFlyData
   flyID: a8eb71ec-1d8e-4430-ba3f-514ed5599564
-  displayImg: {fileID: -4108151583225950438, guid: 801eb56aa845b7749855f65062319e08, type: 3}
+  displayImg: {fileID: -1799102584308268358, guid: 5d9f69d83721015429a27b456c60b568, type: 3}
   powerFlyName: Sick Fly
   description: Feeling sick...
   flyRarity: 2
