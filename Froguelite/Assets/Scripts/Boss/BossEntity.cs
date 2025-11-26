@@ -67,6 +67,8 @@ public class BossEntity : MonoBehaviour
             return;
         }
 
+        AudioManager.Instance.PlaySound(BossSound.BossHit);
+
         //I included this function incase we want to implement damage reduction
         int effectiveDamage = damage; // int effectiveDamage = Mathf.Max(damage - stats.damageReduction, 0)
 

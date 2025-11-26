@@ -233,6 +233,7 @@ public class SubZoneFinalDoor : MonoBehaviour
 
             PlayerMovement.Instance.onReachManualMoveTarget.AddListener(() =>
             {
+                AudioManager.Instance.PlaySound(TravelSound.MountTravel);
                 // Make sure the player is exactly inside the frog, and parent them to it so they move with it
                 PlayerMovement.Instance.transform.position = frogRenderer.transform.position + new Vector3(0, 0.75f, 0);
                 PlayerMovement.Instance.transform.SetParent(frogRenderer.transform);
@@ -301,9 +302,9 @@ public class SubZoneFinalDoor : MonoBehaviour
 
         SaveManager.WriteToFile(); //Save while bubble transition and after completing a sub-zone
         if (zone == 0)
-            LevelManager.Instance.LoadScene(LevelManager.Scenes.MainScene, LevelManager.LoadEffect.Bubble);
+            _ = LevelManager.Instance.LoadScene(LevelManager.Scenes.MainScene, LevelManager.LoadEffect.Bubble);
         else
-            LevelManager.Instance.LoadScene(LevelManager.Scenes.MainScene, LevelManager.LoadEffect.Leaves);
+            _ = LevelManager.Instance.LoadScene(LevelManager.Scenes.MainScene, LevelManager.LoadEffect.Leaves);
     }
 
 

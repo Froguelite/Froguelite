@@ -9,6 +9,7 @@ public class PFE_SickFly : PowerFlyEffect
         if (PlayerAttack.Instance != null)
         {
             PlayerAttack.Instance.AddTongueTag("sickFly");
+            StatsManager.Instance.playerSpeed.AddToBaseValue(-0.75f);
         }
         else
         {

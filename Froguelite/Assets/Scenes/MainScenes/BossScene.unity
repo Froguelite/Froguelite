@@ -3461,11 +3461,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3826962417473394660, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.46
+      value: 0.41
       objectReference: {fileID: 0}
     - target: {fileID: 3826962417473394660, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -7.16
+      value: -7.3
       objectReference: {fileID: 0}
     - target: {fileID: 3826962417473394660, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5481,7 +5481,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5673963059578216789, guid: 2211788457854674c985eaa25d336c6b, type: 3}
       propertyPath: godmode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5673963059578216789, guid: 2211788457854674c985eaa25d336c6b, type: 3}
       propertyPath: playerHealth
@@ -7388,15 +7388,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4656199015551796072, guid: 1984249a298d03e46819244fb37d1342, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -19.08527
+      value: -15.705271
       objectReference: {fileID: 0}
     - target: {fileID: 4656199015551796072, guid: 1984249a298d03e46819244fb37d1342, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -5.69253
+      value: -20.77253
       objectReference: {fileID: 0}
     - target: {fileID: 4656199015551796072, guid: 1984249a298d03e46819244fb37d1342, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -9.99
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 5889923958406996471, guid: 1984249a298d03e46819244fb37d1342, type: 3}
       propertyPath: m_LocalPosition.x
@@ -7444,20 +7444,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7964096971883468815, guid: 1984249a298d03e46819244fb37d1342, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -19.08527
+      value: -15.705271
       objectReference: {fileID: 0}
     - target: {fileID: 7964096971883468815, guid: 1984249a298d03e46819244fb37d1342, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -5.69253
+      value: -20.77253
       objectReference: {fileID: 0}
     - target: {fileID: 7964096971883468815, guid: 1984249a298d03e46819244fb37d1342, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -9.99
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 8410374079760994755, guid: 1984249a298d03e46819244fb37d1342, type: 3}
       propertyPath: Target.TrackingTarget
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1805820655}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -19245,6 +19245,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5122862617918913187, guid: 4eefd41dd8b043c449919ed70181af05, type: 3}
   m_PrefabInstance: {fileID: 1794732389}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1805820655 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3826962417473394660, guid: 302d5ef8468cae24ca550b360ea7a9c0, type: 3}
+  m_PrefabInstance: {fileID: 886668811}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1805932105
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21020,7 +21025,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 301338999469275965, guid: bedd397312b73724d915f9f18dee1997, type: 3}
       propertyPath: stompRadius
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 301338999469275965, guid: bedd397312b73724d915f9f18dee1997, type: 3}
       propertyPath: strikeTimeMax
@@ -21052,11 +21057,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 301338999469275965, guid: bedd397312b73724d915f9f18dee1997, type: 3}
       propertyPath: verticalPaceSpeed
-      value: 0.5
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 301338999469275965, guid: bedd397312b73724d915f9f18dee1997, type: 3}
       propertyPath: stompTelegraphTime
-      value: 1
+      value: 0.45
       objectReference: {fileID: 0}
     - target: {fileID: 301338999469275965, guid: bedd397312b73724d915f9f18dee1997, type: 3}
       propertyPath: hideVisualOffscreen
@@ -21064,7 +21069,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 301338999469275965, guid: bedd397312b73724d915f9f18dee1997, type: 3}
       propertyPath: attackPhase2Duration
-      value: 5
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 301338999469275965, guid: bedd397312b73724d915f9f18dee1997, type: 3}
       propertyPath: idleSprites.Array.size
@@ -21265,6 +21270,14 @@ PrefabInstance:
     - target: {fileID: 7316581457517481837, guid: bedd397312b73724d915f9f18dee1997, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9163260195211916481, guid: bedd397312b73724d915f9f18dee1997, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 40.000004
+      objectReference: {fileID: 0}
+    - target: {fileID: 9163260195211916481, guid: bedd397312b73724d915f9f18dee1997, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 40.000004
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
