@@ -36,6 +36,7 @@ public class EnemyBase : MonoBehaviour, IEnemy
     [SerializeField] private float knockbackDuration = 0.1f; // How long knockback lasts
     [SerializeField] protected SpriteRenderer spriteRenderer;
     [SerializeField] private FlipbookAnimator defeatSmokeAnimator;
+    [SerializeField] private AudioClip deathSound;
     private float flashDuration = 0.2f; // How long the red flash lasts
     private Color flashColor = Color.red; // Color to flash when hit
 
@@ -145,7 +146,7 @@ public class EnemyBase : MonoBehaviour, IEnemy
         FlashSprite();
 
         // Apply knockback if force is greater than 0
-        if (knockbackForce > 0f && useKnockback)
+        if (knockbackForce > 0f && useKnockback && engagedWithPlayer)
         {
             ApplyKnockback(knockbackForce);
         }
@@ -168,6 +169,7 @@ public class EnemyBase : MonoBehaviour, IEnemy
         spriteRenderer.enabled = false;
         StopPlayerChase();
         defeatSmokeAnimator.Play(true);
+        AudioManager.Instance.PlaySound(deathSound);
 
         if (isMiniboss)
         {

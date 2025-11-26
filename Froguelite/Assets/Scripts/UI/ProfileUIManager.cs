@@ -127,6 +127,7 @@ public class ProfileUIManager : MonoBehaviour
 
     public void CreateNewProfile(int profileNumber)
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         //Check if profileNumber is already exists
         Debug.Log("Profile number: " + profileNumber);
         if (profileCards[profileNumber] != null)
@@ -195,6 +196,7 @@ public class ProfileUIManager : MonoBehaviour
 
     public void DeleteProfile(ProfileCardData cardData)
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         ////Destroy Profile Card
         //Destroy(profileCards[cardData.profileNumber]);
         //profileCards[cardData.profileNumber] = null;
@@ -215,6 +217,7 @@ public class ProfileUIManager : MonoBehaviour
 
     public void ConfirmDelete()
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         //Destroy Profile Card
         Destroy(profileCards[profileToDelete.profileNumber]);
         profileCards[profileToDelete.profileNumber] = null;
@@ -236,6 +239,7 @@ public class ProfileUIManager : MonoBehaviour
 
     public void CancelDelete()
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         //Profile not to deleted, remove it
         profileToDelete = null;
 

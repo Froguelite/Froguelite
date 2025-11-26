@@ -26,6 +26,15 @@ public class OrbitalFlyManager : MonoBehaviour
             return;
         }
         Instance = this;
+        
+        // Subscribe to reset event
+        GameManager.ResetPlayerState += RemoveAllOrbitals;
+    }
+
+    private void OnDestroy()
+    {
+        // Unsubscribe from reset event
+        GameManager.ResetPlayerState -= RemoveAllOrbitals;
     }
 
     /// <summary>
@@ -76,6 +85,24 @@ public class OrbitalFlyManager : MonoBehaviour
     {
         activeOrbitals.Remove(orbital);
         RecalculateOrbitalPositions();
+    }
+
+    /// <summary>
+    /// Removes all orbital flies.
+    /// </summary>
+    public void RemoveAllOrbitals()
+    {
+        // Destroy all active orbitals
+        for (int i = activeOrbitals.Count - 1; i >= 0; i--)
+        {
+            if (activeOrbitals[i] != null)
+            {
+                Destroy(activeOrbitals[i].gameObject);
+            }
+        }
+        
+        // Clear the list
+        activeOrbitals.Clear();
     }
 }
 

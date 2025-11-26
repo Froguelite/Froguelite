@@ -338,6 +338,7 @@ public class RoomManager : MonoBehaviour
             else
                 clearText.SetText("GLADE CLEAR!");
             clearText.StartAnimation();
+            AudioManager.Instance.PlaySound(TravelSound.RoomClear);
         }
     }
 

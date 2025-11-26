@@ -29,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isSickFlyActive = false; // Track if sick fly effect is active
     private Color sickFlyTintMultiplier = new Color(0.7f, 1f, 0.7f, 1f); // Green tint multiplier for sick fly
     private bool isIceTintActive = false; // Track if ice/reduced friction effect is active
-    private Color iceTintMultiplier = new Color(0.8f, 0.9f, 1f, 1f); // Light blue tint multiplier for ice
+    private Color iceTintMultiplier = new Color(0.7f, 0.7f, 1f, 1f); // Light blue tint multiplier for ice
 
     private bool isManualMoving = false;
     private Vector3 manualMoveTarget;
@@ -370,6 +370,8 @@ public class PlayerMovement : MonoBehaviour
         
         // Play dash animation
         PlayerAnimationController.Instance.PlayDashAnimation(dashDirection);
+
+        AudioManager.Instance.PlaySound(PlayerSound.Dodge, 0.3f);
     }
 
 
@@ -624,6 +626,15 @@ public class PlayerMovement : MonoBehaviour
             {
                 iceParticles.Stop();
             }
+        }
+        
+        // Clear drunk effect
+        if (useDrunkMovement)
+        {
+            useDrunkMovement = false;
+            drunkOffset = Vector2.zero;
+            drunkOffsetTarget = Vector2.zero;
+            drunkOffsetChangeTimer = 0f;
         }
         
         // Reset to original color

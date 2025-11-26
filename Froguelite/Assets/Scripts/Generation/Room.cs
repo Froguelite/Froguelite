@@ -158,6 +158,8 @@ public class Room : MonoBehaviour
     // Called when the player enters the room
     public void OnPlayerEnter()
     {
+        PlayRoomMusicOverride();
+
         if (enemies.Count == 0)
             return;
 
@@ -165,6 +167,30 @@ public class Room : MonoBehaviour
         foreach (IEnemy enemy in enemies)
         {
             enemy.BeginPlayerChase();
+        }
+    }
+
+
+    // Plays room-specific music override if applicable
+    private void PlayRoomMusicOverride()
+    {
+        switch (roomData.roomType)
+        {
+            case RoomType.Shop:
+            case RoomType.Fly:
+            case RoomType.Totem:
+                AudioManager.Instance.PlayOverrideMusic(MusicType.Mystic);
+                break;
+            case RoomType.SubZoneBoss:
+                if (enemies.Count > 0)
+                    AudioManager.Instance.PlayOverrideMusic(MusicType.SubBoss);
+                break;
+            case RoomType.BossPortal:
+                AudioManager.Instance.PlayOverrideMusic(MusicType.Portal);
+                break;
+            default:
+                AudioManager.Instance.ClearOverrideMusic();
+                break;
         }
     }
 
@@ -249,6 +275,7 @@ public class Room : MonoBehaviour
     private void OnSubZoneBossDefeated()
     {
         Debug.Log("Sub-zone boss defeated!");
+        AudioManager.Instance.ClearOverrideMusic();
         // Open the final door when the sub-zone boss is defeated
         if (subZoneFinalDoor != null)
         {

@@ -33,6 +33,7 @@ public class AttackOverlapHandler : MonoBehaviour
 
             if (enemy != null && !enemy.isDead)
             {
+                AudioManager.Instance.PlaySound(CombatSound.TongueHit);
                 enemy.DamageEnemy(StatsManager.Instance.playerDamage.GetValue(), StatsManager.Instance.playerKnockback.GetValue());
                 
                 // Apply poison if Sick Fly is active
@@ -59,6 +60,7 @@ public class AttackOverlapHandler : MonoBehaviour
 
             if (boss != null)
             {
+                AudioManager.Instance.PlaySound(CombatSound.TongueHit);
                 boss.TakeDamage(Mathf.FloorToInt(StatsManager.Instance.playerDamage.GetValue()));
                 PlayerAttack.Instance.StopTongueExtension(false);
             }
@@ -70,6 +72,7 @@ public class AttackOverlapHandler : MonoBehaviour
             Door door = collision.GetComponent<Door>();
             if (door != null)
             {
+                //AudioManager.Instance.PlaySound(SoundType.TongueHit);
                 door.OnInteract();
             }
             else
@@ -77,6 +80,7 @@ public class AttackOverlapHandler : MonoBehaviour
                 SubZoneFinalDoor finalDoor = collision.GetComponent<SubZoneFinalDoor>();
                 if (finalDoor != null)
                 {
+                    //AudioManager.Instance.PlaySound(SoundType.TongueHit);
                     finalDoor.OnInteract();
                 }
             }
@@ -99,9 +103,9 @@ public class AttackOverlapHandler : MonoBehaviour
 
             if (totem != null)
             {
-                totem.OnInteract();
                 if (totem.GetCurrentState() == Totem.TotemState.Idle)
                     PlayerAttack.Instance.StopTongueExtension(false);
+                totem.OnInteract();
             }
         }
         // Foliage
