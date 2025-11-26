@@ -100,18 +100,21 @@ public class UIManager : MonoBehaviour
 
     public void OnStartGameClick()
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         //Temporary: Switch to Profile Menu
         OnProfilesClick();
     }
 
     public void OnMainMenuClick()
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         //Temporary: Switch to Profile Menu
         OnProfilesClick();
     }
 
     public void OnBackClick()
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         //Switch to start panel if current == profile and previous == pause
         //  Will happen when game is quit, cannot go back to game then
         if(currentPanel == UIPanels.ProfileMenu && previousPanel == UIPanels.PauseMenu)
@@ -126,6 +129,7 @@ public class UIManager : MonoBehaviour
 
     public void OnProfilesClick()
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         //Switch to Profile Menu panel
         PanelSwitch(UIPanels.ProfileMenu);
 
@@ -135,12 +139,14 @@ public class UIManager : MonoBehaviour
 
     public void OnQuitClick()
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         //Suppress await warning _=
         _= LevelManager.Instance.LoadScene(LevelManager.Scenes.MenuScene, LevelManager.LoadEffect.LoadingScreen);
     }
 
     public void OnSettingsClick()
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         //Switch to Settings Panel
         PanelSwitch(UIPanels.SettingsScreen);
     }
@@ -155,6 +161,7 @@ public class UIManager : MonoBehaviour
     //Use enum instead string for setting scene to load
     public async void OnProfileStartClick(LevelManager.Scenes sceneToLoad)
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         //Switch to Loading Screen and call LevelManager to load scene
         PanelSwitch(UIPanels.LoadingScreen);
         LevelManager.Instance.useLoadedVal = true;
@@ -179,6 +186,7 @@ public class UIManager : MonoBehaviour
                 // If no panel is shown, pause the game
                 Time.timeScale = 0f;
                 PanelSwitch(UIPanels.PauseMenu);
+                AudioManager.Instance.PlaySound(PlayerSound.UiClick);
                 break;
             case UIPanels.PauseMenu:
                 // If pause menu is already open, resume the game
@@ -192,6 +200,7 @@ public class UIManager : MonoBehaviour
 
     public void OnResumeClick()
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         Time.timeScale = 1f;
         //Switch back to previous panel
         PanelSwitch(UIPanels.None);
@@ -205,6 +214,7 @@ public class UIManager : MonoBehaviour
 
     public void OnExitClick()
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
@@ -295,6 +305,7 @@ public class UIManager : MonoBehaviour
 
     public void ClosePopUpPanel()
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         if (uiPanels[(int)UIPanels.PopUpScreen].panelObject != null)
             uiPanels[(int)UIPanels.PopUpScreen].panelObject.SetActive(false);
     }

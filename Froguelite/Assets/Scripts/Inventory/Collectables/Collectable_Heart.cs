@@ -25,6 +25,8 @@ public class Collectable_Heart : GroundCollectable
         // Prevent duplicate collection
         if (hasBeenCollected) return;
         hasBeenCollected = true;
+
+        AudioManager.Instance.PlaySound(CollectibleSound.HeartCollect);
         
         // Immediately disable collider and hide visual
         Collider2D collider = GetComponent<Collider2D>();

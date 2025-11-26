@@ -159,8 +159,7 @@ public class GameSettings : MonoBehaviour
         audioVolume = (int) audioSlider.value;
         volumeLevelText.text = audioVolume.ToString() + "%";
 
-        //TO DO: Call AudioManager to change the volume level
-        AudioManager.SetVolumeLevel((float) audioVolume/100); //Need to check
+        AudioManager.Instance.SetVolumeLevel((float) audioVolume/100); //Need to check
 
         //Save changes to Player Prefs
         PlayerPrefs.SetString(SettingType.Audio.ToString(), audioVolume.ToString());

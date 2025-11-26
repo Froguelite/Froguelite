@@ -185,6 +185,7 @@ public class StumpUnlocksShop : MonoBehaviour
         {
             // Not enough currency - shake the HUD to indicate this
             GoldenFlyHUD.Instance.ShakeDisplay();
+            AudioManager.Instance.PlaySound(FlySlotsSound.FlySlotsInvalid);
             return;
         }
 
@@ -205,9 +206,21 @@ public class StumpUnlocksShop : MonoBehaviour
         }
         
         flyToBuy.ManualMoveToPosition(flyOutputPosition.position, capsuleMidpointPosition.position, 2f);
+        
+        StartCoroutine(EnableCollectionCo(flyToBuy));
         flyToBuy.SetCanCollect(true);
 
         StartCoroutine(LeverCooldownCo());
+    }
+
+
+    private IEnumerator EnableCollectionCo(PowerFly fly)
+    {
+        AudioManager.Instance.PlaySound(FlySlotsSound.FlySlotsLeverDown);
+        yield return new WaitForSeconds(0.2f);
+        AudioManager.Instance.PlaySound(FlySlotsSound.FlySlotsStart);
+        yield return new WaitForSeconds(.4f);
+        fly.SetCanCollect(true);
     }
     
 
@@ -220,6 +233,7 @@ public class StumpUnlocksShop : MonoBehaviour
 
         leverRenderer.sprite = leverUpSprite;
         leverInCooldown = false;
+        AudioManager.Instance.PlaySound(FlySlotsSound.FlySlotsLeverUp);
     }
 
 

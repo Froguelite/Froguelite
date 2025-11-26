@@ -487,6 +487,7 @@ MonoBehaviour:
   knockbackDuration: 0.1
   spriteRenderer: {fileID: 2297959734945602373}
   defeatSmokeAnimator: {fileID: 7038732763752294825}
+  deathSound: {fileID: 8300000, guid: 243311da2863634409485986b15df8d7, type: 3}
   sickParticles: {fileID: 8054359847325362234}
   onDeathEvent:
     m_PersistentCalls:

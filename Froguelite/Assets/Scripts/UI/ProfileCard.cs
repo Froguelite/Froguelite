@@ -63,6 +63,7 @@ public class ProfileCard : MonoBehaviour
 
     public void OnStartProfile()
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         // Set the active profile in SaveManager before loading the scene
         SaveManager.SetActiveProfile(profileData.profileNumber);
         
@@ -71,6 +72,7 @@ public class ProfileCard : MonoBehaviour
 
     public void OnDeleteProfile()
     {
+        AudioManager.Instance.PlaySound(PlayerSound.UiClick);
         ProfileUIManager.Instance.DeleteProfile(profileData);
     }
 

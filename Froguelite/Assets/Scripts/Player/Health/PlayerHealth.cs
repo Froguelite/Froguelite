@@ -125,6 +125,8 @@ public class PlayerHealth : MonoBehaviour
 
             onHealthChanged.Invoke();
             onHealthDamaged.Invoke();
+
+            AudioManager.Instance.PlaySound(PlayerSound.PlayerHurt, 1.6f);
         }
 
         if (currentHealth <= 0)
@@ -160,6 +162,10 @@ public class PlayerHealth : MonoBehaviour
     {
         if (GameManager.Instance.currentPlayerState == GameManager.PlayerState.Dead)
             return;
+
+        AudioManager.Instance.PlaySound(PlayerSound.PlayerDeath);
+        AudioManager.Instance.PlayMusic(MusicType.None);
+        AudioManager.Instance.ClearOverrideMusic();
             
         currentHealth = 0;
         Debug.Log("Player Died :(");

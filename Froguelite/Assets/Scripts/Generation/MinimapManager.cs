@@ -14,9 +14,12 @@ public class MinimapManager : MonoBehaviour
 
     public static MinimapManager Instance { get; private set; }
 
-    [SerializeField] private Color landColor = Color.green;
-    [SerializeField] private Color waterColor = Color.blue;
-    [SerializeField] private Color unexploredColor = Color.gray;
+    [SerializeField] private Color swampLandColor = Color.green;
+    [SerializeField] private Color forestLandColor = Color.green;
+    [SerializeField] private Color swampWaterColor = Color.blue;
+    [SerializeField] private Color forestWaterColor = Color.blue;
+    [SerializeField] private Color swampUnexploredColor = Color.gray;
+    [SerializeField] private Color forestUnexploredColor = Color.gray;
 
     [SerializeField] private Image minimapDisplayImg;
     [SerializeField] private Image fullMapDisplayImg;
@@ -138,6 +141,9 @@ public class MinimapManager : MonoBehaviour
     public void InitializeMinimap(char[,] landTileArray)
     {
         this.landTileArray = landTileArray;
+        Color landColor = LevelManager.Instance.currentZone == 0 ? swampLandColor : forestLandColor;
+        Color waterColor = LevelManager.Instance.currentZone == 0 ? swampWaterColor : forestWaterColor;
+        Color unexploredColor = LevelManager.Instance.currentZone == 0 ? swampUnexploredColor : forestUnexploredColor;
 
         if (landTileArray == null)
         {
@@ -252,6 +258,11 @@ public class MinimapManager : MonoBehaviour
     {
         if (minimapTexture == null || exploredTileArray == null || landTileArray == null)
             return;
+
+        Color landColor = LevelManager.Instance.currentZone == 0 ? swampLandColor : forestLandColor;
+        Color waterColor = LevelManager.Instance.currentZone == 0 ? swampWaterColor : forestWaterColor;
+        Color unexploredColor = LevelManager.Instance.currentZone == 0 ? swampUnexploredColor : forestUnexploredColor;
+
 
         // Get texture dimensions
         int width = minimapTexture.width;

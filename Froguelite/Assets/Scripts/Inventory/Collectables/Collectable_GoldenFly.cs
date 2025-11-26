@@ -10,6 +10,8 @@ public class Collectable_GoldenFly : GroundCollectable
         // Prevent duplicate collection
         if (hasBeenCollected) return;
         hasBeenCollected = true;
+
+        AudioManager.Instance.PlaySound(CollectibleSound.GoldenCollect);
         
         // Immediately disable collider and hide visual
         Collider2D collider = GetComponent<Collider2D>();

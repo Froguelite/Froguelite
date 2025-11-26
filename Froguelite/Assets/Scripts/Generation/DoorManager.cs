@@ -76,6 +76,10 @@ public class DoorManager : MonoBehaviour
     public void OnTravelStarted()
     {
         CloseAllDoors(true);
+        if (LevelManager.Instance.currentZone == 1)
+            AudioManager.Instance.PlaySoundIndefinite(TravelSound.LeafTravel);
+        else
+            AudioManager.Instance.PlaySoundIndefinite(TravelSound.WaterTravel, 0.2f);
     }
 
 
@@ -91,6 +95,10 @@ public class DoorManager : MonoBehaviour
     // Called when the player finishes travelling through a door
     public void OnTravelEnded()
     {
+        AudioManager.Instance.StopIndefiniteSound(TravelSound.LeafTravel);
+        AudioManager.Instance.StopIndefiniteSound(TravelSound.WaterTravel);
+        AudioManager.Instance.StopIndefiniteSound(TravelSound.BubbleTravel);
+        
         // Notify the new room that the player has entered it
         RoomManager.Instance.GetRoomAtWorldPosition(PlayerMovement.Instance.transform.position)?.OnDoorTransitionComplete();
     }

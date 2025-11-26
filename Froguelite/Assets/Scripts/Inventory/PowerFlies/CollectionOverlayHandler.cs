@@ -62,6 +62,10 @@ public class CollectionOverlayHandler : MonoBehaviour
     // Triggers the overlay to show that a power fly has been collected
     public void ShowPowerFlyCollected(PowerFlyData powerFlyData, bool showUnlockVisual = false)
     {
+        float effectiveDisplayDuration = displayDuration;
+        if (showUnlockVisual)
+            effectiveDisplayDuration += 2.5f; // Extra time for lock animation
+
         LeanTween.cancel(overlayCanvasGroup.gameObject);
         LeanTween.cancel(contentParent.gameObject);
         LeanTween.cancel(lockImage.gameObject);
@@ -73,7 +77,7 @@ public class CollectionOverlayHandler : MonoBehaviour
         overlayCanvasGroup.alpha = 0f;
         overlayCanvasGroup.LeanAlpha(1f, fadeDuration).setOnComplete(() =>
         {
-            overlayCanvasGroup.LeanAlpha(0f, fadeDuration).setDelay(displayDuration);
+            overlayCanvasGroup.LeanAlpha(0f, fadeDuration).setDelay(effectiveDisplayDuration);
         });
 
         contentParent.localPosition = new Vector3(contentParent.localPosition.x, contentStartY - contentMoveDistance, contentParent.localPosition.z);
@@ -130,7 +134,7 @@ public class CollectionOverlayHandler : MonoBehaviour
         lockCanvGroup.alpha = 1f;
         lockImage.sprite = lockedSprite;
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
 
         lockImage.sprite = unlockedSprite;
         lockImage.transform.LeanMoveLocalX(-100f + lockStartPos.x, 0.6f).setEaseOutQuad();

@@ -86,6 +86,10 @@ public class ShopPedestalAlternate : GroundCollectable
         {
             BuyItem();
         }
+        else
+        {
+            AudioManager.Instance.PlaySound(FlySlotsSound.FlySlotsInvalid);
+        }
     }
 
 
@@ -97,6 +101,7 @@ public class ShopPedestalAlternate : GroundCollectable
             if (addWoodpeckerOnPurchase)
             {
                 InventoryManager.Instance.AddWoodpeckers(1);
+                AudioManager.Instance.PlaySound(CollectibleSound.WoodpeckerCollect);
             }
             else
             {
@@ -105,12 +110,14 @@ public class ShopPedestalAlternate : GroundCollectable
                 if (healPlayerOnPurchase)
                 {
                     StatsManager.Instance.playerHealth.HealPlayer(2);
+                    AudioManager.Instance.PlaySound(CollectibleSound.HeartCollect);
                 }
             }
         }
         else if (powerFlyData != null)
         {
             InventoryManager.Instance.AddPowerFly(powerFlyData);
+            AudioManager.Instance.PlaySound(CollectibleSound.PowerFlyCollect);
         }
         else
         {

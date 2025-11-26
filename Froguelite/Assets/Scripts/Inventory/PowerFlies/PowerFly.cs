@@ -195,7 +195,7 @@ public class PowerFly : MonoBehaviour, ICollectable
     /// </summary>
     private IEnumerator ManualMoveCoroutine(Vector3 endPosition, Vector3 midpoint, float duration)
     {
-        Vector3 startPosition = buzzOffset.position;
+        Vector3 startPosition = transform.position;
         float elapsedTime = 0f;
         
         while (elapsedTime < duration)
@@ -211,13 +211,13 @@ public class PowerFly : MonoBehaviour, ICollectable
             // where P₀ = start, P₁ = midpoint, P₂ = end
             Vector3 newPosition = QuadraticBezier(startPosition, midpoint, endPosition, smoothT);
             
-            buzzOffset.position = newPosition;
+            transform.position = newPosition;
             
             yield return null;
         }
         
         // Ensure we end exactly at the target position
-        buzzOffset.position = endPosition;
+        transform.position = endPosition;
         
         // Update original position so if buzzing restarts, it buzzes around the new position
         originalPosition = endPosition;
@@ -293,6 +293,7 @@ public class PowerFly : MonoBehaviour, ICollectable
     // On collect, apply the effect and destroy the game object
     public void OnCollect()
     {
+        Debug.Log("TRING TO COLLECT, canCollect=" + canCollect);
         if (!canCollect) return;
         
         // Prevent duplicate collection
@@ -317,6 +318,15 @@ public class PowerFly : MonoBehaviour, ICollectable
         
         StopBuzzing();
         StopBobbingAndRotation();
+
+        if (isCapsuleFly)
+        {
+            AudioManager.Instance.PlaySound(FlySlotsSound.FlySlotsCollect);
+        }
+        else
+        {
+            AudioManager.Instance.PlaySound(CollectibleSound.PowerFlyCollect);
+        }
 
         if (!isCapsuleFly)
         {
