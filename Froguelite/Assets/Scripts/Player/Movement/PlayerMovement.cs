@@ -678,6 +678,21 @@ public class PlayerMovement : MonoBehaviour
                 iceParticles.Stop();
             }
         }
+
+        // Clear friction effect
+        if (useReducedFriction)
+        {
+            SetReducedFriction(false);
+        }
+
+        // Clear jitter effect
+        if (useJitterAnimation)
+        {
+            useJitterAnimation = false;
+            jitterOffset = Vector3.zero;
+            jitterOffsetTarget = Vector3.zero;
+            jitterChangeTimer = 0f;
+        }
         
         // Clear drunk effect
         if (useDrunkMovement)
