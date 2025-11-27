@@ -387,10 +387,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 105445440016445791, guid: 9347091632a430a4199d4033aa36ce31, type: 3}
-      propertyPath: playMusicOnStart
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3474332523444214854, guid: 9347091632a430a4199d4033aa36ce31, type: 3}
       propertyPath: m_Name
       value: MenuCanvas
