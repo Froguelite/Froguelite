@@ -387,9 +387,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 105445440016445791, guid: 9347091632a430a4199d4033aa36ce31, type: 3}
-      propertyPath: playMusicOnStart
-      value: 1
+    - target: {fileID: 381510917592002783, guid: 9347091632a430a4199d4033aa36ce31, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 381510917592002783, guid: 9347091632a430a4199d4033aa36ce31, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569123856497751678, guid: 9347091632a430a4199d4033aa36ce31, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569123856497751678, guid: 9347091632a430a4199d4033aa36ce31, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2569123856497751678, guid: 9347091632a430a4199d4033aa36ce31, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3474332523444214854, guid: 9347091632a430a4199d4033aa36ce31, type: 3}
       propertyPath: m_Name

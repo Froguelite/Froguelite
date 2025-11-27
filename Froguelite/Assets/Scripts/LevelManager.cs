@@ -370,7 +370,7 @@ public class LevelManager : MonoBehaviour
     private void IncrementZoneProgression()
     {
         currentSubZone++;
-        if (currentSubZone > 0)
+        if (currentSubZone > 2)
         {
             currentSubZone = 0;
             currentZone--;
