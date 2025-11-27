@@ -477,6 +477,12 @@ MonoBehaviour:
   - soundType: 4
     soundsList:
     - {fileID: 8300000, guid: 7e0c7bc530cd75d4da29f1135c8beb2e, type: 3}
+  - soundType: 5
+    soundsList:
+    - {fileID: 8300000, guid: e82b9ae8e18a86f4b9c513f7348179fc, type: 3}
+  - soundType: 6
+    soundsList:
+    - {fileID: 8300000, guid: 8332fb6c475cfa54fa666b205e795caf, type: 3}
   playerAudioList:
   - soundType: 0
     soundsList:
@@ -495,6 +501,30 @@ MonoBehaviour:
   - soundType: 3
     soundsList:
     - {fileID: 8300000, guid: a0c56400135880c4fa9c26fbb72c285c, type: 3}
+  bossAudioList:
+  - soundType: 0
+    soundsList:
+    - {fileID: 8300000, guid: cc2305808377b154fb762ae8909c3d84, type: 3}
+  - soundType: 1
+    soundsList:
+    - {fileID: 8300000, guid: 0fa319fd47dbe05468f9d230283a7fb9, type: 3}
+  - soundType: 2
+    soundsList:
+    - {fileID: 8300000, guid: 1acce2ceda9d6284db0344f15f3766e1, type: 3}
+  - soundType: 3
+    soundsList:
+    - {fileID: 8300000, guid: 18241ad8ab57cd04a9b649f02dd6207c, type: 3}
+  - soundType: 4
+    soundsList:
+    - {fileID: 8300000, guid: 34bb345f04cf884419ba47211cb02b39, type: 3}
+  - soundType: 5
+    soundsList:
+    - {fileID: 8300000, guid: 0fa319fd47dbe05468f9d230283a7fb9, type: 3}
+  - soundType: 6
+    soundsList:
+    - {fileID: 8300000, guid: b1234f2a493f31d439739aea2d877b37, type: 3}
+    - {fileID: 8300000, guid: 5404def575dc4e94c8c2c770d8dd8a22, type: 3}
+    - {fileID: 8300000, guid: db8a855bfa027124d9f118aa2be6713e, type: 3}
   musicList:
   - musicType: 0
     music: {fileID: 8300000, guid: ec7cd633def56e246acc8a4bc39996b8, type: 3}
@@ -519,6 +549,9 @@ MonoBehaviour:
     optionalAmbiance: {fileID: 0}
   - musicType: 7
     music: {fileID: 8300000, guid: c3a3ecc3b32fe1e41bcadf6f70445f8c, type: 3}
+    optionalAmbiance: {fileID: 0}
+  - musicType: 8
+    music: {fileID: 8300000, guid: 0450993edfabb844ab3461192c1ae47a, type: 3}
     optionalAmbiance: {fileID: 0}
   audioSourcePrefab: {fileID: 6561367752352568853, guid: 101c4530590235f42a0182a1befad5bd, type: 3}
   musicSource: {fileID: 413736942279112608}

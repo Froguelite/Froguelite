@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PF_LilypadFly
   m_EditorClassIdentifier: Assembly-CSharp::PowerFlyData
   flyID: 79a0f606-8a41-4a1e-91d4-e36148f56bd9
-  displayImg: {fileID: -6636963309793451902, guid: 8d149cdd1b697924bade9f454a644dbf, type: 3}
+  displayImg: {fileID: -2267430017629061140, guid: f937d2831e8f4af4b8c4a8909c39fdb0, type: 3}
   powerFlyName: Lilypad Fly
   description: Anti-projectile technology
   flyRarity: 2
