@@ -1253,7 +1253,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 4948625964396600636}
         m_TargetAssemblyTypeName: GameSettings, Assembly-CSharp
         m_MethodName: ToggleFullscreen
         m_Mode: 1
@@ -2309,6 +2309,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 158265291279230698, guid: 0c262dd52a4151f4eb94b77533f46be9, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4948625964396600636}
+    - target: {fileID: 158265291279230698, guid: 0c262dd52a4151f4eb94b77533f46be9, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
@@ -3193,6 +3197,10 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8351792085640906498, guid: 44aab1983a9c4fd4fa99796717f0969c, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4948625964396600636}
     - target: {fileID: 8351792085640906498, guid: 44aab1983a9c4fd4fa99796717f0969c, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
