@@ -39,7 +39,8 @@ public class LevelManager : MonoBehaviour
         Leaves
     }
 
-    private string[] sceneNames = { "MainScene", "MenuScene", "BossScene", "StumpScene", "MinibossRushScene" };
+    //private string[] sceneNames = { "MainScene", "MenuScene", "BossScene", "StumpScene", "MinibossRushScene" };
+    private string[] sceneNames = { "TestMainScene-AA", "TestMenuScene-AA", "TestBossScene-AA", "TestStumpScene-AA", "MinibossRushScene" }; //For testing purposes
 
     #endregion
 
@@ -65,6 +66,9 @@ public class LevelManager : MonoBehaviour
         //Unsubscribe to save and load
         SaveManager.SaveData -= SaveZones;
         SaveManager.LoadZone -= LoadZones;
+
+        //Unsubscribe from scene loaded event
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -99,6 +103,7 @@ public class LevelManager : MonoBehaviour
             UIManager.Instance.PanelSwitch(UIPanels.LoadingScreen);
         }
         
+        SceneManager.sceneLoaded += OnSceneLoaded;
         var scene = SceneManager.LoadSceneAsync(sceneNames[(int) sceneName]);
         scene.allowSceneActivation = false;
 
@@ -164,11 +169,12 @@ public class LevelManager : MonoBehaviour
                 {
                     Debug.Log("Not using loaded value, save data at this stage instead");
                     SaveManager.WriteToFile(); //Save when entering a game scene might conflict with loading
-                } else
-                {
-                    //Generation with loaded zone complete, return to normal
-                    useLoadedVal = false;
-                }
+                } 
+                //else
+                //{
+                //    //Generation with loaded zone complete, return to normal
+                //    useLoadedVal = false;
+                //}
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
                 break;
             case Scenes.MenuScene:
@@ -204,7 +210,15 @@ public class LevelManager : MonoBehaviour
                 ResetZoneProgression();
                 FindAnyObjectByType<StumpManager>().LoadStump();
                 GameManager.Instance.InvokeReset();
-                SaveManager.WriteToFile(); //Save when entering stump scene
+                if (!useLoadedVal)
+                {
+                    //Mainly used for reset and saving after winning the game
+                    Debug.Log("Not using loaded value, allowed for saved data to be overwritten");
+                    SaveManager.WriteToFile(); //Save when entering stump scene
+                    //Debug.Log("Calling load power up");
+                    //PowerUpManager.Instance.LoadPowerUps(); //Values are already loaded from file, safe to call
+                }
+                //SaveManager.WriteToFile(); //Save when entering stump scene
                 UIManager.Instance.OnSceneLoadReturn(UIPanels.None);
 
                 useLoadedVal = false; //if start of profile play
@@ -214,7 +228,7 @@ public class LevelManager : MonoBehaviour
                 {
                     GoldenFlyHUD.Instance.ForceShow();
                 }
-
+                
                 int profileNum = SaveManager.activeProfile;
                 ProfileUIManager.Instance.UpdateSceneToLoadForProfile(profileNum, Scenes.StumpScene);
                 Debug.Log("Changed load scene to StumpScene");
@@ -277,8 +291,21 @@ public class LevelManager : MonoBehaviour
         AudioManager.Instance.ClearOverrideMusic();
         PlayMusicForScene(sceneName);
 
+        //Generation with loaded zone complete, return to normal
+        useLoadedVal = false;
+
         PlayerMovement.Instance.SetCanMove(true);
         PlayerAttack.Instance.SetCanAttack(true);
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log($"Scene loaded: {scene.name}");
+        if (scene.name == sceneNames[(int) Scenes.StumpScene])
+        {
+            PowerUpManager.Instance.LoadPowerUps();
+            Debug.Log("Calling load power up on scene loaded");
+        }
     }
 
     private async Task GenerateZoneAndSetup(int zone, int subZone)

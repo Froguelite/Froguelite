@@ -50,7 +50,7 @@ public class StatsManager : MonoBehaviour
         }
     }
 
-    public int playerLevel { get; private set; } = 1;
+    public int playerLevel { get; private set; } //= 1;
 
     public PlayerHealth playerHealth;
     private int defaultCurrentHealth = -1;
@@ -99,6 +99,8 @@ public class StatsManager : MonoBehaviour
 
         SaveManager.SaveData += SaveHealth;
         SaveManager.LoadData += LoadHealth; //Load funtion will call set stats
+        SaveManager.SaveData += SavePlayerLevel;
+        SaveManager.LoadData += LoadPlayerLevel;
 
         //Subscribe to reset player on win or death
         GameManager.ResetPlayerState += SetHealthToDefault;
@@ -115,6 +117,8 @@ public class StatsManager : MonoBehaviour
 
         SaveManager.SaveData -= SaveHealth;
         SaveManager.LoadData -= LoadHealth;
+        SaveManager.SaveData -= SavePlayerLevel;
+        SaveManager.LoadData -= LoadPlayerLevel;
 
         //Unsubscribe to reset player on win or death
         GameManager.ResetPlayerState -= SetHealthToDefault;
@@ -125,7 +129,7 @@ public class StatsManager : MonoBehaviour
     // Sets all stats to their default values
     public void SetStatsToDefault()
     {
-        playerLevel = 1;
+        //playerLevel = 1;
 
         if (godmode) {
             SetStatsToGodmode();
@@ -166,7 +170,7 @@ public class StatsManager : MonoBehaviour
     // Sets all stats to godmode values
     public void SetStatsToGodmode()
     {
-        playerLevel = 1;
+        //playerLevel = 1;
 
         //playerHealth.SetMaxHealth(20, false);
         //playerHealth.SetCurrentHealth(20, false);
@@ -238,5 +242,49 @@ public class StatsManager : MonoBehaviour
         playerHealth.SetCurrentHealth(defaultCurrentHealth, false);
     }
 
+    #endregion
+
+    #region SAVE AND LOAD PLAYER LEVEL
+    private void SavePlayerLevel()
+    {
+        SaveManager.SaveForProfile<int>(SaveVariable.PlayerLevel, playerLevel);
+        Debug.Log($"[StatsManager] Saved player level {playerLevel} to profile {SaveManager.activeProfile}");
+    }
+
+    private void LoadPlayerLevel()
+    {
+        try
+        {
+            playerLevel = SaveManager.LoadForProfile<int>(SaveVariable.PlayerLevel);
+            Debug.Log($"[StatsManager] Loaded player level {playerLevel} from profile {SaveManager.activeProfile}");
+        }
+        catch (System.Collections.Generic.KeyNotFoundException)
+        {
+            // No saved data yet, use default value (1)
+            playerLevel = 1;
+            Debug.Log($"[StatsManager] No saved player level found, defaulting to level 1");
+        }
+        catch (System.Exception ex)
+        {
+            // Handle other exceptions (e.g., no active profile set)
+            Debug.LogWarning($"[StatsManager] Failed to load player level: {ex.Message}");
+            playerLevel = 1;
+        }
+    }
+    #endregion
+
+    #region UPGRADE PLAYER LEVEL
+    public void UpgradePlayerLevel()
+    {
+        playerLevel += 1;
+        defaultCurrentHealth += 2;
+        defaultMaxHealth += 2;
+        HealthLevel += 2;
+
+        playerHealth.SetMaxHealth(defaultMaxHealth, true);
+        playerHealth.SetCurrentHealth(defaultCurrentHealth, true);
+
+        Debug.Log($"[StatsManager] Player leveled up to level {playerLevel}");
+    }
     #endregion
 }

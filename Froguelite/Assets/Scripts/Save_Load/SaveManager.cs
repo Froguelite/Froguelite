@@ -140,6 +140,7 @@ public class SaveManager : MonoBehaviour
         }
 
         SaveToFile();
+        Debug.Log("[SaveManager] Data saved to file.");
     }
 
     // Public load entry point for after scene generation (objects don't exist before generation)
@@ -258,5 +259,6 @@ public enum SaveVariable
     GoldenFlies,
     RandomSeed,
     CurrentZone,
-    CurrentSubZone
+    CurrentSubZone,
+    PlayerLevel
 }

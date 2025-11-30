@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &2522575998642275521
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 321538535000620829, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_Name
+      value: Collectable_PowerUp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3225412905605876153, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 8.29
+      objectReference: {fileID: 0}
+    - target: {fileID: 3225412905605876153, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 10.27
+      objectReference: {fileID: 0}
+    - target: {fileID: 3225412905605876153, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3225412905605876153, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3225412905605876153, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3225412905605876153, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3225412905605876153, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3225412905605876153, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3225412905605876153, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3225412905605876153, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6116084496106430310, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 7163965599216893010, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7163965599216893010, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7163965599216893010, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7671069595912888355, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: onPlayerOverlap.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2977101779054696054}
+    - target: {fileID: 7671069595912888355, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: onPlayerOverlap.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnCollect
+      objectReference: {fileID: 0}
+    - target: {fileID: 7671069595912888355, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      propertyPath: onPlayerOverlap.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Collectable_PowerUp, Assembly-CSharp
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 321538535000620829, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2977101779054696054}
+  m_SourcePrefab: {fileID: 100100000, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+--- !u!1 &2843926517144124380 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 321538535000620829, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+  m_PrefabInstance: {fileID: 2522575998642275521}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2977101779054696054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2843926517144124380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2e3085b0291ac440a727a83e7b4c54d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Collectable_PowerUp
+  spriteRenderer: {fileID: 8638273455492258727}
+  displayImg: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  rotationAmount: 20
+  rotationFrequency: 1
+  bobbingAmount: 0.1
+  bobbingFrequency: 1
+  doHeartbeat: 0
+--- !u!212 &8638273455492258727 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 6116084496106430310, guid: 1a0b6e0c998be474e90aa104f59af8f5, type: 3}
+  m_PrefabInstance: {fileID: 2522575998642275521}
+  m_PrefabAsset: {fileID: 0}

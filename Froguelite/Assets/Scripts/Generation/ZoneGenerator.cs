@@ -33,8 +33,8 @@ public class ZoneGenerator : MonoBehaviour
     private RoomData[,] roomGraph;
     private Dictionary<Vector2Int, Room> spawnedRooms = new Dictionary<Vector2Int, Room>();
     private char[,] combinedTileLayout; // Combined tile layout of the entire zone
-    private int randomSeed;
-    private bool useLoadedSeed = true;
+    //private int randomSeed;
+    //private bool useLoadedSeed = true;
 
     #endregion
 
@@ -62,36 +62,36 @@ public class ZoneGenerator : MonoBehaviour
 
     #endregion
 
-    #region SAVE AND LOAD RANDOM SEED
-    private void SaveRandomSeed()
-    {
-        SaveManager.SaveForProfile<int>(SaveVariable.RandomSeed, randomSeed);
-    }
+    //#region SAVE AND LOAD RANDOM SEED
+    //private void SaveRandomSeed()
+    //{
+    //    SaveManager.SaveForProfile<int>(SaveVariable.RandomSeed, randomSeed);
+    //}
 
-    private void LoadRandomSeed()
-    {
-        //First load player's current health
-        try
-        {
-            randomSeed = SaveManager.LoadForProfile<int>(SaveVariable.RandomSeed);
-            Debug.Log($"[ZoneGenerator] Loaded {randomSeed} random seed from profile {SaveManager.activeProfile}");
-        }
-        catch (System.Collections.Generic.KeyNotFoundException)
-        {
-            // No saved data yet, use random value
-            randomSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-            Debug.Log($"[ZoneGenerator] No saved random seed found, defaulting to random value {randomSeed}");
-        }
-        catch (System.Exception ex)
-        {
-            // Handle other exceptions (e.g., no active profile set)
-            Debug.LogWarning($"[ZoneGenerator] Failed to load current random seed: {ex.Message}");
-            randomSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-        }
-        useLoadedSeed = true;
-    }
+    //private void LoadRandomSeed()
+    //{
+    //    //First load player's current health
+    //    try
+    //    {
+    //        randomSeed = SaveManager.LoadForProfile<int>(SaveVariable.RandomSeed);
+    //        Debug.Log($"[ZoneGenerator] Loaded {randomSeed} random seed from profile {SaveManager.activeProfile}");
+    //    }
+    //    catch (System.Collections.Generic.KeyNotFoundException)
+    //    {
+    //        // No saved data yet, use random value
+    //        randomSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+    //        Debug.Log($"[ZoneGenerator] No saved random seed found, defaulting to random value {randomSeed}");
+    //    }
+    //    catch (System.Exception ex)
+    //    {
+    //        // Handle other exceptions (e.g., no active profile set)
+    //        Debug.LogWarning($"[ZoneGenerator] Failed to load current random seed: {ex.Message}");
+    //        randomSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+    //    }
+    //    useLoadedSeed = true;
+    //}
 
-    #endregion
+    //#endregion
 
     #region GENERATION
 
@@ -100,17 +100,19 @@ public class ZoneGenerator : MonoBehaviour
     public void GenerateZone(int zone, int subZone)
     {
         // TODO: Temporary, chooses a random seed every time
-        //Uses Loaded seed from profile only the first time, afterwards it will be randomly generated
-        if (useLoadedSeed)
-        {
-            UnityEngine.Random.InitState(randomSeed);
-            useLoadedSeed = false;
-        } else
-        {
-            randomSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-            UnityEngine.Random.InitState(randomSeed);
-            SaveManager.WriteToFile(); //Need to save the next seed for generation ?
-        }
+        ////Uses Loaded seed from profile only the first time, afterwards it will be randomly generated
+        //if (useLoadedSeed)
+        //{
+        //    UnityEngine.Random.InitState(randomSeed);
+        //    useLoadedSeed = false;
+        //} else
+        //{
+        //    randomSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        //    UnityEngine.Random.InitState(randomSeed);
+        //    SaveManager.WriteToFile(); //Need to save the next seed for generation ?
+        //}
+
+        UnityEngine.Random.InitState(UnityEngine.Random.Range(int.MinValue, int.MaxValue));
 
         roomGraph = RoomGraphGenerator.GetRoomGraph(zone, 8, subZone);
         combinedTileLayout = SpawnRoomsFromGraph(zone);

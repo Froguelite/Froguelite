@@ -203,6 +203,7 @@ public class StumpUnlocksShop : MonoBehaviour
             
             // Save immediately after purchase
             SaveManager.WriteToFile();
+            Debug.Log("[StumpUnlocksShop] Saved purchased flies and wrote to file");
         }
         
         flyToBuy.ManualMoveToPosition(flyOutputPosition.position, capsuleMidpointPosition.position, 2f);
