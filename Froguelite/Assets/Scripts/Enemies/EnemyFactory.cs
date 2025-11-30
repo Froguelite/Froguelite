@@ -95,7 +95,10 @@ public class EnemyFactory : MonoBehaviour
             {
                 // Choose a random enemy type from the possible enemies
                 EnemyBase enemyType = entry.possibleEnemies[Random.Range(0, entry.possibleEnemies.Count)];
-                Vector2 spawnPosition = room.GetRandomEnemySpawnPosition();
+                
+                // Get a spawn position that's at least 2 units away from the player
+                Vector2 spawnPosition = GetValidSpawnPosition(room, 2f);
+                
                 EnemyBase newEnemy = Instantiate(enemyType, spawnPosition, Quaternion.identity, room.transform);
                 newEnemy.InitializeEnemy(room);
                 spawnedEnemies.Add(newEnemy);
@@ -132,6 +135,36 @@ public class EnemyFactory : MonoBehaviour
         }
 
         return spawnedEnemies;
+    }
+
+
+    // Gets a valid spawn position that's at least minDistance away from the player
+    private Vector2 GetValidSpawnPosition(Room room, float minDistance)
+    {
+        const int maxAttempts = 20;
+        Vector2 spawnPosition;
+        
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            spawnPosition = room.GetRandomEnemySpawnPosition();
+            
+            if (PlayerMovement.Instance != null)
+            {
+                float distance = Vector2.Distance(spawnPosition, PlayerMovement.Instance.transform.position);
+                if (distance >= minDistance)
+                {
+                    return spawnPosition;
+                }
+            }
+            else
+            {
+                // If player doesn't exist, return any position
+                return spawnPosition;
+            }
+        }
+        
+        // If we couldn't find a valid position after max attempts, return the last attempt
+        return room.GetRandomEnemySpawnPosition();
     }
     
 
