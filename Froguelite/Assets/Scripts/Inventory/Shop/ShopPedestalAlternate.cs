@@ -118,6 +118,13 @@ public class ShopPedestalAlternate : GroundCollectable
         {
             InventoryManager.Instance.AddPowerFly(powerFlyData);
             AudioManager.Instance.PlaySound(CollectibleSound.PowerFlyCollect);
+            CollectionOverlayHandler.Instance.ShowPowerFlyCollected(powerFlyData, false);
+            PowerFlyFactory.Instance.MarkPowerFlyAsCollected(powerFlyData);
+            
+            foreach (PowerFlyEffect effect in powerFlyData.effects)
+            {
+                effect.ApplyEffect();
+            }
         }
         else
         {

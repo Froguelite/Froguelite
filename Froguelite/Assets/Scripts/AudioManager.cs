@@ -105,6 +105,7 @@ public class AudioManager : MonoBehaviour
     private static float clipVolumeLevel = 1.0f;
     private static List<AudioSource> activeAudioSources = new List<AudioSource>();
     private static Dictionary<System.Enum, AudioSource> indefiniteSounds = new Dictionary<System.Enum, AudioSource>();
+    private static int overrideMusicFadeTweenId = -1;
 
 
 
@@ -549,6 +550,13 @@ public class AudioManager : MonoBehaviour
 
         AudioClip randomClip = musicItem.Value.music;
 
+        // Cancel any ongoing override music fade tween
+        if (overrideMusicFadeTweenId != -1)
+        {
+            LeanTween.cancel(overrideMusicFadeTweenId);
+            overrideMusicFadeTweenId = -1;
+        }
+
         // Set up override music
         Instance.musicOverrideSource.clip = randomClip;
         Instance.musicOverrideSource.volume = 0f;
@@ -589,7 +597,7 @@ public class AudioManager : MonoBehaviour
         // Fade out and stop override music if it's playing
         if (Instance.musicOverrideSource != null && Instance.musicOverrideSource.isPlaying)
         {
-            LeanTween.value(Instance.gameObject, Instance.musicOverrideSource.volume, 0f, 1f)
+            overrideMusicFadeTweenId = LeanTween.value(Instance.gameObject, Instance.musicOverrideSource.volume, 0f, 1f)
                 .setOnUpdate((float val) => {
                     if (Instance.musicOverrideSource != null)
                     {
@@ -601,7 +609,8 @@ public class AudioManager : MonoBehaviour
                     {
                         Instance.musicOverrideSource.Stop();
                     }
-                });
+                    overrideMusicFadeTweenId = -1;
+                }).id;
         }
 
         // Fade in main music if it's playing
